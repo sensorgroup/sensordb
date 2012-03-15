@@ -4,8 +4,8 @@ import PlayProject._
 
 object ApplicationBuild extends Build {
 
-  val appName         = "Phenonet"
-  val appVersion      = "2.0"
+  val appName         = "SensorDB"
+  val appVersion      = "1.0"
 
   val appDependencies = Seq(
     // Add your project dependencies here,
