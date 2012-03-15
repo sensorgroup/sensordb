@@ -1,0 +1,107 @@
+@import "bootstrap.less";
+
+.center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.justify{
+  text-align: justify;
+}
+html {
+    min-height: 100%;
+}
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+.pad-20 {
+    padding: 20px 0;
+}
+#main {
+  margin-top: @navbarHeight;
+
+  div.container {
+    margin-top:  20px;
+  }
+}
+div#first-page  {
+
+    img.bg {
+    	min-height: 100%;
+    	min-width: 1024px;
+    	width: 100%;
+    	height: auto;
+    	position: fixed;
+    	top: @navbarHeight;
+    	left: 0;
+    }
+    .vertical-band {
+        position: relative;
+        width: 100%;
+        margin: 20% auto;
+        padding: 20px 0;
+        #translucent > .background(@white, 0.5);
+    }
+}
+.navbar-fixed-top.navbar {
+    .btn {
+        margin-right:10px;
+    }
+    input{
+        margin-top: 5px;
+    }
+    .brand{
+        padding-top: 3px;
+        padding-bottom: 0;
+        margin: 0;
+    }
+}
+
+
+#nav-spacer{
+  clear: both;
+  padding-top: @navbarHeight;
+}
+#footer {
+  border-top:1px solid #E5E5E5;
+  padding: 20px 0;
+  background: @white;
+}
+.page-header{
+ padding-bottom:0;
+ border-bottom: 1px dotted #666;
+}
+
+.sensor-menu{
+	.box {
+		width:225px;
+		float:left;
+		margin:5px;
+		th{
+			#gradient > .vertical(@white, #f5f5f5);
+			text-align:center;
+			color:#555;
+		}
+	}
+	padding-bottom:5px;
+	margin-bottom:5px;
+}
+.well.well-condensed{
+	padding:5px;
+	.btn-group {
+	}
+}
+.modal-header{
+	#gradient > .vertical(@white, #f5f5f5);
+	h3 {
+		width: 100%;
+		text-align: center;
+	}
+	
+}
+.flot {
+  margin-bottom:10px;
+}
