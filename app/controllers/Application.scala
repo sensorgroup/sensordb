@@ -5,16 +5,16 @@ import play.api.mvc._
 
 object Application extends Controller {
 	
-//	def index = Action {
-//		Ok(views.html.index("Your new application is ready."))
-//	}
-//	def sample = Action {
-////		Ok(views.html.sample())
-//	}
-//
-//	def add_sensor_data(key:String) = Action { req =>
-//		Ok("Hello " + key + "!")
-//	}
+	def index = Action {
+		Ok(views.html.index("Your new application is ready."))
+	}
+	def sample = Action {
+		Ok(views.html.sample())
+	}
+
+	def add_sensor_data(key:String) = Action { req =>
+		Ok("Hello " + key + "!")
+	}
 	
 }
 
