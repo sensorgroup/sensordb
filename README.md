@@ -9,4 +9,6 @@ If you would like to use Cassandra for storing sensor data, start it with (v1.0.
 
 GUI to investigate contents of cassandra, use [Cassandra-Cluster-Admin(PHP)](https://github.com/sebgiroux/Cassandra-Cluster-Admin.git)
 
-Markdown syntax (http://daringfireball.net/projects/markdown/syntax)
+Redis (2.4.8+) compiled in 32bit mode *redis-server /path/to/sensordb/conf/redis.conf*
+
+Markdown syntax http://daringfireball.net/projects/markdown/syntax

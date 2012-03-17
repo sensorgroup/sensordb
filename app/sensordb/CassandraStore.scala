@@ -6,8 +6,15 @@ import org.joda.time.{DateTime, Period, Days, DateTimeZone}
 import scala.collection.JavaConversions._
 
 
+/**
+ * Generates keys per day per stream bases
+ * @param prefix
+ * @param fromDay (inclusive)
+ * @param toDay (inclusive)
+ * @param separator Separator used to separate dayIdx from prefixes
+ */
 class KeyGen(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[List[String]] {
-  override def hasNext = from.isBefore(to)
+  override def hasNext = !from.isAfter(to)
   var from = Utils.format.parseDateTime(fromDay)
   val to = Utils.format.parseDateTime(toDay)
   override def next() = {
@@ -17,39 +24,81 @@ class KeyGen(prefix:List[String],fromDay: String, toDay: String,separator:Char=U
   }
 }
 
-trait ChunkSerializer{
-  def open()
+trait ChunkFormatter{
   def done()
   def insert(sensor:String, newYearDay:String,secInDay:Int,value:String):Boolean
 }
 
-class SimpleChunkSerializer(val output:PrintStream) extends ChunkSerializer{
-  def open() ={
-    output.print("{")
+trait ChunkWriter {
+  def open()={
+    openWriter()
+    isOpenValue=true
   }
-  open()
+  var isOpenValue = false
+
+  def insert(sensor:String, ts:String,value:String){
+    if (isClosed()|| !isOpened()) throw new RuntimeException("Bad state exception.")
+    insertData(sensor,ts,value)
+  }
+  def close() = {
+    isClosedValue=true
+    closeWriter()
+  }
+
+  protected def openWriter()
+  protected def closeWriter()
+  protected def insertData(sensor:String, ts:String,value:String)
+  var isClosedValue = false
+  def isClosed() = isClosedValue
+  def isOpened() = isOpenValue
+}
+
+class InMemWriter extends ChunkWriter{
+  def openWriter() = {}
+  var to_return = List[List[String]]()
+  def insertData(sensor:String, ts:String,value:String)= to_return::=List(sensor,ts,value)
+  def closeWriter() = {}
+  /*
+  The return result is verse order of insert calls.
+   */
+  def getData = to_return
+}
+
+class JSONWriter(val output:PrintStream) extends ChunkWriter{
+  def openWriter() =output.print("{")
+  var started = false;
+  def insertData(sensor:String, ts:String,value:String)= {
+    if (started){
+      output.print(",")
+      started=true
+    }
+    val to_write = "["+sensor+","+ts+","+value+"]";
+    output.print(to_write)
+  }
+  def closeWriter() = output.print("}")
+}
+
+class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
+  writer.open()
   var count = 0
   var dayIdx:DateTime = null
   var tempYearDay:String = null
   def insert(sensor:String, newYearDay:String,secInDay:Int,value:String):Boolean={
-    if (count >0) output.print(",")
     if (tempYearDay !=newYearDay) {
       dayIdx= Utils.format.parseDateTime(newYearDay)
       tempYearDay=newYearDay
     }
     val ts = Utils.inputTimeFormat.print(dayIdx.plusSeconds(secInDay))
     count+=1
-    output.print("["+sensor+","+ts+","+value+"]")
+    writer.insert(sensor,ts,value)
     true
   }
-  def done() = {
-    output.print("}")
-  }
+  def done() = writer.close()
 }
 
 trait SensorDataStore {
   def addNodeData(nodeId: String, data: Map[String, Map[String, String]])
-  def queryNode(nodeId:String,keys:Iterator[List[String]],timeRange:Option[(Long, Long)] = None,chunker:ChunkSerializer)
+  def queryNode(nodeId:String,keys:Iterator[List[String]],timeRange:Option[(Long, Long)] = None,chunker:ChunkFormatter)
   def dropNode(nodeId:String)
   def shutdown()
 }
@@ -82,14 +131,12 @@ class CassandraDataStore{
 
   def getClusterFor(clusterName: String, address: String) = HFactory.getOrCreateCluster(clusterName, address)
 
-  def dropCf(c: Cluster, ksName: String, cfName: String) = c.dropColumnFamily(ksName, cfName);
-
   def addCf(c: Cluster, ksName: String, cfName: String) = c.addColumnFamily(HFactory.createColumnFamilyDefinition(ksName, cfName, ComparatorType.LONGTYPE))
 
-  def colFamily(c: Cluster, ksName: String, cfName: String) = c.describeKeyspace(ksName).getCfDefs().exists((cf) => cf.getName == cfName)
+  def isColFamilyExists(cfName: String) = c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
 
   def addNodeData(nodeId: String, data: Map[String, Map[String, String]]) = {
-    if (!colFamily(c, ks.getKeyspaceName, nodeId)) addCf(c, ks.getKeyspaceName, nodeId)
+    if (!isColFamilyExists(nodeId)) addCf(c, ks.getKeyspaceName, nodeId)
     val mutator: Mutator[String] = HFactory.createMutator(ks, ss)
     var total = 0
     data.foreach { (s) =>
@@ -106,7 +153,11 @@ class CassandraDataStore{
     mutator.execute()
   }
 
-  def queryNode(colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:ChunkSerializer){
+  def queryNode(colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:ChunkFormatter){
+    if (!isColFamilyExists(colFamName)) {
+      chunker.done()
+      return
+    }
     val colStart = colRange.getOrElse(Pair(0L,86400L))._1.asInstanceOf[AnyVal]
     val colEnd = colRange.getOrElse(Pair(0L,86400L))._2.asInstanceOf[AnyVal]
     while(keys.hasNext){
@@ -125,7 +176,7 @@ class CassandraDataStore{
     }
     chunker.done()
   }
-  def dropNode(colFamName:String)=c.dropColumnFamily(keyspace_name, colFamily)
+  def dropNode(colFamName:String)= if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
 
   def shutdown()=c.getConnectionManager().shutdown()
 }
@@ -150,7 +201,7 @@ object Sample{
     //    val start=System.currentTimeMillis()
     //    var count = 0;
     val cs = new CassandraDataStore()
-    cs.queryNode("node5",new KeyGen(List("light","humidity"),"201230", "201290"),None,new SimpleChunkSerializer(System.out))
+    cs.queryNode("node5",new KeyGen(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
     //    println(count/((System.currentTimeMillis()-start)/1000.0))
     //    println("count"+count)
 

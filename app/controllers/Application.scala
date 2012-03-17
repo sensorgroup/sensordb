@@ -18,10 +18,10 @@ object Application extends Controller {
 	
 }
 
-case class MeasurmentUnit(pk:Integer, name:String, link:String, shortDescription:String)
+case class MeasurementUnit(pk:Integer, name:String, link:String, shortDescription:String)
 case class MetaData(from:Long,to:Long,shortDescription:String,longDescription:String)
-case class Stream(name:String,description:String,key:String,unit:MeasurmentUnit,stream_id:String,metadata:List[MetaData])
-case class Node(name:String,latitude:Double,altitude:Double,longitutde:Double,description:String,streams:List[Stream],metadata:List[MetaData])
+case class Stream(name:String,description:String,key:String,unit:MeasurementUnit,stream_id:String,metadata:List[MetaData])
+case class Node(name:String,latitude:Double,altitude:Double,longitude:Double,description:String,streams:List[Stream],metadata:List[MetaData])
 case class Experiment(name:String,description:String,nodes:List[Node],metadata:List[MetaData])
 case class Analysis(name:String,widgets:List[WidgetInstance])
 case class WidgetInstance(id:String, title:String,widget_id:Int,config:String)
