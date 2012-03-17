@@ -15,7 +15,7 @@ object ApplicationBuild extends Build {
     "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
     "redis.clients" % "jedis" % "2.0.0",
   	"org.squeryl" %% "squeryl" % "0.9.5-RC1",
-	  "postgresql" % "postgresql" % "8.4-701.jdbc4",
+	  "postgresql" % "postgresql" % "9.1-901.jdbc4",
 	  "me.prettyprint" % "hector-core" % "1.0-3",
     "me.prettyprint" % "hector" % "1.0-3",
     "joda-time" % "joda-time" % "2.1"
