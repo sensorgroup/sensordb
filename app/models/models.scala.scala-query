@@ -1,0 +1,40 @@
+package models
+
+import org.scalaquery.ql._
+import org.scalaquery.ql.TypeMapper._
+import org.scalaquery.ql.extended.{ExtendedTable => Table}
+import org.scalaquery.ql.extended.PostgresDriver.Implicit._
+import org.scalaquery.session._
+import play.api.db._
+import play.api.Play.current
+import java.sql.Date
+
+object Users extends Table[(Long,String,String,Int,Option[String],String, Option[String],Option[String],Date,Date)]("users"){
+  lazy val database = Database.forDataSource(DB.getDataSource())
+
+  def id = column[Long]("id", O PrimaryKey, O AutoInc)
+  def name = column[String]("name", O NotNull, O DBType "varchar(30)")
+  def password = column[String]("password", O NotNull,O DBType "varchar(50)")
+  def timezone = column[Int]("timezone", O NotNull)
+  def picture_path = column[Option[String]]("picture_path",O DBType "varchar(1024)")
+  def token = column[String]("token", O NotNull,O DBType "varchar(50)")
+  def description = column[Option[String]]("description",O DBType "varchar(1024)")
+  def website = column[Option[String]]("website",O DBType "varchar(1024)")
+  def created_at = column[Date]("created_at",O NotNull)
+  def updated_at = column[Date]("updated_at",O NotNull)
+  def * = id ~ name ~password ~ timezone ~ picture_path ~ token ~ description ~ website ~ created_at ~ updated_at
+
+  def findAll = database.withSession { implicit db:Session =>
+    (for(t <- this) yield t).list
+  }
+
+  def findById(id:Int) = database.withSession{ implicit db:Session=>
+    (for(t <- this if t.id == id) yield t).firstOption
+  }
+  def schema = Users.ddl.createStatements.foreach(println)
+}
+
+object DataModel{
+  import  org.scalaquery.ql.basic.BasicDriver.Implicit._
+
+}

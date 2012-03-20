@@ -1,0 +1,36 @@
+use sensordb;
+db.users.ensureIndex({"name":1},{unique:true,dropDups:true});
+
+db.users.ensureIndex({"token":1},{unique:true,dropDups:true});
+db.experiments.ensureIndex({"token":1},{unique:true,dropDups:true});
+db.nodes.ensureIndex({"token":1},{unique:true,dropDups:true});
+db.streams.ensureIndex({"token":1},{unique:true,dropDups:true});
+
+db.experiments.ensureIndex({"user_id":1},{});
+db.nodes.ensureIndex({"user_id":1},{});
+db.streams.ensureIndex({"user_id":1},{});
+db.analysis.ensureIndex({"user_id":1},{});
+db.widgetinstances.ensureIndex({"user_id":1},{});
+db.userwidgets.ensureIndex({"user_id":1},{});
+
+db.nodes.ensureIndex({"experiment_id":1},{});
+db.streams.ensureIndex({"node_id":1},{});
+db.widgetinstances.ensureIndex({"analysis_id":1},{});
+
+/**
+ * Like, to remove all the documents which have reference to an experiment number 7, execute:
+ * cascade('experiment_id',7)
+ * To make sure the cascade is working fine, a consistent naming convention should be followed.
+ **/
+function cascade(field,id){
+  for(idx in db.getCollectionNames()){
+    var name = db.getCollectionNames()[idx]
+    var sample = db[name].find().limit(1)[0]
+    var has_user_id=sample ? sample[field] != undefined : false
+    if (has_user_id) {
+        var to_remove = {}
+        to_remove[field]=id
+        db[name].remove(to_remove);
+    }
+  }
+}

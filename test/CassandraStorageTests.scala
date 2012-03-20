@@ -4,10 +4,35 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 import sensordb._
+import models._
+import anorm.NotAssigned
+import com.mongodb.casbah.commons.MongoDBObject
 
-class HelloWorldSpec extends Specification {
 
-  "The 'Hello world' string" should {
+class SensorDB extends Specification {
+
+  "MongoDB should be able to store and retrive user information" should {
+    "CRUD on Users" in{
+      running(FakeApplication()) {
+        User.find(MongoDBObject()).length must_==0
+        User.save(new User("ali","secret",-120))
+        User.save(new User("ali3","secret",-120))
+        User.find(MongoDBObject()).length must_==2
+        User.findByName("ali").isDefined must beTrue
+        User.findByName("ali2").isDefined must beFalse
+        User.dropByName("ali2")
+        User.find(MongoDBObject()).length must_==2
+        User.dropByName("ali3")
+        User.find(MongoDBObject()).length must_==1
+        User.dropByName("ali")
+        User.find(MongoDBObject()).length must_==0
+
+        //        User.findOneByID("1234")
+        1 must_== 1
+      }
+    }
+  }
+  "Cassandra should be able to store and retrive sensor data" should {
     val c = new CassandraDataStore()
     val n = "testnode"
 
@@ -96,6 +121,7 @@ class HelloWorldSpec extends Specification {
       c.queryNode(n,new KeyGen(List("s1","s2"),"20111","20112"),Option(76,86400),new DefaultChunkFormatter(writer5))
       writer5.getData.length must_==  3
     }
+
 
   }
 }

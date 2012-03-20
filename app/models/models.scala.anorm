@@ -1,0 +1,323 @@
+package models
+
+import play.api.db._
+import play.api.Play.current
+import anorm._
+import anorm.SqlParser._
+import java.util.Date
+import sensordb.Utils
+
+case class User(id:Pk[Long],
+                name:String,
+                password:String,
+                timezone:Int,
+                picture_path:Option[String],
+                token:String,
+                description:Option[String],
+                website:Option[String],
+                created_at:Date = null,
+                updated_at:Date = null)
+
+object User {
+  val model = {
+    get[Pk[Long]]("users.id") ~
+      get[String]("users.name") ~
+      get[String]("users.password")~
+      get[Int]("users.timezone")~
+      get[Option[String]]("users.picture_path")~
+      get[String]("users.token")~
+      get[Option[String]]("users.description")~
+      get[Option[String]]("users.website")~
+      get[Date]("users.created_at")~
+      get[Date]("users.updated_at") map{
+      case id~name~password~timezone~picturePath~token~description~website~created_at~updated_at =>
+        User(id,name,password,timezone,picturePath,token,description,website,created_at,updated_at)
+    }
+  }
+
+  def findById(id:Long):Option[User]=DB.withConnection { implicit connection =>
+    SQL("select * from users where id = {id}").on('id -> id).as(model.singleOpt)
+  }
+
+  def create(user:User):Option[User]= DB.withTransaction { implicit connection =>
+    val id: Long = user.id.getOrElse {
+      SQL("select nextval('users_id_seq')").as(scalar[Long].single)
+    }
+    SQL( """
+        insert into users(id,name,password,timezone,picture_path,token,description,website) values (
+          {id},{name}, {password}, {timezone}, {picture_path}, {token}, {description}, {website} )
+      """).on(
+      'id ->id,
+      'name -> user.name,
+      'password -> user.password,
+      'timezone -> user.timezone,
+      'picture_path -> user.picture_path,
+      'token -> user.token,
+      'description -> user.description,
+      'website -> user.website
+    ).executeUpdate()
+    findById(id)
+  }
+
+  def findAll:Seq[User]=DB.withConnection { implicit connection =>
+    SQL("select * from users").as(User.model *)
+  }
+
+}
+object DBHelpers {
+  def updateToken(table:String,id:Long,user_id:Long):String={
+    val token = Utils.uuid()
+    updateField(table,"token",token,id,user_id)
+    token
+  }
+  def updateField(table:String,field:String,value:String,id:Long,user_id:Long):Int={
+    val queryForUser = "update {table} set {field}={value} where id = {id};"
+    val queryForOtherTables = "update {table} set {field}={value} where id = {id} and user_id={uid};"
+    val query = if(table.equalsIgnoreCase("users")) queryForUser else queryForOtherTables
+    DB.withConnection { implicit connection => SQL(query)
+      .on('table->table,'id -> id,'field->field,'value->value,'uid->user_id).executeUpdate()
+   }
+  }
+  def deleteRow(table:String,id:Long,user_id:Long)={
+    val queryForUser = "delete from {table} where where id = {id};"
+    val queryForOtherTables = "delete from {table} where id={id} and user_id={user_id};"
+    val query = if(table.equalsIgnoreCase("users")) queryForUser else queryForOtherTables
+    DB.withConnection { implicit connection => SQL(query)
+      .on('table->table,'id -> id,'user_id->user_id).executeUpdate()
+    }
+  }
+
+}
+case class Experiment(id:Pk[Long],
+                      name:String,
+                      access_restriction:String,
+                      picture_path:Option[String],
+                      description:Option[String],
+                      user_id:Long,
+                      timezone:Int,
+                      token:String,
+                      website:Option[String],
+                      created_at:Date,
+                      updated_at:Date,
+                      var nodes:List[Node]=Nil )
+object Experiment{
+  val model = {
+    get[Pk[Long]]("experiments.id") ~
+      get[String]("experiments.name") ~
+      get[String]("experiments.access_restriction")~
+      get[Option[String]]("experiments.picture_path")~
+      get[Option[String]]("experiments.description")~
+      get[Int]("experiments.user_id")~
+      get[Int]("experiments.timezone")~
+      get[String]("experiments.token")~
+      get[Option[String]]("experiments.website")~
+      get[Date]("experiments.created_at")~
+      get[Date]("experiments.updated_at") map{
+      case id~name~accessRestriction~picturePath~description~userId~timezone~token~website~created_at~updated_at =>
+        Experiment(id,name,accessRestriction,picturePath,description,userId,timezone,token,website,created_at,updated_at)
+    }
+  }
+
+  def create(experiment:Experiment):Option[Experiment]= DB.withTransaction { implicit connection =>
+    val id: Long = experiment.id.getOrElse {
+      SQL("select nextval('experiments_id_seq')").as(scalar[Long].single)
+    }
+    SQL( """
+        insert into experiments(id,name,access_restriction,picture_path,description,user_id,timezone,token,website) values (
+          {id},{name}, {access_restriction}, {picture_path}, {description}, {user_id}, {timezone},{token} {website} );
+      """).on(
+      'id ->id,
+      'name -> experiment.name,
+      'access_restriction -> experiment.access_restriction,
+      'timezone -> experiment.timezone,
+      'picture_path -> experiment.picture_path,
+      'token -> experiment.token,
+      'description -> experiment.description,
+      'website -> experiment.website ,
+      'user_id->experiment.user_id
+    ).executeUpdate()
+    findById(id)
+  }
+
+  def findById(id:Long):Option[Experiment]=DB.withConnection { implicit connection =>
+    SQL("select * from experiments where id = {id}").on('id -> id).as(model.singleOpt)
+  }
+
+  def findByUser(uid:Long):List[Experiment]=DB.withConnection { implicit connection =>
+    SQL("select * from experiments where user_id = {uid}").on('uid -> uid).as(model *)
+  }
+
+  def findAll:Seq[Experiment]=DB.withConnection { implicit connection =>
+    SQL("select * from experiments").as(Experiment.model *)
+  }
+
+
+}
+case class Node(id:Pk[Long],
+                name:String,
+                picture_path:Option[String],
+                description:Option[String],
+                latitude:Option[Double],
+                longitude:Option[Double],
+                altitude:Option[Double],
+                token:String,
+                user_id:Long,
+                website:Option[String],
+                experiment_id: Int,
+                created_at:Date,
+                updated_at:Date ,
+                var streams:List[Stream]= Nil)
+object Node{
+  val model = {
+    get[Pk[Long]]("node.id") ~
+      get[String]("node.name") ~
+      get[Option[String]]("node.picture_path")~
+      get[Option[String]]("node.description")~
+      get[Option[Double]]("node.latitude")~
+      get[Option[Double]]("node.longitude")~
+      get[Option[Double]]("node.altitude")~
+      get[String]("node.token")~
+      get[Int]("node.user_id")~
+      get[Option[String]]("node.website")~
+      get[Int]("node.experiment_id")~
+      get[Date]("node.created_at")~
+      get[Date]("node.updated_at") map{
+      case id~name~picturePath~description~latitude~longitude~altitude~token~userId~website~experimentId~created_at~updated_at =>
+        Node(id,name,picturePath,description,latitude,longitude,altitude,token,userId,website,experimentId,created_at,updated_at)
+    }
+  }
+
+  def findById(id:Long):Option[Node]=DB.withConnection { implicit connection =>
+    SQL("select * from nodes where id = {id}").on('id -> id).as(model.singleOpt)
+  }
+
+  def findAll:Seq[Node]=DB.withConnection { implicit connection =>
+    SQL("select * from nodes").as(Node.model *)
+  }
+
+  def findByUser(uid:Long):List[Node]=DB.withConnection { implicit connection =>
+    SQL("select * from nodes where user_id = {uid}").on('uid -> uid).as(model *)
+  }
+
+  def create(node:Node):Option[Node]= DB.withTransaction { implicit connection =>
+    val id: Long = node.id.getOrElse {
+      SQL("select nextval('nodes_id_seq');").as(scalar[Long].single)
+    }
+    SQL( """
+        insert into nodes(id,name,picture_path,description,latitude,longitude,altitude,token,user_id,website,experiment_id) values (
+          {id},{name}, {picture_path}, {description}, {latitude},{longitude},{altitude},{token},{user_id},{website},{experiment_id} );
+      """).on(
+      'id ->id,
+      'name -> node.name,
+      'picture_path -> node.picture_path,
+      'description -> node.description,
+      'latitude -> node.latitude,
+      'longitude -> node.longitude,
+      'altitude -> node.altitude,
+      'token -> node.token,
+      'website -> node.website ,
+      'user_id->node.user_id,
+      'experiment_id->node.experiment_id
+    ).executeUpdate()
+    findById(id)
+  }
+
+}
+
+case class Stream(id:Pk[Long],
+                  name:String,
+                  picture_path:Option[String],
+                  description:Option[String],
+                  measurement_id: Int,
+                  node_id:Long,
+                  user_id:Long,
+                  token:String,
+                  website:Option[String],
+                  created_at:Date,
+                  updated_at:Date)
+object Stream{
+  val model = {
+    get[Pk[Long]]("stream.id") ~
+      get[String]("stream.name") ~
+      get[Option[String]]("stream.picture_path")~
+      get[Option[String]]("stream.description")~
+      get[Int]("stream.measurement_id")~
+      get[Int]("stream.node_id")~
+      get[Int]("stream.user_id")~
+      get[String]("stream.token")~
+      get[Option[String]]("stream.website")~
+      get[Date]("stream.created_at")~
+      get[Date]("stream.updated_at") map{
+      case id~name~picturePath~description~measurementId~nodeId~userId~token~website~created_at~updated_at =>
+        Stream(id,name,picturePath,description,measurementId,nodeId,userId,token,website,created_at,updated_at)
+    }
+  }
+
+  def findById(id:Long):Option[Stream]=DB.withConnection { implicit connection =>
+    SQL("select * from streams where id = {id}").on('id -> id).as(model.singleOpt)
+  }
+
+  def findAll:Seq[Stream]=DB.withConnection { implicit connection =>
+    SQL("select * from streams").as(Stream.model *)
+  }
+
+  def findByUser(uid:Long):List[Stream]=DB.withConnection { implicit connection =>
+    SQL("select * from streams where user_id = {uid}").on('uid -> uid).as(model *)
+  }
+
+  def create(stream:Stream):Option[Stream]= DB.withTransaction { implicit connection =>
+    val id: Long = stream.id.getOrElse {
+      SQL("select nextval('streams_id_seq');").as(scalar[Long].single)
+    }
+    SQL( """
+        insert into streams(id,name,picture_path,description,measurement_id,node_id,user_id,token,website) values (
+          {id},{name},{picture_path},{description}, {measurement_id},{node_id}, {user_id},{token} {website} );
+      """).on(
+      'id ->id,
+      'name -> stream.name,
+      'picture_path -> stream.picture_path,
+      'description -> stream.description,
+      'measurement_id -> stream.measurement_id,
+      'node_id -> stream.node_id,
+      'user_id->stream.user_id,
+      'token -> stream.token,
+      'website -> stream.website
+    ).executeUpdate()
+    findById(id)
+  }
+
+}
+
+case class Measurement(id:Pk[Long],
+                       name:String,
+                       description:Option[String],
+                       website:Option[String],
+                       created_at:Date,
+                       updated_at:Date )
+
+object Measurement{
+  val model = {
+    get[Pk[Long]]("measurement.id") ~
+      get[String]("measurement.name") ~
+      get[Option[String]]("measurement.description")~
+      get[Option[String]]("measurement.website")~
+      get[Date]("measurement.created_at")~
+      get[Date]("measurement.updated_at") map{
+      case id~name~description~website~created_at~updated_at =>
+        Measurement(id,name,description,website,created_at,updated_at)
+    }
+  }
+
+  def findById(id:Long):Option[Measurement]=DB.withConnection { implicit connection =>
+    SQL("select * from measurements where id = {id}").on('id -> id).as(model.singleOpt)
+  }
+
+  def findAll:Seq[Measurement]=DB.withConnection { implicit connection =>
+    SQL("select * from measurements").as(Measurement.model *)
+  }
+}
+
+//case class Metadata(id:Long,objectType:String, user_id:String, from:Long,to:Long,shortDescription:String,longDescription:String)
+//case class Analysis(id:Long, user_id:Long, name:String,widgets:List[WidgetInstance])
+//case class WidgetInstance(id:Long,title:String, analysis_id:Long, widget_id:Long,config:String)
+//case class Widget(id:Long, author_id:String, sample_config:String)

@@ -107,10 +107,11 @@ object Utils {
   val inputTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
   val zoneUTC = DateTimeZone.UTC
   val SEPARATOR = '$'
+  def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
   def generateRowKey(sensor:String, date:String) = sensor+"$"+date
-
 }
+
 class CassandraDataStore{
   /**Resource: https://github.com/rantav/hector/blob/master/core/src/test/java/me/prettyprint/cassandra/service/CassandraClusterTest.java#L102-156 */
 
