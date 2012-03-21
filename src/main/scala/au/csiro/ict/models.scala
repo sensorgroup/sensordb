@@ -1,4 +1,4 @@
-package models
+package au.csiro.ict
 
 import com.novus.salat._
 import com.novus.salat.global._
@@ -6,7 +6,7 @@ import com.novus.salat.annotations._
 import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoConnection
-import sensordb.Utils
+import au.csiro.ict.Utils
 
 object AccessRestriction extends Enumeration("Public","Friends","Private") {
   val PUBLIC, FRIENDS, PRIVATE = Value
@@ -27,6 +27,7 @@ object User extends SalatDAO[User, ObjectId](collection = MongoConnection()("sen
   def dropByName(name:String)=remove(MongoDBObject("name"->name))
   override def save(t:User)={
     t.updated_at=System.currentTimeMillis()
+
     super.save(t)
   }
 }

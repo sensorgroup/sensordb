@@ -1,4 +1,4 @@
-package sensordb
+package au.csiro.ict
 
 import java.io.{PrintStream}
 import org.joda.time.format.DateTimeFormat
