@@ -10,9 +10,7 @@ GUI to investigate contents of cassandra, use [Cassandra-Cluster-Admin(PHP)](htt
 
 Redis (v2.4.8+) compiled in 32bit mode *redis-server /path/to/sensordb/conf/redis.conf*
 
-Postgresql (v9.1) on Mac with PgAdmin, update username/password/db-name at */path/to/sensordb/conf/application.conf*
-
-Data model is stored on MongoDB (./mongod --journal)
+Data model is stored on MongoDB(V2.0.4+) (./mongod --journal)
 
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/e-r-diagram.png)
 
