@@ -20,7 +20,9 @@ Data model is stored on MongoDB(V2.0.4+) (./mongod --journal). In SensorDB:
 -  Any user can have zero or more experiments
 -  Any experiment can have zero or more nodes
 -  Any node can have zero or more streams
--  Any stream is a set of (timestamp,value) pairs. Time is presented in unix timestamp format (milliseconds since epoch). A value is a real number (double precision float).
+-  Any stream is a set of (timestamp,value) pairs. Each stream has one unit of measurement.
+
+Internally, timestamps are presented in unix format (milliseconds since epoch). Values (sensor readings) are presented as real numbers (double precision float).
 
 ### Data model in a Tree View
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/er-tree.png)

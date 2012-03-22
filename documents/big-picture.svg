@@ -55,11 +55,11 @@
     <rect
        style="fill:#373e48;fill-opacity:1;stroke:none"
        id="rect2985"
-       width="64.5"
+       width="88.346153"
        height="216.5"
-       x="11.25"
+       x="-12.596154"
        y="423.36218"
-       rx="1.4757511e-11" />
+       rx="2.0213478e-11" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -80,9 +80,9 @@
          style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff">(Cassandra Cluster)</tspan></text>
     <rect
        rx="9.8383411e-12"
-       y="192.36218"
+       y="201.59296"
        x="93"
-       height="703.5"
+       height="694.26923"
        width="43"
        id="rect2993"
        style="fill:#373e48;fill-opacity:1;stroke:none" />
@@ -130,36 +130,37 @@
          y="-0.48242188"
          style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
          id="tspan4377">[Structural Info]</tspan></text>
-    <g
-       id="g3025"
-       transform="translate(0.75,0)">
-      <rect
-         rx="1.5215109e-11"
-         y="193.86218"
-         x="9.5"
-         height="216.5"
-         width="66.5"
-         id="rect3017"
-         style="fill:#373e48;fill-opacity:1;stroke:none" />
-      <text
-         transform="matrix(0,1,-1,0,0,0)"
-         sodipodi:linespacing="125%"
-         id="text3019"
-         y="-46.165039"
-         x="300.26355"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           id="tspan3021"
-           y="-46.165039"
-           x="300.26355"
-           sodipodi:role="line">Caching/Queues</tspan><tspan
-           id="tspan3023"
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           y="-21.165039"
-           x="300.26355"
-           sodipodi:role="line">(Redis)</tspan></text>
-    </g>
+    <rect
+       style="fill:#373e48;fill-opacity:1;stroke:none"
+       id="rect3017"
+       width="88.807693"
+       height="216.5"
+       x="-12.057693"
+       y="201.86218"
+       rx="2.0319078e-11" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="302.26355"
+       y="-48.915039"
+       id="text3019"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         x="302.26355"
+         y="-48.915039"
+         id="tspan3021"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff">Caching/Queues/</tspan><tspan
+         sodipodi:role="line"
+         x="302.26355"
+         y="-23.915039"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         id="tspan3177">Sessions</tspan><tspan
+         sodipodi:role="line"
+         x="302.26355"
+         y="1.0849609"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         id="tspan3023">(Redis)</tspan></text>
     <rect
        style="fill:#999999;fill-opacity:1;stroke:none"
        id="rect3031"
@@ -329,7 +330,7 @@
     </g>
     <g
        id="g4384"
-       transform="matrix(-1,0,0,1,367.13884,16.153846)">
+       transform="matrix(-1,0,0,1,367.13884,26.153846)">
       <rect
          rx="8.4073096e-12"
          y="267.36218"

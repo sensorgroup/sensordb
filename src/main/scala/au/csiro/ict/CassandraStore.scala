@@ -187,8 +187,10 @@ class CassandraDataStore{
   def rowFilter(colFamName:String,filter:(String=>Boolean)):List[String]={
     Nil
   }
-  def deleteRows(keys:List[String])={
+  def keyList(cf:String,select:(String)=>Boolean = (_=>true)):Iterable[String]= new KeyIterator[String](ks,cf,ss).filter(select)
 
+  def deleteRows(keys:List[String])={
+    c.
   }
   def shutdown()=c.getConnectionManager().shutdown()
 }
