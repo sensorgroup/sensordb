@@ -4,6 +4,7 @@ import java.io.{PrintStream}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, Period, Days, DateTimeZone}
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
  * Generates keys per day per stream bases
@@ -183,15 +184,11 @@ class CassandraDataStore{
     chunker
   }
   def dropNode(colFamName:String)= if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
-//  def dropStream(colFamName:String, streamName:String)=
-  def rowFilter(colFamName:String,filter:(String=>Boolean)):List[String]={
-    Nil
-  }
-  def keyList(cf:String,select:(String)=>Boolean = (_=>true)):Iterable[String]= new KeyIterator[String](ks,cf,ss).filter(select)
 
-  def deleteRows(keys:List[String])={
-    c.
-  }
+  def listKeys(cf:String,select:(String)=>Boolean = (_=>true)):Iterable[String]= new KeyIterator[String](ks,cf,ss).filter(select)
+
+  def deleteRows(colFamName:String, keys:Iterable[String])=HFactory.createMutator(ks, ss).addDeletion(keys.asJava,colFamName).execute()
+
   def shutdown()=c.getConnectionManager().shutdown()
 }
 

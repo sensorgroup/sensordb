@@ -38,12 +38,12 @@ class SensorDB extends Specification() {
       c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
       writer.isClosed() must beTrue
     }
-//
+
     "Query inserting one element" in {
       c.dropNode(n)
       c.addNodeData(n, Map("s1" -> Map("2011-01-02T00:01:15" -> "-100")))
-      c.keyList(n).head must_== "s1$20112"
-      c.keyList(n).size must_== 1
+      c.listKeys(n).head must_== "s1$20112"
+      c.listKeys(n).size must_== 1
       val writer = new InMemWriter()
       new KeyListIterator(List("s1"), "20111", "20112").length must_== 2
       c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
@@ -68,6 +68,9 @@ class SensorDB extends Specification() {
       val writer6 = new InMemWriter()
       c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer6))
       writer6.getData.length must_== 0
+      c.listKeys(n).size must_== 1
+      c.deleteRows(n,c.listKeys(n,(x)=>x.startsWith("s1$")))
+      c.listKeys(n).size must_== 0
     }
     "Query inserting multiple element" in {
       c.dropNode(n)
