@@ -5,7 +5,6 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, Period, Days, DateTimeZone}
 import scala.collection.JavaConversions._
 
-
 /**
  * Generates keys per day per stream bases
  * @param prefix
@@ -134,7 +133,9 @@ class CassandraDataStore{
 
   def addCf(c: Cluster, ksName: String, cfName: String) = c.addColumnFamily(HFactory.createColumnFamilyDefinition(ksName, cfName, ComparatorType.LONGTYPE))
 
-  def isColFamilyExists(cfName: String) = c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
+  def isColFamilyExists(cfName: String) = {
+    c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
+  }
 
   def addNodeData(nodeId: String, data: Map[String, Map[String, String]]) = {
     if (!isColFamilyExists(nodeId)) addCf(c, ks.getKeyspaceName, nodeId)

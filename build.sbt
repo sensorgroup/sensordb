@@ -4,6 +4,10 @@ name := "SensorDB"
 
 version := "1.0"
 
+parallelExecution in (Test) := false
+
+testOptions in Test += Tests.Argument("sequential")
+
 scalaVersion := "2.9.1"
 
 seq(webSettings :_*)

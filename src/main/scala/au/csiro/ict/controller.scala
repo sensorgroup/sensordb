@@ -7,18 +7,13 @@ import com.codahale.jerkson.Json._
 import io.Source
 import java.util.Properties
 import java.io.FileReader
+import scala.collection.JavaConversions._
 
 object Configuration{
   private val config = new Properties()
   config.load(getClass.getResourceAsStream("/config.properties"))
-  
-  def apply(name:String):Option[String]= {
-    config.getProperty(name) match {
-      case v:String=>Some(v)
-      case null=>None
-    }
-    
-  }
+  val config_map = config.entrySet().map(x=>(x.getKey.toString.trim().toLowerCase,x.getValue.toString.trim())).toMap[String, String]
+  def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
 }
 
 class Controller extends ScalatraServlet with ScalateSupport {
