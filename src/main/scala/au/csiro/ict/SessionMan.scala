@@ -3,7 +3,6 @@ package sensordb
 import org.mindrot.jbcrypt.BCrypt
 import redis.clients.jedis.Jedis
 import org.apache.commons.validator.GenericValidator._
-import models.User
 
 object SessionMan {
 

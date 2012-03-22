@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
  * @param toDay (inclusive)
  * @param separator Separator used to separate dayIdx from prefixes
  */
-class KeyGen(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[List[String]] {
+class KeyListIterator(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[List[String]] {
   override def hasNext = !from.isAfter(to)
   var from = Utils.format.parseDateTime(fromDay)
   val to = Utils.format.parseDateTime(toDay)
@@ -123,8 +123,8 @@ class CassandraDataStore{
   import me.prettyprint.hector.api.factory._
   import me.prettyprint.hector.api.mutation._
 
-  val keyspace_name = "sensordb"
-  val c = getClusterFor("sensordb-cluster", "localhost:9160")
+  val keyspace_name = Configuration("cassandra.keyspace").get
+  val c = getClusterFor(Configuration("cassandra.cluster").get, Configuration("cassandra.host").get+":"+Configuration("cassandra.port").get)
   val ks = HFactory.createKeyspace(keyspace_name, c)
   val ss = StringSerializer.get()
   val ls = LongSerializer.get().asInstanceOf[Serializer[Any]]
@@ -154,13 +154,16 @@ class CassandraDataStore{
     mutator.execute()
   }
 
-  def queryNode(colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:ChunkFormatter){
+  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T={
     if (!isColFamilyExists(colFamName)) {
       chunker.done()
-      return
+      return chunker
     }
     val colStart = colRange.getOrElse(Pair(0L,86400L))._1.asInstanceOf[AnyVal]
     val colEnd = colRange.getOrElse(Pair(0L,86400L))._2.asInstanceOf[AnyVal]
+    if (keys.isEmpty){
+       // TODO: iterate through all the keys and add the respective columns to the result
+    }
     while(keys.hasNext){
       val keys_iterator = keys.next().iterator
       while(keys_iterator.hasNext){
@@ -176,9 +179,16 @@ class CassandraDataStore{
       }
     }
     chunker.done()
+    chunker
   }
   def dropNode(colFamName:String)= if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
+//  def dropStream(colFamName:String, streamName:String)=
+  def rowFilter(colFamName:String,filter:(String=>Boolean)):List[String]={
+    Nil
+  }
+  def deleteRows(keys:List[String])={
 
+  }
   def shutdown()=c.getConnectionManager().shutdown()
 }
 
@@ -202,7 +212,7 @@ object Sample{
     //    val start=System.currentTimeMillis()
     //    var count = 0;
     val cs = new CassandraDataStore()
-    cs.queryNode("node5",new KeyGen(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
+    cs.queryNode("node5",new KeyListIterator(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
     //    println(count/((System.currentTimeMillis()-start)/1000.0))
     //    println("count"+count)
 

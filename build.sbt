@@ -17,16 +17,20 @@ libraryDependencies ++= Seq(
   "javax.servlet" % "servlet-api" % "2.5" % "provided" ,
   "org.apache.commons" % "commons-math" % "2.2",
   "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
-  "redis.clients" % "jedis" % "2.0.0",
   "me.prettyprint" % "hector-core" % "1.0-3",
   "me.prettyprint" % "hector" % "1.0-3",
   "joda-time" % "joda-time" % "2.1",
   "org.joda" % "joda-convert" % "1.2" % "provided",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "commons-validator"% "commons-validator" % "1.4.0",
-  "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT"
+  "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
+  "com.codahale" %% "jerkson" % "0.5.0",
+  "org.clapper" %% "grizzled-slf4j" % "0.6.6",
+  "net.debasishg" %% "redisclient" % "2.4.2"
 )
 
 resolvers += "Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
 resolvers += "repo.novus rels" at "http://repo.novus.com/releases/"
+
+resolvers += "codehale for jerkson" at "http://repo.codahale.com"

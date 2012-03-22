@@ -1,3 +1,7 @@
+## SensorDB Data Lifecycle
+![](https://github.com/alisalehi/sensordb/raw/master/documents/data-lifecycle.png)
+
+## High-level architecture of SensorDB
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/big-picture.png)
 
 To compile javascript, use _coffee -o public/j/ --watch --compile app/assets/javascripts/*.coffee_
@@ -10,7 +14,17 @@ GUI to investigate contents of cassandra, use [Cassandra-Cluster-Admin(PHP)](htt
 
 Redis (v2.4.8+) compiled in 32bit mode *redis-server /path/to/sensordb/conf/redis.conf*
 
-Data model is stored on MongoDB(V2.0.4+) (./mongod --journal)
+## Data Model
+Data model is stored on MongoDB(V2.0.4+) (./mongod --journal). In SensorDB
+* Any user can have zero or more experiments
+* Any experiment can have zero or more nodes
+* Any node can have zero or more streams
+* Any stream is a set of (timestamp,value) pairs. Time is in unix timestamp (milliseconds since epoch). Value is a real number (double precision float).
+
+### Data model in a Tree View
+![](https://github.com/alisalehi/sensordb/raw/master/documents/er-tree.png)
+
+### SensorDB's logical ER diagram
 
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/e-r-diagram.png)
 
