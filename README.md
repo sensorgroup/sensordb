@@ -31,6 +31,11 @@ Internally, timestamps are presented in unix format (milliseconds since epoch). 
 
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/e-r-diagram.png)
 
+### Data Stream Insertion Process diagram
+
+![](https://github.com/alisalehi/sensordb/raw/master/documents/data-flow.png)
+
+
 Markdown syntax http://daringfireball.net/projects/markdown/syntax
 
 

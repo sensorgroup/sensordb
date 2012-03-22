@@ -98,8 +98,9 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
 
 trait SensorDataStore {
   def addNodeData(nodeId: String, data: Map[String, Map[String, String]])
-  def queryNode(nodeId:String,keys:Iterator[List[String]],timeRange:Option[(Long, Long)] = None,chunker:ChunkFormatter)
+  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T
   def dropNode(nodeId:String)
+  def deleteRows(colFamName:String, keys:Iterable[String])
   def shutdown()
 }
 object Utils {
@@ -112,7 +113,7 @@ object Utils {
   def generateRowKey(sensor:String, date:String) = sensor+"$"+date
 }
 
-class CassandraDataStore{
+class CassandraDataStore extends SensorDataStore{
   /**Resource: https://github.com/rantav/hector/blob/master/core/src/test/java/me/prettyprint/cassandra/service/CassandraClusterTest.java#L102-156 */
 
   import me.prettyprint.cassandra.model._
@@ -138,7 +139,7 @@ class CassandraDataStore{
     c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
   }
 
-  def addNodeData(nodeId: String, data: Map[String, Map[String, String]]) = {
+  override def addNodeData(nodeId: String, data: Map[String, Map[String, String]]) = {
     if (!isColFamilyExists(nodeId)) addCf(c, ks.getKeyspaceName, nodeId)
     val mutator: Mutator[String] = HFactory.createMutator(ks, ss)
     var total = 0
@@ -156,7 +157,7 @@ class CassandraDataStore{
     mutator.execute()
   }
 
-  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T={
+  override def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T={
     if (!isColFamilyExists(colFamName)) {
       chunker.done()
       return chunker
@@ -183,11 +184,11 @@ class CassandraDataStore{
     chunker.done()
     chunker
   }
-  def dropNode(colFamName:String)= if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
+  override def dropNode(colFamName:String)= if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
 
   def listKeys(cf:String,select:(String)=>Boolean = (_=>true)):Iterable[String]= new KeyIterator[String](ks,cf,ss).filter(select)
 
-  def deleteRows(colFamName:String, keys:Iterable[String])=HFactory.createMutator(ks, ss).addDeletion(keys.asJava,colFamName).execute()
+  override def deleteRows(colFamName:String, keys:Iterable[String])=HFactory.createMutator(ks, ss).addDeletion(keys.asJava,colFamName).execute()
 
   def shutdown()=c.getConnectionManager().shutdown()
 }
