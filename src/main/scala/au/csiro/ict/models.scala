@@ -15,13 +15,16 @@ object AccessRestriction extends Enumeration("Public","Friends","Private") {
 case class User(var name:String,
                 var password:String,
                 var timezone:Int,
+                var email:String,
                 var picture:Option[String]=None,
                 var website:Option[String]=None,
                 var description:Option[String]=None,
                 var token:String=Utils.uuid(),
                 var updated_at:Long = System.currentTimeMillis() ,
                 val created_at:Long = System.currentTimeMillis(),
-                @Key("_id") val id:ObjectId = new ObjectId)
+                @Key("_id") val id:ObjectId = new ObjectId){
+
+}
 object User extends SalatDAO[User, ObjectId](collection = MongoConnection()("sensordb")("users")){
   def findByName(name:String):Option[User]=this.findOne(MongoDBObject("name"->name))
   def dropByName(name:String)=remove(MongoDBObject("name"->name))
