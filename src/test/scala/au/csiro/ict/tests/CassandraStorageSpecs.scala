@@ -1,16 +1,18 @@
-package com.example.app
+package au.csiro.ict.tests
 
 import org.specs2.mutable._
 import au.csiro.ict._
 import com.mongodb.casbah.commons.MongoDBObject
 
 
-class SensorDB extends Specification() {
+class SensorDB extends Specification {
+  args(sequential = true)
+
   "MongoDB should be able to store and retrive user information" should {
     "CRUD on Users" in {
         User.find(MongoDBObject()).length must_== 0
-        User.save(new User("ali", "secret", -120))
-        User.save(new User("ali3", "secret", -120))
+        User.save(new User("ali", "secret", -120,"2@2.com"))
+        User.save(new User("ali3", "secret", -120,"2@2.com"))
         User.find(MongoDBObject()).length must_== 2
         User.findByName("ali").isDefined must beTrue
         User.findByName("ali2").isDefined must beFalse

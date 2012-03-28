@@ -6,7 +6,7 @@ version := "1.0"
 
 parallelExecution in (Test) := false
 
-testOptions in Test += Tests.Argument("sequential")
+//testOptions in Test += Tests.Argument("sequential")
 
 scalaVersion := "2.9.1"
 
@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.0.4",
   "org.scalatra" %% "scalatra-scalate" % "2.0.4",
   "org.scalatra" %% "scalatra-specs2" % "2.0.4" % "test",
+  "org.scalatra" %% "scalatra-scalatest" % "2.0.4" % "test",
   "ch.qos.logback" % "logback-classic" % "1.0.0" % "runtime",
   "org.scalatra" %% "scalatra-fileupload" % "2.0.4",
   "org.eclipse.jetty" % "jetty-webapp" % "7.6.0.v20120127" % "container",

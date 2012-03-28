@@ -235,7 +235,7 @@ class Router extends Backbone.Router
 		widgets = db.analysis(user)[name]
 		_.each widgets,(value) ->
 			value.html_id=sensordb.Utils.guid()
-			$LAB.script("/assets/j/#{value.handler}.js").wait -> 
+			$LAB.script("/j/#{value.handler}.js").wait ->
 				if (window.ws.getWidgetFor(value.handler))
 					window.ws.addWidgetInstnace(new (window.ws.getWidgetFor(value.handler))(value))
 				else

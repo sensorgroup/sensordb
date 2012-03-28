@@ -15,6 +15,7 @@ import org.jsoup.Jsoup
 import org.jsoup.safety.Whitelist
 import org.apache.commons.fileupload.servlet.ServletFileUpload
 import scala.{None, Option}
+import org.mindrot.jbcrypt.BCrypt
 
 object Configuration{
   private val config = new Properties()
@@ -38,15 +39,39 @@ case class Validator(params:Map[String,String]){
     ).foreach(x=>_errors::=x)
 }
 class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupport {
-  val sanitize = Jsoup.clean(_:String, Whitelist.basic())
-  private val logger: Logger = Logger[this.type]
-
-  get("/register") {
+  def withUserPassword()(f: (String,String,Validator)=>Unit){
     val validator = new Validator(params)
-
     validator.test("name",List(("Username is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
       ("Username is not Valid",x=>isAlphanumeric(x.get)),
-      ("Username must have 2 to 10 characters",x=>isInRange(x.get.size,2,10)),
+      ("Username must have 2 to 20 characters",x=>isInRange(x.get.size,2,20))))
+
+    validator.test("password",List(("Password is Required",x=>x.isDefined),
+      ("Password is not valid",x=>isAsciiPrintable(x.get)),
+      ("Password must have at least 6 characters",_.get.size>=6)))
+
+    if (!validator.errors.isEmpty) halt(400,generate(validator.errors))
+    val name = params("name")
+    val password = params("password")
+
+    f(name,password,validator)
+    forwardToSessionPath
+  }
+  def userSession=Sessions.userSession.map{user=>
+    generate(Map("id"->user.id.toString,"token"->user.token))
+  }.getOrElse("{}")
+  
+  def forwardToSessionPath=servletContext.getRequestDispatcher("/session").forward(request, response)
+
+
+  val sanitize = Jsoup.clean(_:String, Whitelist.basic())
+  private val logger: Logger = Logger[this.type]
+  post("/register") {
+    logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
+
+    val validator = new Validator(params)
+    validator.test("name",List(("Username is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
+      ("Username is not Valid",x=>isAlphanumeric(x.get)),
+      ("Username must have 2 to 20 characters",x=>isInRange(x.get.size,2,20)),
       ("Username is already used",x=>User.findByName(x.get).isEmpty)))
 
     validator.test("password",List(("Password is Required",x=>x.isDefined),
@@ -62,25 +87,46 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
     validator.test("website",List(("Website is not valid",x=>x.isEmpty || isUrl(x.get))))
 
     var picture=if(ServletFileUpload.isMultipartContent(request)) fileParams.get("picture") else None
+
+    if (!validator.errors.isEmpty) halt(400,generate(validator.errors))
+
     var website=params.get("website")
     var description=params.get("description").map(_.trim()).filterNot(isBlankOrNull).map(sanitize)
-
-    if (!validator.errors.isEmpty)
-      halt(400,generate(validator.errors))
     val name = params("name")
     val password = params("password")
     val timezone = params("timezone").toInt
     val email = params("email")
     val pic = None
-    val user = User(name,password,timezone,email,pic,website,description)
+    val user = User(name,BCrypt.hashpw(password, BCrypt.gensalt()),timezone,email,pic,website,description)
     User.insert(user)
-    //TODO: redirect to login
-    //TODO: check image upload, validating if it is really image, putting it into the right folder, imagemagic styles
-    generate(Map("id"->user.id.toString))
-    //    Configuration("redis.queue.port")
-    //    Json.parse(Source.fromFile("config.json"))
-    //    generate(Configuration("1",1,"2",2,"3",3,"4",4))
-
+    Sessions.login(name,password)
+    forwardToSessionPath
+  }
+  post("/logout"){ 
+    Sessions.logout
+    forwardToSessionPath
+  }
+  post("/session"){
+    userSession
+  }
+  post("/login"){
+    withUserPassword(){(user,password,validator)=>
+      logger.info("User login request with username:"+user)
+      if (User.findByName(user).isEmpty)
+        halt(200)
+      Sessions.login(user,password)
+    }
+  }
+  post("/remove"){
+    withUserPassword(){(name,password,validator)=>
+      User.findByName(name).filter(r=> BCrypt.checkpw(password, r.password)) match {
+        case Some(u:User)=>
+          User.removeById(u.id)
+          Sessions.logout
+        case others=>
+      }
+      halt(200)
+    }
   }
 
   notFound {

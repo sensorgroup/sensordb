@@ -388,7 +388,7 @@
       widgets = db.analysis(user)[name];
       _.each(widgets, function(value) {
         value.html_id = sensordb.Utils.guid();
-        return $LAB.script("/assets/j/" + value.handler + ".js").wait(function() {
+        return $LAB.script("/j/" + value.handler + ".js").wait(function() {
           if (window.ws.getWidgetFor(value.handler)) {
             return window.ws.addWidgetInstnace(new (window.ws.getWidgetFor(value.handler))(value));
           } else {

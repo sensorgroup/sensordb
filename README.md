@@ -4,7 +4,7 @@
 ## High-level architecture of SensorDB
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/big-picture.png)
 
-To compile javascript, use _coffee -o public/j/ --watch --compile app/assets/javascripts/*.coffee_
+To compile javascript, use _coffee -o src/main/webapp/j/ -wc src/main/coffeescript/*.coffee_
 
 To compile CSS use *lessc main.less >main.css*
 
