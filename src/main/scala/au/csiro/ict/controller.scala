@@ -62,9 +62,10 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   
   def forwardToSessionPath=servletContext.getRequestDispatcher("/session").forward(request, response)
 
-
   val sanitize = Jsoup.clean(_:String, Whitelist.basic())
+
   private val logger: Logger = Logger[this.type]
+
   post("/register") {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
 
@@ -128,7 +129,67 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
       halt(200)
     }
   }
+  
+  delete("/experiments"){
 
+  }
+
+  put("/experiments"){
+    // update/replace an experiment information
+  }
+
+  post("/experiments"){
+    // Add a new experiments
+	val name = params("name")
+    val description = params("description")
+    val timezone = params("timezone")
+    val privacy = params("privacy")
+    val website = params("website")	
+// todo handle the uploaded pictures ...
+//todo make the editor proper html editor
+// escape all content with with jsoup
+	println(website)
+  }
+  get("/nodes"){
+    // List the nodes
+
+  }
+  delete("/nodes"){
+
+  }
+
+  put("/nodes"){
+    // update/replace an nodes information
+  }
+
+  post("/nodes"){
+    // Add a new nodes
+
+  }
+  get("/nodes"){
+    // List the nodes
+
+  }
+  get("/nodes"){
+    // List the nodes
+
+  }
+  delete("/streams"){
+
+  }
+
+  put("/streams"){
+    // update/replace an streams information
+  }
+
+  post("/streams"){
+    // Add a new streams
+
+  }
+  get("/streams"){
+    // List the streams
+
+  }
   notFound {
     findTemplate(requestPath) map {
       path =>

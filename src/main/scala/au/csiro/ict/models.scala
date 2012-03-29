@@ -46,7 +46,9 @@ case class Experiment(var name:String,
                       var updated_at:Long = System.currentTimeMillis(),
                       val created_at:Long = System.currentTimeMillis(),
                       @Key("_id") val id:ObjectId = new ObjectId)
-object Experiment extends SalatDAO[Experiment, ObjectId](collection = MongoConnection()("sensordb")("experiments"))
+object Experiment extends SalatDAO[Experiment, ObjectId](collection = MongoConnection()("sensordb")("experiments")){
+
+}
 
 case class Node(var name:String,
                 val experiment_id:String,
@@ -61,7 +63,9 @@ case class Node(var name:String,
                 var updated_at:Long = System.currentTimeMillis(),
                 val created_at:Long = System.currentTimeMillis(),
                 @Key("_id") val id:ObjectId = new ObjectId)
-object Node extends SalatDAO[Node, ObjectId](collection = MongoConnection()("sensordb")("nodes"))
+object Node extends SalatDAO[Node, ObjectId](collection = MongoConnection()("sensordb")("nodes")){
+
+}
 
 case class Stream(var name:String,
                   var measurement_id: String,
@@ -74,7 +78,9 @@ case class Stream(var name:String,
                   var updated_at:Long = System.currentTimeMillis(),
                   val created_at:Long = System.currentTimeMillis(),
                   @Key("_id") val id:ObjectId = new ObjectId)
-object Stream extends SalatDAO[Stream, ObjectId](collection = MongoConnection()("sensordb")("streams"))
+object Stream extends SalatDAO[Stream, ObjectId](collection = MongoConnection()("sensordb")("streams")){
+
+}
 
 case class Analysis(var name:String,
                     var user_id:String,

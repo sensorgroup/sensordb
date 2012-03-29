@@ -89,7 +89,7 @@ class SampleDatabase extends sensordb.Database
 				description: "Use this widget to plot raw sensor data. You can configure individual axies using the following menu."
 				conf:
 					width: '100%'
-					height: '250px'
+					height: '350px'
 					zoom: false
 					line_shadow:0
 					allow_axis_selection:true
@@ -228,7 +228,8 @@ window.rm = new sensordb.GroupedRequestManager(window.db)
 class Router extends Backbone.Router
 	routes:
 		"": "home"
-		":user/analysis/:name" : 'analysis'
+		":user/analysis/:name" : "analysis"
+		"experiments/create" : "create_experiment"
 		'*path':  'default_route'
 
 	analysis: (user,name) ->
@@ -244,6 +245,12 @@ class Router extends Backbone.Router
 		$("#main").html( _.template( $("#tpl-analysis").html(), {widgets} ) )
 		
 	home: ()-> $("#main").html(_.template($("#tpl-first-page").html(),{}))
+	
+	create_experiment: () ->
+		$("#main").html(_.template($("#tpl-experiment-create").html(),{}))
+		$(".container form").ajaxForm -> 
+			alert("Thank you for your comment!")
+
 	
 	default_route: (path) -> $("#main").html(_.template($("#tpl-404").html(),{path}))
 

@@ -14,7 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.2 r9819"
-   sodipodi:docname="big-picture.svg">
+   sodipodi:docname="big-picture.svg"
+   inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/big-picture.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,8 +28,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.3"
-     inkscape:cx="194.82934"
-     inkscape:cy="591.44798"
+     inkscape:cx="502.52165"
+     inkscape:cy="406.8326"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -44,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -202,132 +205,128 @@
          y="344.17328"
          style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
          id="tspan4394">(timestamp,real-number)</tspan></text>
-    <g
-       id="g3108"
-       transform="translate(-19,77)">
-      <rect
-         transform="matrix(0,-1,1,0,0,0)"
-         style="fill:#373e48;fill-opacity:1;stroke:none"
-         id="rect3064"
-         width="322.5"
-         height="276.5"
-         x="-694.36218"
-         y="237.5"
-         rx="7.3787559e-11" />
-      <rect
-         rx="9.4777547e-11"
-         y="628.36218"
-         x="248"
-         height="50"
-         width="216"
-         id="rect3102"
-         style="fill:#999999;fill-opacity:1;stroke:none" />
-      <text
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         x="356.4541"
-         y="660.69714"
-         id="text3066"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           x="356.4541"
-           y="660.69714"
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           id="tspan3070">Analysis Page</tspan></text>
-      <rect
-         style="fill:#999999;fill-opacity:1;stroke:none"
-         id="rect3100"
-         width="216"
-         height="50"
-         x="248"
-         y="568.36218"
-         rx="9.4777547e-11" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3078"
-         y="600.69714"
-         x="355.55078"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           id="tspan3080"
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           y="600.69714"
-           x="355.55078"
-           sodipodi:role="line">Data Page</tspan></text>
-      <rect
-         rx="9.4777547e-11"
-         y="508.36218"
-         x="248"
-         height="50"
-         width="216"
-         id="rect3098"
-         style="fill:#999999;fill-opacity:1;stroke:none" />
-      <text
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         x="355.87305"
-         y="540.69714"
-         id="text3082"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           x="355.87305"
-           y="540.69714"
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           id="tspan3084">Setup page</tspan></text>
-      <rect
-         style="fill:#999999;fill-opacity:1;stroke:none"
-         id="rect3096"
-         width="216"
-         height="50"
-         x="248"
-         y="448.36218"
-         rx="9.4777547e-11" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3086"
-         y="480.69714"
-         x="355.55078"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           id="tspan3088"
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           y="480.69714"
-           x="355.55078"
-           sodipodi:role="line">Metadata Page</tspan></text>
-      <rect
-         rx="9.4777547e-11"
-         y="388.36218"
-         x="248"
-         height="50"
-         width="216"
-         id="rect3094"
-         style="fill:#999999;fill-opacity:1;stroke:none" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3090"
-         y="419.69714"
-         x="355.55078"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           id="tspan3092"
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           y="419.69714"
-           x="355.55078"
-           sodipodi:role="line">Derived Data Page</tspan></text>
-      <text
-         transform="matrix(0,1,-1,0,0,0)"
-         sodipodi:linespacing="125%"
-         id="text3104"
-         y="-482.16504"
-         x="527.76355"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
-           id="tspan3106"
-           y="-482.16504"
-           x="527.76355"
-           sodipodi:role="line">SensorDB Web Interface</tspan></text>
-    </g>
+    <rect
+       rx="8.6107489e-11"
+       y="218.5"
+       x="-779.20831"
+       height="276.5"
+       width="376.34616"
+       id="rect3064"
+       style="fill:#373e48;fill-opacity:1;stroke:none"
+       transform="matrix(0,-1,1,0,0,0)" />
+    <rect
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       id="rect3102"
+       width="216"
+       height="50"
+       x="229"
+       y="659.36218"
+       rx="9.4777547e-11" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3066"
+       y="691.69714"
+       x="337.4541"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         id="tspan3070"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         y="691.69714"
+         x="337.4541"
+         sodipodi:role="line">Analysis Page</tspan></text>
+    <rect
+       rx="9.4777547e-11"
+       y="599.36218"
+       x="229"
+       height="50"
+       width="216"
+       id="rect3100"
+       style="fill:#999999;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="336.55078"
+       y="631.69714"
+       id="text3078"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="336.55078"
+         y="631.69714"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         id="tspan3080">Data Page</tspan></text>
+    <rect
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       id="rect3098"
+       width="216"
+       height="50"
+       x="229"
+       y="539.36218"
+       rx="9.4777547e-11" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3082"
+       y="571.69714"
+       x="336.87305"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         id="tspan3084"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         y="571.69714"
+         x="336.87305"
+         sodipodi:role="line">Setup page</tspan></text>
+    <rect
+       rx="9.4777547e-11"
+       y="479.36218"
+       x="229"
+       height="50"
+       width="216"
+       id="rect3096"
+       style="fill:#999999;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="336.55078"
+       y="511.69714"
+       id="text3086"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="336.55078"
+         y="511.69714"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         id="tspan3088">Metadata Page</tspan></text>
+    <rect
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       id="rect3094"
+       width="216"
+       height="50"
+       x="229"
+       y="419.36218"
+       rx="9.4777547e-11" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="336.55078"
+       y="450.69714"
+       id="text3090"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="336.55078"
+         y="450.69714"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         id="tspan3092">Derived Data Page</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="558.76355"
+       y="-463.16504"
+       id="text3104"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         x="558.76355"
+         y="-463.16504"
+         id="tspan3106"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff">SensorDB Web Interface</tspan></text>
     <g
        id="g4384"
        transform="matrix(-1,0,0,1,367.13884,26.153846)">
@@ -370,5 +369,25 @@
          d="m 581.62036,504.46449 0,0 -18.48974,16.82645 0,0 18.17256,19.96893 0,0 c 0.4358,-23.51762 0.75853,-3.62376 0.31718,-36.79538 z"
          style="fill:#999999;fill-opacity:1;stroke:none" />
     </g>
+    <rect
+       rx="9.4777547e-11"
+       y="719.36218"
+       x="229"
+       height="50"
+       width="216"
+       id="rect3183"
+       style="fill:#999999;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="337.4541"
+       y="751.69714"
+       id="text3185"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="337.4541"
+         y="751.69714"
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff"
+         id="tspan3187">Alerts Page</tspan></text>
   </g>
 </svg>
