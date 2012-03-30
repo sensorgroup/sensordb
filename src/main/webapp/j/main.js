@@ -11,6 +11,17 @@
   this.module("sensordb", function() {
     this.Utils = (function() {
       function Utils() {}
+      Utils.editor_config = {
+        width: '700px',
+        height: 250,
+        controls: "bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " + "indent | alignleft center alignright justify | undo redo | " + "image link unlink | cut copy paste | source",
+        colors: "FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " + "CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " + "BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " + "999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " + "666 900 C60 C93 990 090 399 33F 60C 939 " + "333 600 930 963 660 060 366 009 339 636 " + "000 300 630 633 330 030 033 006 309 303",
+        fonts: "Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," + "Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
+        useCSS: false,
+        docType: '<!DOCTYPE html>',
+        docCSSFile: "",
+        bodyStyle: "margin:4px; font:10pt Arial,Verdana; cursor:text"
+      };
       Utils.guid = function() {
         var S4;
         S4 = function() {
@@ -380,7 +391,10 @@
     }
     Router.prototype.routes = {
       "": "home",
-      ":user/analysis/:name": 'analysis',
+      ":user/analysis/:name": "analysis",
+      "experiments/create": "create_experiment",
+      "nodes/create": "create_node",
+      "streams/create": "create_stream",
       '*path': 'default_route'
     };
     Router.prototype.analysis = function(user, name) {
@@ -402,6 +416,27 @@
     };
     Router.prototype.home = function() {
       return $("#main").html(_.template($("#tpl-first-page").html(), {}));
+    };
+    Router.prototype.create_experiment = function() {
+      $("#main").html(_.template($("#tpl-experiment-create").html(), {}));
+      $("#main textarea").cleditor(sensordb.Utils.editor_config);
+      return $(".container form").ajaxForm(function() {
+        return alert("Thank you for your comment!");
+      });
+    };
+    Router.prototype.create_node = function() {
+      $("#main").html(_.template($("#tpl-node-create").html(), {}));
+      $("#main textarea").cleditor(sensordb.Utils.editor_config);
+      return $(".container form").ajaxForm(function() {
+        return alert("Thank you for your comment!");
+      });
+    };
+    Router.prototype.create_stream = function() {
+      $("#main").html(_.template($("#tpl-stream-create").html(), {}));
+      $("#main textarea").cleditor(sensordb.Utils.editor_config);
+      return $(".container form").ajaxForm(function() {
+        return alert("Thank you for your comment!");
+      });
     };
     Router.prototype.default_route = function(path) {
       return $("#main").html(_.template($("#tpl-404").html(), {

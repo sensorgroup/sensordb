@@ -53,31 +53,31 @@
 				var _id = sensordb.Utils.guid();
 				 %>
 			<div class="modal hide <%=direction%>" id="<%=direction%>-<%=id%>">
-		  		<div class="modal-header">
-		    		<a class="close" data-dismiss="modal">Close</a>
-		    		<h3><%=direction%> Axis</h3>
-		  		</div>
-		  		<div class="modal-body">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">Close</a>
+					<h3><%=direction%> Axis</h3>
+				</div>
+				<div class="modal-body">
 					<div class="main-params sensor-menu">
 						<div class="tabbable">
 							<ul class="nav nav-tabs">
-								<%  var isFirst = true;
+								<%	var isFirst = true;
 									_.each(catalog,function(experiments,user_id){
 									user_print =  _.size(catalog)>1 ? user_id+" &raquo; " : "";
 									_.each(experiments,function(nodes,exp_name){ %>
-		    						<li <% if (isFirst) {print('class="active"');isFirst=false;} %>>
+									<li <% if (isFirst) {print('class="active"');isFirst=false;} %>>
 										<a href="#<%=exp_name%>-<%=_id%>" data-toggle="tab"><%=user_print%> <%=exp_name%></a>
 									</li>
 								<% }); %>
 								<% }); %><!-- for user_id -->
-		  					</ul>
+							</ul>
 							<div class="tab-content">
-								<%  var isFirst = true;
+								<%	var isFirst = true;
 								_.each(catalog,function(experiments,user_id){
 								_.each(experiments,function(nodes,exp_name){ %>
-			    				<div class="tab-pane <% if (isFirst) {print('active');isFirst=false;} %>" id="<%=exp_name%>-<%=_id%>">
+								<div class="tab-pane <% if (isFirst) {print('active');isFirst=false;} %>" id="<%=exp_name%>-<%=_id%>">
 									<% _.each(nodes,function(sensors,node_name){ %>
-		    						<table class="table table-bordered box table-condensed">
+									<table class="table table-bordered box table-condensed">
 										<thead><tr><th><%=node_name%></th></tr></thead>
 										<tbody>
 											<% _.each(sensors, function(sensor_info,sensor_name){%>
@@ -86,7 +86,7 @@
 										</tbody>
 									</table>
 									<% }); %>
-			    				</div>
+								</div>
 								<% }); %><!-- for experiments -->
 								<% }); %><!-- for user_id -->
 							</div>
@@ -103,7 +103,7 @@
 			</div>
 			<div class="row caption hide">
 				<div class="span1"><p> </p></div>
-				<p class="span10 center">Plot for <strong><span class="from_timestamp">12/2/2003</span></strong> until <strong><span class="to_timestamp">10/3/2009</span></strong></p>	
+				<p class="span10 center">Plot for <strong><span class="from_timestamp">12/2/2003</span></strong> until <strong><span class="to_timestamp">10/3/2009</span></strong></p> 
 				<a class="reset-zoom btn pull-right">Reset Zoom</a>
 			</div>
 		</script>
@@ -129,45 +129,48 @@
 		<legend><h2>Create Experiment</h2></legend>
 		<form action="/experiments" method="post" class="form-horizontal">
 		  <fieldset>
-		    <div class="control-group">
-		      <label class="control-label" for="name">Name</label>
-		      <div class="controls">
-		        <input type="text" class="span9" name="name">
-		        <p class="help-block">Name of this experiment must be unique</p>
-		      </div>
-		    </div>
+			<div class="control-group">
+			  <label class="control-label" for="name">Name</label>
+			  <div class="controls">
+				<input type="text" class="span9" name="name">
+				<p class="help-block">Name of this experiment must be unique</p>
+			  </div>
+			</div>
 			 <div class="control-group">
 				<label class="control-label" for="description">Description</label>
 				<div class="controls">
 					<textarea rows="5" class="span9" name="description"></textarea>
+					<p class="help-block">You can click on show source and build complex description text using standard html.<p>
+					
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="privacy">Privacy</label>
 				<div class="controls">
 				<label class="checkbox">
-				    <input type="checkbox" checked name="privacy"> Public Access
+					<input type="checkbox" checked name="privacy"> Public Access
+					<p class="help-block">If you don&#39;t select public access, this experiment will be only visible to you after you logged in. <p>
 				  </label>
 				</div>
 			</div>
 			<div class="control-group">
-		      <label class="control-label" for="picture">Picture URL</label>
-		       <div class="controls">
-			        <input type="text" class="span9" name="picture">
-			        <p class="help-block">Upload you images using <a href="http://imgur.com/">Imgur</a> or <a href="http://tinypic.com/">TinyPic</a> or <a href="http://minus.com/">Minus</a></p>
-			      </div>
-		    </div>
+			  <label class="control-label" for="picture">Picture URL</label>
+			   <div class="controls">
+					<input type="text" class="span9" name="picture">
+					<p class="help-block">Simply upload your images to <a href="http://imgur.com/">Imgur</a> or <a href="http://www.dropmocks.com/">Dropmocks</a> or <a href="http://tinypic.com/">TinyPic</a> or <a href="http://minus.com/">Minus</a> or any other online image sharing service</p>
+				  </div>
+			</div>
 			<div class="control-group">
-		      <label class="control-label" for="website">Website</label>
-		      <div class="controls">
-		        <input type="text" class="span9" name="website">
-		        <p class="help-block">Public URL for more information about this experiment</p>
-		      </div>
-		    </div>
+			  <label class="control-label" for="website">Website</label>
+			  <div class="controls">
+				<input type="text" class="span9" name="website">
+				<p class="help-block">Public URL for more information about this experiment</p>
+			  </div>
+			</div>
 			<div class="control-group">
-		      <label class="control-label" for="timezone">Timezone</label>
-		      <div class="controls">
-		        <select name="timezone">
+			  <label class="control-label" for="timezone">Timezone</label>
+			  <div class="controls">
+				<select name="timezone" class="span9">
 					<option value="-1200">UTC -12:00</option>
 					<option value="-1130">UTC -11:30</option>
 					<option value="-1100">UTC -11:00</option>
@@ -218,9 +221,9 @@
 					<option value="1130">UTC 11:30</option>
 					<option value="1200">UTC 12:00</option>
 				</select>
-		        <p class="help-block">Timezone informtion is used to correctly display time series data</p>
-		      </div>
-		    </div>
+				<p class="help-block">Timezone informtion is used to correctly display time series data</p>
+			  </div>
+			</div>
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary btn-large">Create</button>
 				<a class="btn btn-large">Cancel</a>
@@ -232,6 +235,151 @@
 		</div>
 		<%= _.template($("#footer-tpl").html(),{}) %>
 		</script>
+		<script type="html/template" id="tpl-node-create">
+		<div class="container">
+		<legend><h2>Create Node</h2></legend>
+		<form action="/nodes" method="post" class="form-horizontal">
+		  <fieldset>
+			<div class="control-group">
+			  <label class="control-label" for="experiment">Experiment</label>
+			  <div class="controls">
+				<select name="experiment" class="span9">
+					<option>Experiment 1</option>
+				</select>
+				<p class="help-block">Choose the experiment which this node belongs to</p>
+			  </div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="name">Name</label>
+			  <div class="controls">
+				<input type="text" class="span9" name="name">
+				<p class="help-block">Name of this node must be unique within the selected experiment</p>
+			  </div>
+			</div>
+			 <div class="control-group">
+				<label class="control-label" for="description">Description</label>
+				<div class="controls">
+					<textarea rows="5" class="span9" name="description"></textarea>
+					<p class="help-block">You can click on show source and build complex description text using standard html.<p>
+					
+				</div>
+			</div>
+		
+			<div class="control-group">
+				<label class="control-label" for="latitude">Latitude</label>
+				<div class="controls">
+					<input type="text" class="span9" name="latitude">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="longitude">Longitude</label>
+				<div class="controls">
+					<input type="text" class="span9" name="longitude">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="altitude">Altitude</label>
+				<div class="controls">
+					<input type="text" class="span9" name="altitude">
+				</div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="picture">Picture URL</label>
+			   <div class="controls">
+					<input type="text" class="span9" name="picture">
+					<p class="help-block">Simply upload your images to <a href="http://imgur.com/">Imgur</a> or <a href="http://www.dropmocks.com/">Dropmocks</a> or <a href="http://tinypic.com/">TinyPic</a> or <a href="http://minus.com/">Minus</a> or any other online image sharing service</p>
+				  </div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="website">Website</label>
+				<div class="controls">
+					<input type="text" class="span9" name="website">
+					<p class="help-block">Public URL for more information about this experiment</p>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary btn-large">Create</button>
+				<a class="btn btn-large">Cancel</a>
+			</div>
+			</fieldset>
+			<div class="offset1">
+			</div>
+		</form>
+		</div>
+		<%= _.template($("#footer-tpl").html(),{}) %>
+		</script>
+		<script type="html/template" id="tpl-stream-create">
+		<div class="container">
+		<legend><h2>Create Stream</h2></legend>
+		<form action="/streams" method="post" class="form-horizontal">
+		  <fieldset>
+			<div class="control-group">
+			  <label class="control-label" for="experiment">Experiment</label>
+			  <div class="controls">
+				<select name="experiment" class="span9">
+					<option>Experiment 1</option>
+				</select>
+				<p class="help-block">Choose the experiment which this stream belongs to</p>
+			  </div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="node">Node</label>
+			  <div class="controls">
+				<select name="node" class="span9">
+					<option>Node 1</option>
+				</select>
+				<p class="help-block">Choose the node which this stream belongs to</p>
+			  </div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="name">Name</label>
+			  <div class="controls">
+				<input type="text" class="span9" name="name">
+				<p class="help-block">Name of this stream must be unique within the node</p>
+			  </div>
+			</div>
+			 <div class="control-group">
+				<label class="control-label" for="description">Description</label>
+				<div class="controls">
+					<textarea rows="5" class="span9" name="description"></textarea>
+					<p class="help-block">You can click on show source and build complex description text using standard html.<p>
+					
+				</div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="experiment">Measurement Unit</label>
+			  <div class="controls">
+				<select name="experiment" class="span9">
+					<option>Temperature (Centigrade)</option>
+				</select>
+			  </div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="picture">Picture URL</label>
+			   <div class="controls">
+					<input type="text" class="span9" name="picture">
+					<p class="help-block">Simply upload your images to <a href="http://imgur.com/">Imgur</a> or <a href="http://www.dropmocks.com/">Dropmocks</a> or <a href="http://tinypic.com/">TinyPic</a> or <a href="http://minus.com/">Minus</a> or any other online image sharing service</p>
+				  </div>
+			</div>
+			<div class="control-group">
+			  <label class="control-label" for="website">Website</label>
+			  <div class="controls">
+				<input type="text" class="span9" name="website">
+				<p class="help-block">Public URL for more information about this experiment</p>
+			  </div>
+			</div>			
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary btn-large">Create</button>
+				<a class="btn btn-large">Cancel</a>
+			</div>
+			</fieldset>
+			<div class="offset1">
+			</div>
+		</form>
+		</div>
+		<%= _.template($("#footer-tpl").html(),{}) %>
+		</script>
+
 		<script type="html/template" id="tpl-analysis">
 		<div class="container">
 					<div class="navbar">
@@ -264,13 +412,13 @@
 										<button type="button" class="btn btn-danger pull-right">Remove Widget</button>
 									</form>
 									<div class="page-header">
-									    <h3 class="center">Widget</h3>
+										<h3 class="center">Widget</h3>
 									</div>
 								</div>
 								<div class="result">
 									<div class="in-widget-config"></div>
 									<div class="widget-output"></div>
-								</div>                                                             
+								</div>															   
 							</div>
 						</div>
 					<%});%>

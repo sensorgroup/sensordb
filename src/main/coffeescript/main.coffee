@@ -1,5 +1,25 @@
 @module "sensordb", ->
-	class @Utils 
+	class @Utils
+		@editor_config=
+				width:'700px'
+				height:250
+				controls:"bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " +
+					"indent | alignleft center alignright justify | undo redo | " +
+					"image link unlink | cut copy paste | source",
+				colors:"FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " +
+					"CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " +
+					"BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " +
+					"999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " +
+					"666 900 C60 C93 990 090 399 33F 60C 939 " +
+					"333 600 930 963 660 060 366 009 339 636 " +
+					"000 300 630 633 330 030 033 006 309 303",	  
+				fonts:"Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," +
+					"Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
+				useCSS:false,
+				docType:'<!DOCTYPE html>',
+				docCSSFile:"", 
+				bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
+			 
 		@guid= ->
 			S4 = -> (((1+Math.random())*0x10000)|0).toString(16).substring(1)
 			(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
@@ -226,10 +246,14 @@ window.db = new SampleDatabase()
 window.rm = new sensordb.GroupedRequestManager(window.db)
 
 class Router extends Backbone.Router
+
 	routes:
 		"": "home"
 		":user/analysis/:name" : "analysis"
 		"experiments/create" : "create_experiment"
+		"nodes/create" : "create_node"
+		"streams/create" : "create_stream"
+		
 		'*path':  'default_route'
 
 	analysis: (user,name) ->
@@ -248,30 +272,21 @@ class Router extends Backbone.Router
 	
 	create_experiment: () ->
 		$("#main").html(_.template($("#tpl-experiment-create").html(),{}))
-		$("#main textarea").cleditor {
-				width:'700px'
-				height:250
-				controls:"bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " +
-					"indent | alignleft center alignright justify | undo redo | " +
-					"image link unlink | cut copy paste | source",
-				colors:"FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " +
-					"CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " +
-					"BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " +
-					"999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " +
-					"666 900 C60 C93 990 090 399 33F 60C 939 " +
-					"333 600 930 963 660 060 366 009 339 636 " +
-					"000 300 630 633 330 030 033 006 309 303",	  
-				fonts:"Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," +
-					"Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
-				useCSS:false,
-				docType:'<!DOCTYPE html>',
-				docCSSFile:"", 
-				bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
-				}
-		     
+		$("#main textarea").cleditor(sensordb.Utils.editor_config)		     
 		$(".container form").ajaxForm -> 
 			alert("Thank you for your comment!")
-
+	
+	create_node: () ->
+		$("#main").html(_.template($("#tpl-node-create").html(),{}))
+		$("#main textarea").cleditor(sensordb.Utils.editor_config)		     
+		$(".container form").ajaxForm -> 
+			alert("Thank you for your comment!")
+	create_stream: () ->
+		$("#main").html(_.template($("#tpl-stream-create").html(),{}))
+		$("#main textarea").cleditor(sensordb.Utils.editor_config)		     
+		$(".container form").ajaxForm -> 
+			alert("Thank you for your comment!")
+	
 	
 	default_route: (path) -> $("#main").html(_.template($("#tpl-404").html(),{path}))
 
