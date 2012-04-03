@@ -19,7 +19,7 @@
 				docType:'<!DOCTYPE html>',
 				docCSSFile:"", 
 				bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
-			 
+ 
 		@guid= ->
 			S4 = -> (((1+Math.random())*0x10000)|0).toString(16).substring(1)
 			(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
@@ -86,6 +86,18 @@
 		
 		sample_config: -> alert('not implemented')
 		
+	class Experiment extends Backbone.Model
+		defaults: () -> 
+			user_id:123
+		
+		initialize: ()->
+		
+		validate:(attrs)->
+	
+	class Experiments extends Backbone.Collection
+		url: '/experiments'
+		model:Experiment
+	
 
 class WidgetStore
 	constructor: -> 

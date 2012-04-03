@@ -19,7 +19,7 @@ Data model is stored on MongoDB(V2.0.4+) (./mongod --journal). In SensorDB:
 
 -  Any user can have zero or more experiments
 -  Any experiment can have zero or more nodes
--  Any node can have zero or more streams
+-  Any node can have zero or more streams. Each node can also have latitude, longitude and altitude values.
 -  Any stream is a set of (timestamp,value) pairs. Each stream has one unit of measurement.
 
 Internally, timestamps are presented in unix format (milliseconds since epoch). Values (sensor readings) are presented as real numbers (double precision float).

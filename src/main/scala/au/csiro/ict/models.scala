@@ -4,14 +4,22 @@ import com.novus.salat._
 import com.novus.salat.global._
 import com.novus.salat.annotations._
 import com.novus.salat.dao._
-import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoConnection
-import au.csiro.ict.Utils
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+import com.mongodb.casbah.Imports._
 
 object AccessRestriction extends Enumeration("Public","Friends","Private") {
   val PUBLIC, FRIENDS, PRIVATE = Value
 }
 
+trait SensorDBModelHelper[T<: AnyRef]{self: SalatDAO[T, ObjectId] =>
+  def findByUserId(uid:String,fields:Map[String,Int]=Map()):List[T]=this.find(MongoDBObject("user_id"->uid),fields).toList
+  def findByUserIdWithFields(uid:String,fields:Map[String,Int]=Map()):List[Map[String,String]]=
+    this.collection.find(MongoDBObject("user_id"->uid),fields).map(_.toMap.map(x=>x._1.toString->x._2.toString).toMap).toList
+  def findByNameWithFields(name:String,fields:Map[String,Int]=Map()):List[Map[String,String]]=
+    this.collection.find(MongoDBObject("name"->name),fields).map(_.toMap.map(x=>x._1.toString->x._2.toString).toMap).toList
+}
 case class User(var name:String,
                 var password:String,
                 var timezone:Int,
@@ -25,8 +33,8 @@ case class User(var name:String,
                 @Key("_id") val id:ObjectId = new ObjectId){
 
 }
-object User extends SalatDAO[User, ObjectId](collection = MongoConnection()("sensordb")("users")){
-  def findByName(name:String):Option[User]=this.findOne(MongoDBObject("name"->name))
+object User extends SalatDAO[User, ObjectId](collection = MongoConnection()("sensordb")("users")) with SensorDBModelHelper[User]{
+  def findByName(name:String,fields:Map[String,Int]=Map()):Option[User]=this.find(MongoDBObject("name"->name),fields).toList.headOption
   def dropByName(name:String)=remove(MongoDBObject("name"->name))
   override def save(t:User)={
     t.updated_at=System.currentTimeMillis()
@@ -46,7 +54,7 @@ case class Experiment(var name:String,
                       var updated_at:Long = System.currentTimeMillis(),
                       val created_at:Long = System.currentTimeMillis(),
                       @Key("_id") val id:ObjectId = new ObjectId)
-object Experiment extends SalatDAO[Experiment, ObjectId](collection = MongoConnection()("sensordb")("experiments")){
+object Experiment extends SalatDAO[Experiment, ObjectId](collection = MongoConnection()("sensordb")("experiments")) with SensorDBModelHelper[Experiment]{
 
 }
 
@@ -63,7 +71,7 @@ case class Node(var name:String,
                 var updated_at:Long = System.currentTimeMillis(),
                 val created_at:Long = System.currentTimeMillis(),
                 @Key("_id") val id:ObjectId = new ObjectId)
-object Node extends SalatDAO[Node, ObjectId](collection = MongoConnection()("sensordb")("nodes")){
+object Node extends SalatDAO[Node, ObjectId](collection = MongoConnection()("sensordb")("nodes")) with SensorDBModelHelper[Node]{
 
 }
 
@@ -78,7 +86,7 @@ case class Stream(var name:String,
                   var updated_at:Long = System.currentTimeMillis(),
                   val created_at:Long = System.currentTimeMillis(),
                   @Key("_id") val id:ObjectId = new ObjectId)
-object Stream extends SalatDAO[Stream, ObjectId](collection = MongoConnection()("sensordb")("streams")){
+object Stream extends SalatDAO[Stream, ObjectId](collection = MongoConnection()("sensordb")("streams")) with SensorDBModelHelper[Stream]{
 
 }
 

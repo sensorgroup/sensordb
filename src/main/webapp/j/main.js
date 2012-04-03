@@ -9,6 +9,7 @@
     return child;
   };
   this.module("sensordb", function() {
+    var Experiment, Experiments;
     this.Utils = (function() {
       function Utils() {}
       Utils.editor_config = {
@@ -141,7 +142,7 @@
       Database.prototype.catalog = function(selectors) {};
       return Database;
     })();
-    return this.Widget = (function() {
+    this.Widget = (function() {
       __extends(Widget, Backbone.Events);
       function Widget(widget) {
         this.widget = widget;
@@ -158,6 +159,29 @@
         return alert('not implemented');
       };
       return Widget;
+    })();
+    Experiment = (function() {
+      __extends(Experiment, Backbone.Model);
+      function Experiment() {
+        Experiment.__super__.constructor.apply(this, arguments);
+      }
+      Experiment.prototype.defaults = function() {
+        return {
+          user_id: 123
+        };
+      };
+      Experiment.prototype.initialize = function() {};
+      Experiment.prototype.validate = function(attrs) {};
+      return Experiment;
+    })();
+    return Experiments = (function() {
+      __extends(Experiments, Backbone.Collection);
+      function Experiments() {
+        Experiments.__super__.constructor.apply(this, arguments);
+      }
+      Experiments.prototype.url = '/experiments';
+      Experiments.prototype.model = Experiment;
+      return Experiments;
     })();
   });
   WidgetStore = (function() {
