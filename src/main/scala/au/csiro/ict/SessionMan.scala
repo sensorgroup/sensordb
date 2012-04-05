@@ -2,12 +2,12 @@ package au.csiro.ict
 
 import org.mindrot.jbcrypt.BCrypt
 import com.redis._
-import au.csiro.ict.Configuration._
-import au.csiro.ict.{Configuration, Utils, User}
 import org.bson.types.ObjectId
 import javax.servlet.http.HttpSession
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
+import com.mongodb.casbah.commons.MongoDBObject
+import com.mongodb.casbah.Imports._
 
 object Sessions {
 
@@ -22,27 +22,31 @@ object Sessions {
   cache.select(CACHE_DB)
   queue.select(QUEUE_DB)
 
-  def userSession(implicit session:HttpSession):Option[String]={
+  /**
+   *
+   * @param session
+   * @return (User_ID, User_Name)
+   */
+  def userSession(implicit session:HttpSession):Option[(String,String)]={
     val sessionId=session.getAttribute(SESSION_ID)
     if(sessionId !=null) {
       cache.expire(sessionId,CACHE_TIMEOUT)
-      cache.hget(sessionId,CACHE_USER_NAME)
+      Some(cache.hget(sessionId,CACHE_USER_ID).get->cache.hget(sessionId,CACHE_USER_NAME).get)
     } else None
   }
 
-  def login(user:String, password:String)(implicit session:HttpSession):Option[User]=
-    userSession.flatMap(x=>User.findByName(x)).orElse{
-      User.findByName(user).filter(r=> BCrypt.checkpw(password, r.password)).headOption match {
-        case Some(u:User)=>
-          val session_id = Utils.uuid()
-          session.setAttribute (SESSION_ID,session_id)
-          cache.hset(session_id,CACHE_USER_ID,u.id.toString)
-          cache.hset(session_id,CACHE_USER_NAME,u.name)
-          cache.expire(session_id,CACHE_TIMEOUT)
-          Some(u)
-        case _ => None // Failed login
+  def login(user:String, password:String)(implicit session:HttpSession):Option[DBObject]= {
+    userSession.flatMap(x=>User.collection.findOne(Map("_id"->x._1))).orElse{
+      User.collection.findOne(Map("name"->user)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ u=>
+        val session_id = Utils.uuid()
+        session.setAttribute (SESSION_ID,session_id)
+        cache.hset(session_id,CACHE_USER_ID,u._id.get.toString)
+        cache.hset(session_id,CACHE_USER_NAME,u.getAs[String]("name").get)
+        cache.expire(session_id,CACHE_TIMEOUT)
+        u
       }
     }
+  }
 
   def logout(implicit session:HttpSession)={
     val ident=session.getAttribute(SESSION_ID)

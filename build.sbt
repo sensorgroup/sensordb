@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.2" % "provided",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "commons-validator"% "commons-validator" % "1.4.0",
-  "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
+//  "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
   "com.codahale" %% "jerkson" % "0.5.0",
   "org.clapper" %% "grizzled-slf4j" % "0.6.6",
   "net.debasishg" %% "redisclient" % "2.4.2",
