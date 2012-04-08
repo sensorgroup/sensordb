@@ -5,9 +5,33 @@ import org.scalatra.test.scalatest.ScalatraSuite
 import com.codahale.jerkson.Json._
 import au.csiro.ict.{Controller}
 import java.util.LinkedHashMap
+import org.bson.types.ObjectId
 
 class ControllerTests extends ScalatraSuite with FunSuite{
   addServlet(classOf[Controller], "/*")
+  test("Validators") {
+    import au.csiro.ict.Validators._
+    implicit val validator=new Validator()
+    EntityId(None) should equal(None)
+    EntityId(Some("")) should equal(None)
+    EntityId(Some("   ")) should equal(None)
+    EntityId(Some("12345")) should equal(None)
+    EntityId(Some(new ObjectId().toString)) should not equal(None)
+
+    Email(None) should equal(None)
+    Email(Some("--")) should equal(None)
+    Email(Some("@")) should equal(None)
+    Email(Some("2@")) should equal(None)
+    Email(Some("2@l")) should equal(None)
+    Email(Some("2@lll.com")) should not equal(None)
+
+    Password(None) should equal(None)
+    Password(Some("--")) should equal(None)
+    Password(Some("1234")) should equal(None)
+    Password(Some("123456")) should not equal(None)
+
+  }
+
   test("Full CRUD Restful API") {
     var stream1:Map[String,String]=Map()
     var stream2:Map[String,String]=Map()
@@ -117,32 +141,6 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("token")
         status should equal(200)
       }
-      post("/nodes",Map("name"->"node1","eid"->exp1("_id"))){
-        // successful creation of node1 within experiment 1
-        node1 = parse[Map[String,String]](body)
-        body should include ("token")
-        status should equal(200)
-      }
-      post("/session"){
-        body should  include ("node1")
-      }
-      put("/nodes",Map("field"->"name","value"->"node3","nid"->node1("_id"))){
-        // successful renaming of node1 to node3 experiment
-        node1 = parse[Map[String,String]](body)
-        body should include ("token")
-        body should include ("node3")
-        body should not include ("node1")
-        status should equal(200)
-      }
-      post("/session"){
-        body should include ("node3")
-        body should not include ("node1")
-      }
-      post("/session"){
-        // machine is used in ObjectId's if they aren't stored as strings
-        body should not include ("machine")
-      }
-
 
       post("/experiments",Map("name"->"exp1","timezone"->"1000")){
         //failed, name reused creation of experiment
@@ -166,20 +164,126 @@ class ControllerTests extends ScalatraSuite with FunSuite{
 
       put("/experiments",Map("field"->"name","value"->"exp 123","eid"->exp1("_id"))){
         // renaming exp1 to exp 123 successful
-
         status should equal(200)
       }
+      put("/experiments",Map("field"->"description","value"->"desc-123","eid"->exp1("_id"))){
+        // adding description to exp1
+        body should include("desc-123")
+        status should equal(200)
+      }
+
       post("/session"){
         body should include ("exp2")
         body should include ("exp 123")
+        body should include ("desc-123")
       }
-
-      delete("/experiments",Map("id"->exp1("_id"))){
+      post("/nodes",Map("name"->"node1","eid"->exp1("_id"))){
+        // successful creation of node1 within experiment 1
+        node1 = parse[Map[String,String]](body)
+        body should include ("token")
+        status should equal(200)
+      }
+      post("/nodes",Map("name"->"node1","eid"->exp1("_id"))){
+        // failed, name is already used
+        body should include ("error")
+        status should equal(400)
+      }
+      post("/session"){
+        body should include ("node1")
+        body should not include ("node2")
+      }
+      post("/nodes",Map("name"->"node2","eid"->exp1("_id"))){
+        // successful creation of node2 within exp1
+        body should include ("token")
+        node2 = parse[Map[String,String]](body)
         status should equal(200)
       }
       post("/session"){
+        body should  include ("node1")
+        body should  include ("node2")
+        body should not include ("node1 renamed")
+
+      }
+      put("/nodes",Map("field"->"name","value"->"node1 renamed","nid"->node1("_id"))){
+        // successful renaming of node1 to node1 renamed experiment
+        node1 = parse[Map[String,String]](body)
+        body should include ("token")
+        body should include ("node1 renamed")
+        status should equal(200)
+      }
+      post("/session"){
+        // confirm renamed work
+        body should include ("node1 renamed")
+      }
+      put("/nodes",Map("field"->"lon","value"->"-123.321","nid"->node1("_id"))){
+        // successfully adding longitude to node1
+        body should include ("-123.321")
+        node1 = parse[Map[String,String]](body)
+        node1("name") should equal("node1 renamed")
+        node1("lon") should equal("-123.321")
+        status should equal(200)
+      }
+      put("/nodes",Map("field"->"lon","value"->"","nid"->node1("_id"))){
+        // successfully resetting longitude to node1
+        node1 = parse[Map[String,String]](body)
+        body should not include ("-123.321")
+        body should include (exp1("_id"))
+        status should equal(200)
+      }
+
+      put("/nodes",Map("field"->"eid","value"->exp2("_id"),"nid"->node1("_id"))){
+        // successfully moving node1 from exp1 to exp2
+        node1 = parse[Map[String,String]](body)
+        body should not include (exp1("_id"))
+        body should include (exp2("_id"))
+        status should equal(200)
+      }
+      put("/nodes",Map("field"->"eid","value"->"   ","nid"->node1("_id"))){
+        // invalid move, should return 400
+        body should include ("error")
+        status should equal(400)
+      }
+      put("/nodes",Map("field"->"eid","value"->"44444444444","nid"->node1("_id"))){
+        // invalid move, should return 400
+        body should include ("error")
+        status should equal(400)
+      }
+
+      put("/nodes",Map("field"->"eid","value"->node2("_id"),"nid"->node1("_id"))){
+        // invalid move, should return 400 successfully moving node1 from exp1 to exp2
+        body should include ("error")
+        status should equal(400)
+      }
+
+      post("/session"){
+        // machine is used in ObjectId's if they aren't stored as strings
+        body should not include ("machine")
+      }
+      delete("/nodes",Map("nid"->node1("_id"))){
+        status should equal(200)
+      }
+
+      post("/session"){
+        body should not include ("node1 renamed")
+        status should equal(200)
+      }
+
+      delete("/experiments",Map("eid"->exp1("_id"))){
+        status should equal(200)
+      }
+      post("/session"){
+        body should not include ("exp 123")
         body should include ("exp2")
       }
+
+      delete("/experiments",Map("eid"->exp2("_id"))){
+        status should equal(200)
+      }
+      post("/session"){
+        body should not include ("exp 123")
+        body should not include ("exp2")
+      }
+
       post("/remove",Map("name"->"ali","password"->"secret2")) {
         status should equal (200)
       }
@@ -188,6 +292,9 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
 
       post("/remove",Map("name"->"ali","password"->"secret1")) {
+        status should equal (200)
+      }
+      post("/remove",Map("name"->"ali2","password"->"secret2")) {
         status should equal (200)
       }
       post("/session"){

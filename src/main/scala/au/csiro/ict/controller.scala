@@ -58,7 +58,7 @@ object Configuration{
   def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
 }
 
-class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupport with FlashMapSupport {
+class Controller extends ScalatraServlet  with FileUploadSupport with FlashMapSupport {//with ScalateSupport
 
   import SDBSerializer.generate
 
@@ -170,7 +170,7 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
 
   delete("/experiments"){
     //TODO: Test cascading deletes
-    (UserSession(session),EntityId(params.get("id"))) match{
+    (UserSession(session),EntityId(params.get("eid"))) match{
       case (Some((uid,userName)),Some(expId))=>
         Experiments.remove(Map("uid"->uid,"_id"->expId))
         val failed=Experiments.findOne(Map("uid"->uid,"_id"->expId)).isDefined
@@ -186,7 +186,7 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   post("/experiments"){
     // Add a new experiments
     (UserSession(session),Name(params.get("name")),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{
-      case (Some((uid,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueName(Experiments,name,"uid"->uid)=>
+      case (Some((uid,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueName(Experiments,"name"->name,"uid"->uid)=>
         Experiments.insert(Map("name"->name,"uid"->uid,"timezone"->timezone,"access_restriction"-> public_access,
           "picture"->picture,"website"->website, "token"->Utils.uuid(),
           "updated_at"->System.currentTimeMillis(),
@@ -200,15 +200,16 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
 
   put("/experiments"){
     // update/replace an experiment information
-    val validators:Map[String,()=>Option[String]] = Map("website"-> (()=>WebUrl(params.get("field"))),
-      "name"-> (()=> Name(params.get("field"))),
-      "timezone"-> (()=> TimeZone(params.get("field"))),
-      "description"-> (()=> Description(params.get("field"))),
-      "picture"-> (()=> PictureUrl(params.get("field"))),
-      "access_restriction"-> (()=> Privacy(params.get("field"))))
+    val validators:Map[String,()=>Option[String]] = Map(
+      "website"-> (()=>WebUrl(params.get("value"))),
+      "name"-> (()=> Name(params.get("value"))),
+      "timezone"-> (()=> TimeZone(params.get("value"))),
+      "description"-> (()=> Description(params.get("value"))),
+      "picture"-> (()=> PictureUrl(params.get("value"))),
+      "access_restriction"-> (()=> Privacy(params.get("value"))))
 
     (UserSession(session),EntityId(params.get("eid")),params.get("field").filter(validators.keys.contains),params.get("value")) match {
-      case (Some((uid,userName)),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (field.equals("name") && UniqueName(Experiments,value,"uid"->uid)) =>
+      case (Some((uid,userName)),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (!(field.equals("name")) || UniqueName(Experiments,"name"->value,"uid"->uid)) =>
         Experiments.findAndModify(Map("uid"->uid,"_id"->eid),$set(field->value,"updated_at"->System.currentTimeMillis()))
         generate(Experiments.findOne(Map("uid"->uid,"_id"->eid)))
       case errors => haltMsg()
@@ -219,10 +220,10 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
 
   }
   delete("/nodes"){
-    (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid"))) match {
-      case (Some((uid,userName)),Some(nid),Some(eid))=>
-        Nodes.remove(Map("uid"->uid,"_id"->nid,"eid"->eid))
-        if(Nodes.findOne(Map("uid"->uid,"_id"->nid,"eid"->eid)).isDefined)
+    (UserSession(session),EntityId(params.get("nid"))) match {
+      case (Some((uid,userName)),Some(nid))=>
+        Nodes.remove(Map("uid"->uid,"_id"->nid))
+        if(Nodes.findOne(Map("uid"->uid,"_id"->nid)).isDefined)
           haltMsg("Delete Failed")
         else
           halt(200,"Delete succeeded")
@@ -233,18 +234,19 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   put("/nodes"){
     // update/replace an nodes information
     val validators:Map[String,()=>Option[_]] = Map(
-      "name"-> (()=> Name(params.get("field"))),
-      "lat"-> (()=> LatLonAlt(params.get("field"))),
-      "alt"-> (()=> LatLonAlt(params.get("field"))),
-      "lon"-> (()=> LatLonAlt(params.get("field"))),
-      "description"-> (()=> Description(params.get("field"))),
-      "picture"-> (()=> PictureUrl(params.get("field"))),
-      "website"-> (()=>WebUrl(params.get("field"))),
-      "eid"-> (()=> EntityId(params.get("field"))))
+      "name"-> (()=> Name(params.get("value"))),
+      "lat"-> (()=> LatLonAlt(params.get("value"))),
+      "alt"-> (()=> LatLonAlt(params.get("value"))),
+      "lon"-> (()=> LatLonAlt(params.get("value"))),
+      "description"-> (()=> Description(params.get("value"))),
+      "picture"-> (()=> PictureUrl(params.get("value"))),
+      "website"-> (()=>WebUrl(params.get("value"))),
+      "eid"-> (()=> EntityId(params.get("value"))))
 
     (UserSession(session),EntityId(params.get("nid")),ExperimentIdFromNodeId(EntityId(params.get("nid"))),params.get("field").filter(validators.keys.contains),params.get("value")) match {
-      case (Some((uid,userName)),Some(nid),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (if(field== "name") UniqueName(Nodes,value,"eid"->eid) else true) && (if(field=="eid") OwnedBy(Experiments,uid,validators.apply(field).asInstanceOf[ObjectId]) else true) =>
-        Nodes.findAndModify(Map("uid"->uid,"_id"->nid),$set(field->value,"updated_at"->System.currentTimeMillis()))
+      case (Some((uid,userName)),Some(nid),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && ((field!= "name") || UniqueName(Nodes,"name"->value,"eid"->eid)) && (field!="eid" || OwnedBy(Experiments,uid,validators(field).apply().get.asInstanceOf[ObjectId])) =>
+        val toSet = if(field == "eid") validators(field).apply().get.asInstanceOf[ObjectId] else value
+        Nodes.findAndModify(Map("uid"->uid,"_id"->nid),$set(field->toSet,"updated_at"->System.currentTimeMillis()))
         generate(Nodes.findOne(Map("uid"->uid,"_id"->nid)))
       case errors => haltMsg()
     }
@@ -253,7 +255,7 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   post("/nodes"){
     // Create a new node
     (UserSession(session),Name(params.get("name")),EntityId(params.get("eid")),LatLonAlt(params.get("lat")),LatLonAlt(params.get("lon")),LatLonAlt(params.get("alt")),Description(params.get("description")),WebUrl(params.get("website")),PictureUrl(params.get("picture"))) match{
-      case (Some((uid,user_name)),Some(name),Some(eid),lat,lon,alt,Some(description),Some(website),Some(picture)) if UniqueName(Nodes,name,"eid"->eid)=>
+      case (Some((uid,user_name)),Some(name),Some(eid),Some(lat),Some(lon),Some(alt),Some(description),Some(website),Some(picture)) if UniqueName(Nodes,"name"->name,"eid"->eid)=>
         Nodes.insert(Map("name"->name,"uid"->uid,"eid"->eid,"lat"->lat,"lon"->lon,"alt"->alt,
           "picture"->picture,"website"->website, "token"->Utils.uuid(),
           "updated_at"->System.currentTimeMillis(),
@@ -280,15 +282,12 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
     // Add a new streams
 
   }
-  get("/streams"){
-    // List the streams
-
-  }
   notFound {
-    findTemplate(requestPath) map {
-      path =>
-        contentType = "text/html"
-        layoutTemplate(path)
-    } orElse serveStaticResource() getOrElse resourceNotFound()
+    //    findTemplate(requestPath) map {
+    //      path =>
+    //        contentType = "text/html"
+    //        layoutTemplate(path)
+    //    } orElse
+    serveStaticResource() getOrElse resourceNotFound()
   }
 }

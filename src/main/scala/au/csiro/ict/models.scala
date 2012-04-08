@@ -1,43 +1,13 @@
 package au.csiro.ict
 
 import com.mongodb.casbah.MongoConnection
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
 import com.mongodb.casbah.Imports._
 
-//case class User(var name:String,
-//                var password:String,
-//                var timezone:Int,
-//                var email:String,
-//                var picture:Option[String]=None,
-//                var website:Option[String]=None,
-//                var description:Option[String]=None,
-//                var token:String=Utils.uuid(),
-//                var updated_at:Long = System.currentTimeMillis() ,
-//                val created_at:Long = System.currentTimeMillis(),
-//                @Key("_id") val id:ObjectId = new ObjectId)
 object User {
   val collection = MongoConnection()("sensordb")("users")
   def findByName(name:String,fields:Map[String,Int]=Map()):Option[DBObject]=collection.findOne(Map("name"->name),fields)
-  def dropByName(name:String)=collection.remove(Map("name"->name))
-  def save(t:MongoDBObject)={
-    t.put("updated_at",System.currentTimeMillis())
-    collection.save(t)
-  }
+
 }
-//case class Node(var name:String,
-//                val experiment_id:String,
-//                val user_id:String,
-//                var latitude:Option[Double]=None,
-//                var longitude:Option[Double]=None,
-//                var altitude:Option[Double]=None,
-//                var picture:Option[String]=None,
-//                var website:Option[String]=None,
-//                var description:Option[String]=None,
-//                var token:String=Utils.uuid(),
-//                var updated_at:Long = System.currentTimeMillis(),
-//                val created_at:Long = System.currentTimeMillis(),
-//                @Key("_id") val id:ObjectId = new ObjectId)
 
 //case class Stream(var name:String,
 //                  var measurement_id: String,

@@ -41,10 +41,10 @@ object Validators {
 
   def Privacy(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).orElse(Some("0"))
 
-  def Description(value:Option[String]):Option[String]=value.map(_.trim()).map(sanitize).orElse(EMPTY_STR)
+  def Description(value:Option[String]):Option[String]=value.map(x=>sanitize(x.trim())).orElse(EMPTY_STR)
 
   def Name(value:Option[String])(implicit validator:Validator)=value.orElse(validator.addError( "Name is missing")).flatMap{v=>
-    if (!isAlphanumeric(v))
+    if (!isAlphanumericSpace(v))
       validator.addError("Name is not valid")
     else if (!isInRange(v.size,3,30))
       validator.addError("Name must have 3 to 30 characters")
@@ -85,7 +85,7 @@ object Validators {
       Some(u)
   }
 
-  def UniqueName[B <: AnyRef](collection:MongoCollection,name:String,filters:(String,B)*)(implicit validator:Validator)=if (collection.count(MongoDBObject(("name"->name)::filters.toList))!=0){
+  def UniqueName[B <: AnyRef](collection:MongoCollection,filters:(String,B)*)(implicit validator:Validator)=if (collection.count(filters.toMap)!=0){
     validator.addError("Name is not available")
     false
   }
@@ -96,30 +96,6 @@ object Validators {
     false
   }
   else true
-
-  //  def UniqueExperiment(uid:ObjectId,experiment_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
-  //    if(Experiment.collection.findOne(Map("uid"->uid,"name"->experiment_name,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
-  //      validator.addError("Experiment name is not available")
-  //      false
-  //    }
-  //    else
-  //      true
-  //  def UniqueExperimentNode(uid:ObjectId,eId:ObjectId,node_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
-  //    if(Node.collection.findOne(Map("uid"->uid,"name"->node_name,"eid"->eId,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
-  //      validator.addError("Node name is not available")
-  //      false
-  //    }
-  //    else
-  //      true
-  //
-  //  def UniqueExperimentNodeStream(uid:ObjectId,eId:ObjectId,sId:ObjectId,node_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
-  //    if(Stream.collection.findOne(Map("uid"->uid,"name"->node_name,"eid"->eId,"sid"->sId,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
-  //      validator.addError("Stream name is not available")
-  //      false
-  //    }
-  //    else
-  //      true
-
 
   /**
    *
@@ -137,7 +113,7 @@ object Validators {
     }
   }
 
-  def EntityId(v:Option[String])(implicit validator:Validator):Option[ObjectId]=v.filter(x=>org.bson.types.ObjectId.isValid(x)).map(x=>new ObjectId(x)).orElse{
+  def EntityId(v:Option[String])(implicit validator:Validator):Option[ObjectId]=v.filter(org.bson.types.ObjectId.isValid).map(x=>new ObjectId(x)).orElse{
     validator.addError("Invalid entity id")
     None
   }
@@ -147,6 +123,6 @@ object Validators {
   )
 
 
-  def LatLonAlt(v:Option[String])(implicit validator:Validator):Option[Double]=v.filter(isDouble).map(_.toDouble)
+  def LatLonAlt(v:Option[String])(implicit validator:Validator):Option[String]=v.orElse(EMPTY_STR).map(_.trim).filter(x=> x.isEmpty || isDouble(x))
 
 }
