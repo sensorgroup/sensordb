@@ -1,6 +1,5 @@
 package au.csiro.ict
 
-import util.matching.Regex
 import org.jsoup.safety.Whitelist
 import org.jsoup.Jsoup
 import org.apache.commons.validator.GenericValidator._
@@ -9,6 +8,9 @@ import org.bson.types.ObjectId
 import com.mongodb.casbah.Imports._
 import java.util.Date
 import javax.servlet.http.HttpSession
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+
 
 object Validators {
   val sanitize = Jsoup.clean(_:String, Whitelist.basic())
@@ -76,13 +78,47 @@ object Validators {
       Some(u)
   }
 
-  def UniqueExperiment(userId:ObjectId,experiment_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
-    if(Experiment.collection.findOne(Map("user_id"->userId,"name"->experiment_name,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
-      validator.addError("Experiment name is not available")
-      false
-    }
+  def UniqueEmail(v:Option[String])(implicit validator:Validator):Option[String]=v.flatMap{u=>
+    if (Cache.Users.findOne(MongoDBObject("email"->u)).isDefined)
+      validator.addError("Email is already used")
     else
-      true
+      Some(u)
+  }
+
+  def UniqueName[B <: AnyRef](collection:MongoCollection,name:String,filters:(String,B)*)(implicit validator:Validator)=if (collection.count(MongoDBObject(("name"->name)::filters.toList))!=0){
+    validator.addError("Name is not available")
+    false
+  }
+  else true
+
+  def OwnedBy[B <: AnyRef](col:MongoCollection,uid:ObjectId,entityId:ObjectId)(implicit validator:Validator)=if (col.count(MongoDBObject("_id"->entityId,"uid"->uid))==0){
+    validator.addError("Access denied")
+    false
+  }
+  else true
+
+  //  def UniqueExperiment(uid:ObjectId,experiment_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
+  //    if(Experiment.collection.findOne(Map("uid"->uid,"name"->experiment_name,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
+  //      validator.addError("Experiment name is not available")
+  //      false
+  //    }
+  //    else
+  //      true
+  //  def UniqueExperimentNode(uid:ObjectId,eId:ObjectId,node_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
+  //    if(Node.collection.findOne(Map("uid"->uid,"name"->node_name,"eid"->eId,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
+  //      validator.addError("Node name is not available")
+  //      false
+  //    }
+  //    else
+  //      true
+  //
+  //  def UniqueExperimentNodeStream(uid:ObjectId,eId:ObjectId,sId:ObjectId,node_name:String,exclude_id:ObjectId=EMPTY_OBJECT_ID)(implicit validator:Validator):Boolean=
+  //    if(Stream.collection.findOne(Map("uid"->uid,"name"->node_name,"eid"->eId,"sid"->sId,"_id"->MongoDBObject("$ne"->exclude_id))).isDefined){
+  //      validator.addError("Stream name is not available")
+  //      false
+  //    }
+  //    else
+  //      true
 
 
   /**
@@ -94,7 +130,7 @@ object Validators {
     val sessionId=session.getAttribute(SESSION_ID)
     if(sessionId !=null) {
       Cache.cache.expire(sessionId,Cache.CACHE_TIMEOUT)
-      Some(new ObjectId(Cache.cache.hget(sessionId,Cache.CACHE_USER_ID).get)->Cache.cache.hget(sessionId,Cache.CACHE_USER_NAME).get)
+      Some(new ObjectId(Cache.cache.hget(sessionId,Cache.CACHE_UID).get)->Cache.cache.hget(sessionId,Cache.CACHE_USER_NAME).get)
     } else {
       validator.addError("Invalid session")
       None
@@ -106,38 +142,11 @@ object Validators {
     None
   }
 
-  //  def withSession(v:Validator)(successBlock:(String,String)=>Unit)(implicit session:HttpSession)=
-  //    Sessions.userSession.orElse{
-  //      v.addError("No active user session available")
-  //      None
-  //    }.foreach(user=>successBlock.apply(user._1,user._2))
+  def ExperimentIdFromNodeId(nid:Option[ObjectId])(implicit validator:Validator):Option[ObjectId]=nid.flatMap(nid=>
+    Cache.Nodes.findOne(Map("_id"->nid),Map("eid"->1)).flatMap(_.getAs[ObjectId]("eid"))
+  )
 
-  //  def withName(field:String="name",v:Validator)(successBlock:(String,String)=>Unit)=params.get(field).filterNot(_.trim.isEmpty).filter{ name=>
-  //      import RegexUtils._
-  //      //    if (!("""[a-zA-Z0-9_ ]{3,30}""".r matches name))
-  //
-  //        true
-  //    }.orElse{
-  //      validator.addError("Name is required")
-  //      None
-  //    }
-  //  }
-  ////
-  ////  def withUserPassword()(f: (String,String,Validator)=>Unit){
-  ////    val validator = new Validator(params)
-  ////    validator.test("name",List(("Username is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
-  ////      ("Username is not valid",x=>isAlphanumeric(x.get)),
-  ////      ("Username must have 2 to 20 characters",x=>isInRange(x.get.size,2,20))))
-  ////
-  ////    validator.test("password",List(("Password is Required",x=>x.isDefined),
-  ////      ("Password is not valid",x=>isAsciiPrintable(x.get)),
-  ////      ("Password must have at least 6 characters",_.get.size>=6)))
-  ////
-  ////    if (!validator.errors.isEmpty) halt(400,generate(validator.errors))
-  ////    val name = params("name")
-  ////    val password = params("password")
-  ////
-  ////    f(name,password,validator)
-  ////    forward()
-  ////  }
+
+  def LatLonAlt(v:Option[String])(implicit validator:Validator):Option[Double]=v.filter(isDouble).map(_.toDouble)
+
 }

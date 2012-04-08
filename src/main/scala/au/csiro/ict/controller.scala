@@ -4,7 +4,6 @@ import org.scalatra._
 import scalate.ScalateSupport
 import grizzled.slf4j.Logger
 import org.scalatra.fileupload.FileUploadSupport
-import com.codahale.jerkson.Json._
 import io.Source
 import java.util.Properties
 import java.io.FileReader
@@ -19,7 +18,38 @@ import com.mongodb.casbah.Imports._
 import au.csiro.ict.Validators._
 import org.bson.types.ObjectId
 import javax.servlet.http.HttpSession
+import Cache._
 
+object SDBSerializer extends com.codahale.jerkson.Json{
+  import org.codehaus.jackson.Version
+  import org.codehaus.jackson.map.Module
+  import org.codehaus.jackson.map.Module.SetupContext
+  import org.codehaus.jackson.`type`.JavaType
+  import org.codehaus.jackson.map._
+  import annotate.JsonCachable
+  import org.codehaus.jackson.JsonGenerator
+
+  class ObjectIdModule extends Module{
+    def version = new Version(0, 2, 0, "")
+    def getModuleName = "sensordb"
+    def setupModule(context: SetupContext) {
+      context.addSerializers(new ObjectIdSerializer)
+    }
+  }
+  class ObjectIdSerializer extends Serializers.Base {
+    override def findSerializer(config: SerializationConfig, javaType: JavaType, beanDesc: BeanDescription, beanProp: BeanProperty) = {
+      val ser: Object = if (classOf[ObjectId].isAssignableFrom(beanDesc.getBeanClass)) { new ObjectIdSerlization } else null
+      ser.asInstanceOf[JsonSerializer[Object]]
+    }
+    @JsonCachable
+    class ObjectIdSerlization extends JsonSerializer[ObjectId] {
+      def serialize(value: ObjectId, json: JsonGenerator, provider: SerializerProvider) {
+        json.writeString(value.toString)
+      }
+    }
+  }
+  mapper.registerModule(new ObjectIdModule())
+}
 
 object Configuration{
   private val config = new Properties()
@@ -30,9 +60,9 @@ object Configuration{
 
 class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupport with FlashMapSupport {
 
-  def forward(path:String="/session")=servletContext.getRequestDispatcher(path).forward(request, response)
+  import SDBSerializer.generate
 
-  def DBObjectToJSON(ob:Option[DBObject]):String = generate(ob.map(x=>x.filter(_._2 != null).mapValues(z=>z.toString)))
+  def forward(path:String="/session")=servletContext.getRequestDispatcher(path).forward(request, response)
 
   private val logger: Logger = Logger[this.type]
 
@@ -55,21 +85,21 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
 
   def login(name:String, password:String)(implicit session:HttpSession):Option[DBObject]= {
     UserSession(session) match{
-      case Some((userId,userName))=>User.collection.findOne(Map("_id"->userId))
+      case Some((uid,userName))=>Users.findOne(Map("_id"->uid))
       case None=>
-        User.collection.findOne(Map("name"->name)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
+        Users.findOne(Map("name"->name)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
           val session_id = Utils.uuid()
           session.setAttribute (SESSION_ID,session_id)
-          Cache.cache.hset(session_id,Cache.CACHE_USER_ID, user._id.get.toString)
-          Cache.cache.hset(session_id,Cache.CACHE_USER_NAME, user.getAs[String]("name").get)
-          Cache.cache.expire(session_id,Cache.CACHE_TIMEOUT)
+          cache.hset(session_id,CACHE_UID, user._id.get.toString)
+          cache.hset(session_id,CACHE_USER_NAME, user.getAs[String]("name").get)
+          cache.expire(session_id,CACHE_TIMEOUT)
           user
         }
     }
   }
   def logout()={
     val ident=session.getAttribute(SESSION_ID)
-    if (ident !=null) Cache.cache.del(ident)
+    if (ident !=null) cache.del(ident)
     session.invalidate()
     forward()
   }
@@ -77,28 +107,37 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   post("/session"){
     val current:Option[ObjectId] = UserSession(session).map(_._1)
     val user:Option[ObjectId] = params.get("user").filterNot(_.trim.isEmpty).flatMap{uname=>
-      User.collection.findOne(Map("name"->uname),Map("_id"->1))
+      Users.findOne(Map("name"->uname),Map("_id"->1))
     }.flatMap(x=>x.getAs[ObjectId]("_id"))
     val fields = if (current.exists(x=>user.isEmpty || x.equals(user.get)))
       Map("password"->0)
     else
       protectedFields
-    user.orElse(current).flatMap((u:ObjectId)=>User.collection.findOne(Map("_id"->u))).map{user=>
+    user.orElse(current).flatMap((u:ObjectId)=>Users.findOne(Map("_id"->u),fields)).map{user=>
       val uid = user._id.get
       user.put("_id",uid.toString)
       generate(Map("user"->user,
-        "experiments"->Experiment.collection.find(Map("user_id"->uid),fields),
-        "nodes"->Node.collection.find(Map("user_id"->uid),fields),
-        "streams"->Stream.collection.find(Map("user_id"->uid),fields)))
+        "experiments"->Experiments.find(Map("uid"->uid),fields), //.map((o:DBObject)=> o.toMap+("_id"->o("_id").toString)),
+        "nodes"->Nodes.find(Map("uid"->uid),fields),
+        "streams"->Streams.find(Map("uid"->uid),fields)))
     }.getOrElse("{}")
   }
 
   post("/register") {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
-    (UniqueUsername(Username(params.get("name"))),Password(params.get("password")),TimeZone(params.get("timezone")),Email(params.get("email")),Description(params.get("description")),PictureUrl(params.get("picture")),WebUrl(params.get("website"))) match {
+    (UniqueUsername(Username(params.get("name"))),Password(params.get("password")),TimeZone(params.get("timezone")),UniqueEmail(Email(params.get("email"))),Description(params.get("description")),PictureUrl(params.get("picture")),WebUrl(params.get("website"))) match {
       case (Some(name),Some(password),Some(timezone),Some(email),Some(description),Some(pic),Some(website))=>
-        val user = Map("name"->name,"token"->Utils.uuid(),"password"->BCrypt.hashpw(password, BCrypt.gensalt()),"timezone"->timezone,"email"->email,"picture"->pic,"website"->website,"description"->description)
-        User.collection.insert(user)
+        val user = Map("name"->name,
+          "token"->Utils.uuid(),
+          "password"->BCrypt.hashpw(password, BCrypt.gensalt()),
+          "timezone"->timezone,
+          "email"->email,
+          "picture"->pic,
+          "website"->website,
+          "description"->description,
+          "created_at"->System.currentTimeMillis(),
+          "updated_at"->System.currentTimeMillis())
+        Users.insert(user)
         login(name,password)
         forward()
       case errors => haltMsg()
@@ -120,8 +159,8 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   post("/remove"){
     (Username(params.get("name")),Password(params.get("password"))) match {
       case (Some(user),Some(password))=>
-        User.collection.findOne(Map("name"->user)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).foreach{u=>
-          User.collection.remove(Map("name"->user))
+        Users.findOne(Map("name"->user)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).foreach{u=>
+          Users.remove(Map("name"->user))
           logout()
         }
       case errors=> haltMsg()
@@ -132,9 +171,9 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   delete("/experiments"){
     //TODO: Test cascading deletes
     (UserSession(session),EntityId(params.get("id"))) match{
-      case (Some((userId,userName)),Some(expId))=>
-        Experiment.collection.remove(Map("user_id"->userId,"_id"->expId))
-        val failed=Experiment.collection.findOne(Map("user_id"->userId,"_id"->expId)).isDefined
+      case (Some((uid,userName)),Some(expId))=>
+        Experiments.remove(Map("uid"->uid,"_id"->expId))
+        val failed=Experiments.findOne(Map("uid"->uid,"_id"->expId)).isDefined
         if(failed)
           haltMsg("Delete Failed")
         else
@@ -147,17 +186,18 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   post("/experiments"){
     // Add a new experiments
     (UserSession(session),Name(params.get("name")),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{
-      case (Some((user_id,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueExperiment(user_id,name)=>
-        Experiment.collection.insert(Map("name"->name,"user_id"->user_id,"timezone"->timezone,"access_restriction"-> public_access,
+      case (Some((uid,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueName(Experiments,name,"uid"->uid)=>
+        Experiments.insert(Map("name"->name,"uid"->uid,"timezone"->timezone,"access_restriction"-> public_access,
           "picture"->picture,"website"->website, "token"->Utils.uuid(),
           "updated_at"->System.currentTimeMillis(),
           "created_at"->System.currentTimeMillis(),
           "description"->description))
 
-        DBObjectToJSON(Experiment.collection.findOne(Map("user_id"->user_id,"name"->name)))
+        generate(Experiments.findOne(Map("uid"->uid,"name"->name)))
       case error=>haltMsg()
     }
   }
+
   put("/experiments"){
     // update/replace an experiment information
     val validators:Map[String,()=>Option[String]] = Map("website"-> (()=>WebUrl(params.get("field"))),
@@ -168,9 +208,9 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
       "access_restriction"-> (()=> Privacy(params.get("field"))))
 
     (UserSession(session),EntityId(params.get("eid")),params.get("field").filter(validators.keys.contains),params.get("value")) match {
-      case (Some((userId,userName)),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (field.equals("name") && UniqueExperiment(userId,value,eid)) =>
-        Experiment.collection.findAndModify(Map("user_id"->userId,"_id"->eid),$set(field->value))
-        DBObjectToJSON(Experiment.collection.findOne(Map("user_id"->userId,"_id"->eid)))
+      case (Some((uid,userName)),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (field.equals("name") && UniqueName(Experiments,value,"uid"->uid)) =>
+        Experiments.findAndModify(Map("uid"->uid,"_id"->eid),$set(field->value,"updated_at"->System.currentTimeMillis()))
+        generate(Experiments.findOne(Map("uid"->uid,"_id"->eid)))
       case errors => haltMsg()
     }
   }
@@ -180,36 +220,60 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
   }
   delete("/nodes"){
     (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid"))) match {
-      case (Some((userId,userName)),Some(id),Some(eid))=>
+      case (Some((uid,userName)),Some(nid),Some(eid))=>
+        Nodes.remove(Map("uid"->uid,"_id"->nid,"eid"->eid))
+        if(Nodes.findOne(Map("uid"->uid,"_id"->nid,"eid"->eid)).isDefined)
+          haltMsg("Delete Failed")
+        else
+          halt(200,"Delete succeeded")
       case errors => haltMsg()
     }
   }
-  //
+
   put("/nodes"){
     // update/replace an nodes information
+    val validators:Map[String,()=>Option[_]] = Map(
+      "name"-> (()=> Name(params.get("field"))),
+      "lat"-> (()=> LatLonAlt(params.get("field"))),
+      "alt"-> (()=> LatLonAlt(params.get("field"))),
+      "lon"-> (()=> LatLonAlt(params.get("field"))),
+      "description"-> (()=> Description(params.get("field"))),
+      "picture"-> (()=> PictureUrl(params.get("field"))),
+      "website"-> (()=>WebUrl(params.get("field"))),
+      "eid"-> (()=> EntityId(params.get("field"))))
+
+    (UserSession(session),EntityId(params.get("nid")),ExperimentIdFromNodeId(EntityId(params.get("nid"))),params.get("field").filter(validators.keys.contains),params.get("value")) match {
+      case (Some((uid,userName)),Some(nid),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (if(field== "name") UniqueName(Nodes,value,"eid"->eid) else true) && (if(field=="eid") OwnedBy(Experiments,uid,validators.apply(field).asInstanceOf[ObjectId]) else true) =>
+        Nodes.findAndModify(Map("uid"->uid,"_id"->nid),$set(field->value,"updated_at"->System.currentTimeMillis()))
+        generate(Nodes.findOne(Map("uid"->uid,"_id"->nid)))
+      case errors => haltMsg()
+    }
   }
 
   post("/nodes"){
-    // Add a new nodes
+    // Create a new node
+    (UserSession(session),Name(params.get("name")),EntityId(params.get("eid")),LatLonAlt(params.get("lat")),LatLonAlt(params.get("lon")),LatLonAlt(params.get("alt")),Description(params.get("description")),WebUrl(params.get("website")),PictureUrl(params.get("picture"))) match{
+      case (Some((uid,user_name)),Some(name),Some(eid),lat,lon,alt,Some(description),Some(website),Some(picture)) if UniqueName(Nodes,name,"eid"->eid)=>
+        Nodes.insert(Map("name"->name,"uid"->uid,"eid"->eid,"lat"->lat,"lon"->lon,"alt"->alt,
+          "picture"->picture,"website"->website, "token"->Utils.uuid(),
+          "updated_at"->System.currentTimeMillis(),
+          "created_at"->System.currentTimeMillis(),
+          "description"->description))
+        generate(Nodes.findOne(Map("uid"->uid,"name"->name,"eid"->eid)))
+      case error=>haltMsg()
+    }
 
   }
-  get("/nodes"){
-    // List the nodes
 
-  }
-  get("/nodes"){
-    // List the nodes
-
-  }
   delete("/streams"){
     (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid")),EntityId(params.get("nid"))) match {
-      case (Some((userId,userName)),Some(sid),Some(eid),Some(nid))=>
+      case (Some((uid,userName)),Some(sid),Some(eid),Some(nid))=>
       case errors => haltMsg()
     }
   }
 
   put("/streams"){
-    // update/replace an streams information
+    // update/replace stream information
   }
 
   post("/streams"){

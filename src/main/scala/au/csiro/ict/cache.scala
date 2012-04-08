@@ -12,7 +12,7 @@ import au.csiro.ict.Validators.Validator
 
 object Cache {
 
-  val CACHE_USER_ID="uid"
+  val CACHE_UID="uid"
   val CACHE_USER_NAME="user"
   val CACHE_TIMEOUT=15*60 // in seconds
   val CACHE_DB = 1
@@ -23,7 +23,18 @@ object Cache {
   queue.select(QUEUE_DB)
 
 
+  val EXPERIMENT_ACCESS_PUBLIC=0
 
+  val EXPERIMENT_ACCESS_PRIVATE=1
 
+  val EXPERIMENT_ACCESS_FRIENDS=2
+
+  val Experiments = MongoConnection()("sensordb")("experiments")
+
+  val Nodes = MongoConnection()("sensordb")("nodes")
+
+  val Users = MongoConnection()("sensordb")("users")
+
+  val Streams = MongoConnection()("sensordb")("streams")
 
 }

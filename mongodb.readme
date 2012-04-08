@@ -18,7 +18,7 @@ db.streams.ensureIndex({"node_id":1},{});
 db.widgetinstances.ensureIndex({"analysis_id":1},{});
 
 /**
- * Like, to remove all the documents which have reference to an experiment number 7, execute:
+ * Example, to remove all the documents which have reference to an experiment number 7, execute:
  * cascade('experiment_id',7)
  * To make sure the cascade is working fine, a consistent naming convention should be followed.
  **/

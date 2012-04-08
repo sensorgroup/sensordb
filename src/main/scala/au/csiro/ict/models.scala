@@ -25,26 +25,6 @@ object User {
     collection.save(t)
   }
 }
-
-//case class Experiment(var name:String,
-//                      var user_id:String,
-//                      var timezone:String,
-//                      var access_restriction:Int=Experiment.ACCESS_PUBLIC,
-//                      var picture:Option[String]=None,
-//                      var website:Option[String]=None,
-//                      var description:Option[String]=None,
-//                      var token:String=Utils.uuid(),
-//                      var updated_at:Long = System.currentTimeMillis(),
-//                      val created_at:Long = System.currentTimeMillis(),
-//                      @Key("_id") val id:ObjectId = new ObjectId){
-//}
-object Experiment {
-   val ACCESS_PUBLIC=0
-   val ACCESS_PRIVATE=1
-   val ACCESS_FRIENDS=2
-   val collection = MongoConnection()("sensordb")("experiments")
-}
-
 //case class Node(var name:String,
 //                val experiment_id:String,
 //                val user_id:String,
@@ -58,10 +38,6 @@ object Experiment {
 //                var updated_at:Long = System.currentTimeMillis(),
 //                val created_at:Long = System.currentTimeMillis(),
 //                @Key("_id") val id:ObjectId = new ObjectId)
-object Node {
-  val collection = MongoConnection()("sensordb")("nodes")
-
-}
 
 //case class Stream(var name:String,
 //                  var measurement_id: String,
@@ -74,9 +50,6 @@ object Node {
 //                  var updated_at:Long = System.currentTimeMillis(),
 //                  val created_at:Long = System.currentTimeMillis(),
 //                  @Key("_id") val id:ObjectId = new ObjectId)
-object Stream {
-  val collection = MongoConnection()("sensordb")("streams")
-}
 
 //case class Analysis(var name:String,
 //                    var user_id:String,
