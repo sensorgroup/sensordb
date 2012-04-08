@@ -6,19 +6,20 @@ import grizzled.slf4j.Logger
 import org.scalatra.fileupload.FileUploadSupport
 import com.codahale.jerkson.Json._
 import io.Source
-import org.apache.commons.validator.GenericValidator._
-import org.apache.commons.lang3.StringUtils._
 import java.util.Properties
 import java.io.FileReader
 import scala.collection.JavaConversions._
-import org.jsoup.Jsoup
-import org.jsoup.safety.Whitelist
+import scala.collection.JavaConverters._
+
 import org.apache.commons.fileupload.servlet.ServletFileUpload
 import scala.{None, Option}
 import org.mindrot.jbcrypt.BCrypt
-import javax.swing.plaf.OptionPaneUI
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
+import au.csiro.ict.Validators._
+import org.bson.types.ObjectId
+import javax.servlet.http.HttpSession
+
 
 object Configuration{
   private val config = new Properties()
@@ -27,112 +28,64 @@ object Configuration{
   def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
 }
 
-case class Validator(params:Map[String,String]){
-  private var _errors:List[String] = Nil;
-  def errors = _errors
-  def test(name:String, validator:List[(String,(Option[String])=>Boolean)])=
-    validator.foldLeft(None:Option[String])((err,item)=>
-      if(err.isEmpty)
-        if (!item._2(params.get(name)))
-          Some(item._1)
-        else
-          None
-      else
-        err
-    ).foreach(x=>_errors::=x)
-  def addError(msg:String):Boolean= {
-    _errors::=msg
-    false
-  }
-}
-class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupport {
-  def withUserPassword()(f: (String,String,Validator)=>Unit){
-    val validator = new Validator(params)
-    validator.test("name",List(("Username is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
-      ("Username is not valid",x=>isAlphanumeric(x.get)),
-      ("Username must have 2 to 20 characters",x=>isInRange(x.get.size,2,20))))
-
-    validator.test("password",List(("Password is Required",x=>x.isDefined),
-      ("Password is not valid",x=>isAsciiPrintable(x.get)),
-      ("Password must have at least 6 characters",_.get.size>=6)))
-
-    if (!validator.errors.isEmpty) halt(400,generate(validator.errors))
-    val name = params("name")
-    val password = params("password")
-
-    f(name,password,validator)
-    forward()
-  }
-  def validSession(implicit validator:Validator):Option[(String,String)]=Sessions.userSession.orElse{
-    validator.addError("No active user session available")
-    None
-  }
-
-  def validPictureUrl(implicit validator:Validator):Option[String]=params.get("picture").filter{ url=>
-    if(!url.isEmpty && !isUrl(url))
-      validator.addError( "Picture URL is not valid")
-    else
-      true
-  }
-  val timezones = List("-1200","-1130","-1100","-1030","-1000","-930","-900","-830","-800","-730","-700","-630","-600","-530","-500","-430","-400","-330","-300","-230","-200","-130","-100","-030","000" ,"030","100","130","200","230","300","330","400","430","500","530","600","630","700","730","800","830","900","930","1000","1030","1100","1130","1200")
-
-  def validTimeZone(implicit validator:Validator):Option[String]={
-    params.get("timezone").filter(x=>timezones.indexOf(x)>=0).orElse{
-      validator.addError( "Timezone is not valid")
-      None
-    }
-  }
-  def validBoolean(name:String)(implicit validator:Validator):Boolean=
-    params.get(name).filterNot(_.trim.isEmpty).filter(x=>x.equalsIgnoreCase("true")||x.equalsIgnoreCase("yes")||x.equalsIgnoreCase("1")).isDefined
-
-  def validWebUrl(implicit validator:Validator):Option[String]=params.get("webpage").filter{ url=>
-    if(!url.isEmpty && !isUrl(url))
-      validator.addError( "Webpage URL is not valid")
-    else
-      true
-  }
-
-  def validName(implicit validator:Validator):Option[String]=params.get("name").filterNot(_.trim.isEmpty).filter{ name=>
-    if (!isAlphanumericSpace(name))
-      validator.addError("Name is not valid")
-    else if (!isInRange(name.size,3,30))
-      validator.addError("Name must have 5 to 30 characters")
-    else
-      true
-  }.orElse{
-    validator.addError("Name is required")
-    None
-  }
-
-  def validDescription=params.get("description").map(_.trim()).filterNot(isBlankOrNull).map(sanitize)
-
-  def validRequiredAlphaNumericField(field:String)(implicit validator:Validator):Option[String]=params.get(field).filter(isAlphanumeric).map(_.trim).orElse{
-    validator.addError(capitalize(field)+" is required")
-    None
-  }
-
-  def halfIfError(implicit validator:Validator)=if (!validator.errors.isEmpty) halt(400,generate(Map("errors"->validator.errors)))
+class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupport with FlashMapSupport {
 
   def forward(path:String="/session")=servletContext.getRequestDispatcher(path).forward(request, response)
 
-  val sanitize = Jsoup.clean(_:String, Whitelist.basic())
+  def DBObjectToJSON(ob:Option[DBObject]):String = generate(ob.map(x=>x.filter(_._2 != null).mapValues(z=>z.toString)))
 
   private val logger: Logger = Logger[this.type]
 
   val protectedFields = Map("token"->0,"password"->0,"email"->0)
 
+  implicit def errors:Validator = request.getAttribute("__errors") match {
+    case v:Validator =>v
+    case others =>
+      val validator = new Validator()
+      request.setAttribute("__errors",validator)
+      validator
+  }
+
+  def haltMsg(newErrorMessage:String=null) = {
+    if(newErrorMessage!=null)
+      errors.addError(newErrorMessage)
+    if (!errors.errors.isEmpty)
+      halt(400,generate(Map("errors"->errors.errors)))
+  }
+
+  def login(name:String, password:String)(implicit session:HttpSession):Option[DBObject]= {
+    UserSession(session) match{
+      case Some((userId,userName))=>User.collection.findOne(Map("_id"->userId))
+      case None=>
+        User.collection.findOne(Map("name"->name)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
+          val session_id = Utils.uuid()
+          session.setAttribute (SESSION_ID,session_id)
+          Cache.cache.hset(session_id,Cache.CACHE_USER_ID, user._id.get.toString)
+          Cache.cache.hset(session_id,Cache.CACHE_USER_NAME, user.getAs[String]("name").get)
+          Cache.cache.expire(session_id,Cache.CACHE_TIMEOUT)
+          user
+        }
+    }
+  }
+  def logout()={
+    val ident=session.getAttribute(SESSION_ID)
+    if (ident !=null) Cache.cache.del(ident)
+    session.invalidate()
+    forward()
+  }
+
   post("/session"){
-    val current = Sessions.userSession.map(_._1)
-    val user = params.get("user").filterNot(_.trim.isEmpty).flatMap{uname=>
+    val current:Option[ObjectId] = UserSession(session).map(_._1)
+    val user:Option[ObjectId] = params.get("user").filterNot(_.trim.isEmpty).flatMap{uname=>
       User.collection.findOne(Map("name"->uname),Map("_id"->1))
-    }.map(x=>x.getAs[ObjectId]("_id").toString)
-     val fields = if (current.exists(x=>user.isEmpty || x.equals(user.get)))
+    }.flatMap(x=>x.getAs[ObjectId]("_id"))
+    val fields = if (current.exists(x=>user.isEmpty || x.equals(user.get)))
       Map("password"->0)
     else
       protectedFields
-    user.orElse(current).flatMap(u=>User.collection.findOne(Map("_id"->new ObjectId(u)))).map{user=>
-      val uid = user._id.get.toString
-      user.put("_id",uid)
+    user.orElse(current).flatMap((u:ObjectId)=>User.collection.findOne(Map("_id"->u))).map{user=>
+      val uid = user._id.get
+      user.put("_id",uid.toString)
       generate(Map("user"->user,
         "experiments"->Experiment.collection.find(Map("user_id"->uid),fields),
         "nodes"->Node.collection.find(Map("user_id"->uid),fields),
@@ -140,119 +93,98 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
     }.getOrElse("{}")
   }
 
-
   post("/register") {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
-
-    val validator = new Validator(params)
-    validator.test("name",List(("Username is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
-      ("Username is not valid",x=>isAlphanumeric(x.get)),
-      ("Username must have 2 to 20 characters",x=>isInRange(x.get.size,2,20)),
-      ("Username is already used",x=>User.findByName(x.get).isEmpty)))
-
-    validator.test("password",List(("Password is Required",x=>x.isDefined),
-      ("Password is not valid",x=>isAsciiPrintable(x.get)),
-      ("Password must have at least 6 characters",_.get.size>=6)))
-
-    validator.test("email",List(("Email is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
-      ("Email is not valid",x=>isEmail(x.get))))
-
-    validator.test("timezone",List(("Timezone is Required",x=>x.isDefined && !isBlankOrNull(x.get)),
-      ("Timezone is not valid",x=>isInt(x.get) && isInRange (x.get.toInt,-1200,+1200))))
-
-    validator.test("website",List(("Website URL is not valid",x=>x.isEmpty || isUrl(x.get))))
-
-    validator.test("picture",List(("Picture URL is not valid",x=>x.isEmpty || isUrl(x.get))))
-
-    if (!validator.errors.isEmpty) halt(400,generate(validator.errors))
-
-    var website=params.get("website")
-    var description=params.get("description").map(_.trim()).filterNot(isBlankOrNull).map(sanitize)
-    val name = params("name")
-    val password = params("password")
-    val timezone = params("timezone").toInt
-    val email = params("email")
-    val pic = params.get("picture")
-    val user = Map("name"->name,"token"->Utils.uuid(),"password"->BCrypt.hashpw(password, BCrypt.gensalt()),"timezone"->timezone,"email"->email,"picture"->pic,"website"->website,"description"->description)
-    User.collection.insert(user)
-    Sessions.login(name,password)
-    forward()
+    (UniqueUsername(Username(params.get("name"))),Password(params.get("password")),TimeZone(params.get("timezone")),Email(params.get("email")),Description(params.get("description")),PictureUrl(params.get("picture")),WebUrl(params.get("website"))) match {
+      case (Some(name),Some(password),Some(timezone),Some(email),Some(description),Some(pic),Some(website))=>
+        val user = Map("name"->name,"token"->Utils.uuid(),"password"->BCrypt.hashpw(password, BCrypt.gensalt()),"timezone"->timezone,"email"->email,"picture"->pic,"website"->website,"description"->description)
+        User.collection.insert(user)
+        login(name,password)
+        forward()
+      case errors => haltMsg()
+    }
   }
   post("/logout"){
-    Sessions.logout
-    forward()
+    logout()
   }
 
   post("/login"){
-    withUserPassword(){(user,password,validator)=>
-      logger.info("User login request with username:"+user)
-      Sessions.login(user,password)
+    (Username(params.get("name")),Password(params.get("password"))) match {
+      case (Some(user),Some(password))=>
+        logger.info("User login request with username:"+user)
+        login(user,password)
+        forward()
+      case errors=>  haltMsg()
     }
   }
   post("/remove"){
-    withUserPassword(){(name,password,validator)=>
-      User.collection.findOne(Map("name"->name)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get))
-        .foreach{u=>
-        User.collection.remove(Map("name"->name))
-        Sessions.logout
-      }
+    (Username(params.get("name")),Password(params.get("password"))) match {
+      case (Some(user),Some(password))=>
+        User.collection.findOne(Map("name"->user)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).foreach{u=>
+          User.collection.remove(Map("name"->user))
+          logout()
+        }
+      case errors=> haltMsg()
     }
-    halt(200)
+
   }
 
   delete("/experiments"){
-    implicit val validator = new Validator(params)
-    val user_id = validSession
-    val experimentId=validRequiredAlphaNumericField("experiment_id")
-    halfIfError
-    Experiment.collection.remove(Map("user_id"->user_id.get,"experimentId"->experimentId.get))
-    val failed=Experiment.collection.findOne(Map("user_id"->user_id.get,"experimentId"->experimentId.get)).isDefined
-    if(failed) halt(400,"Delete failed")
-    halt(200,"Delete succeeded")
+    //TODO: Test cascading deletes
+    (UserSession(session),EntityId(params.get("id"))) match{
+      case (Some((userId,userName)),Some(expId))=>
+        Experiment.collection.remove(Map("user_id"->userId,"_id"->expId))
+        val failed=Experiment.collection.findOne(Map("user_id"->userId,"_id"->expId)).isDefined
+        if(failed)
+          haltMsg("Delete Failed")
+        else
+          halt(200,"Delete succeeded")
+      case errors=>haltMsg()
+    }
   }
-
-  //todo: test that experiment information with private flag is not available through session
+  //
+  //  //todo: test that experiment information with private flag is not available through session
   post("/experiments"){
     // Add a new experiments
-    implicit val validator = new Validator(params)
-    val name = validName
-    val description = validDescription
-    val website = validWebUrl
-    val picture = validPictureUrl
-    val user_id = validSession
-    val timezone = validTimeZone
-    val public = validBoolean("public_access")
-    if(user_id.isDefined && name.isDefined && Experiment.collection.findOne(Map("user_id"->user_id.get._1,"name"->name.get)).isDefined)
-      validator.addError("Experiment name is not available")
-    halfIfError
-    val newExperiment = Map("name"->name.get,
-      "user_id"->user_id.get._1,
-      "timezone"->timezone.get,
-      "access_restriction"-> (if(public) Experiment.ACCESS_PUBLIC else Experiment.ACCESS_PRIVATE),
-      "picture"->picture,
-      "website"->website,
-      "token"->Utils.uuid(),
-      "updated_at"->System.currentTimeMillis(),
-      "created_at"->System.currentTimeMillis(),
-      "description"->description)
+    (UserSession(session),Name(params.get("name")),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{
+      case (Some((user_id,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueExperiment(user_id,name)=>
+        Experiment.collection.insert(Map("name"->name,"user_id"->user_id,"timezone"->timezone,"access_restriction"-> public_access,
+          "picture"->picture,"website"->website, "token"->Utils.uuid(),
+          "updated_at"->System.currentTimeMillis(),
+          "created_at"->System.currentTimeMillis(),
+          "description"->description))
 
-    Experiment.collection.insert(newExperiment)
-    generate(Experiment.collection.findOne(Map("user_id"->user_id.get._1,"name"->name.get)).map(x=>x.put("_id",x.get("_id").toString)))
+        DBObjectToJSON(Experiment.collection.findOne(Map("user_id"->user_id,"name"->name)))
+      case error=>haltMsg()
+    }
   }
   put("/experiments"){
     // update/replace an experiment information
+    val validators:Map[String,()=>Option[String]] = Map("website"-> (()=>WebUrl(params.get("field"))),
+      "name"-> (()=> Name(params.get("field"))),
+      "timezone"-> (()=> TimeZone(params.get("field"))),
+      "description"-> (()=> Description(params.get("field"))),
+      "picture"-> (()=> PictureUrl(params.get("field"))),
+      "access_restriction"-> (()=> Privacy(params.get("field"))))
+
+    (UserSession(session),EntityId(params.get("eid")),params.get("field").filter(validators.keys.contains),params.get("value")) match {
+      case (Some((userId,userName)),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (field.equals("name") && UniqueExperiment(userId,value,eid)) =>
+        Experiment.collection.findAndModify(Map("user_id"->userId,"_id"->eid),$set(field->value))
+        DBObjectToJSON(Experiment.collection.findOne(Map("user_id"->userId,"_id"->eid)))
+      case errors => haltMsg()
+    }
   }
   get("/nodes"){
     // List the nodes
 
   }
   delete("/nodes"){
-    implicit val validator = new Validator(params)
-    val experimentId=validRequiredAlphaNumericField("experiment_id")
-    val nodeId=validRequiredAlphaNumericField("node_id")
-    halfIfError
+    (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid"))) match {
+      case (Some((userId,userName)),Some(id),Some(eid))=>
+      case errors => haltMsg()
+    }
   }
-
+  //
   put("/nodes"){
     // update/replace an nodes information
   }
@@ -270,11 +202,10 @@ class Controller extends ScalatraServlet with ScalateSupport with FileUploadSupp
 
   }
   delete("/streams"){
-    implicit val validator = new Validator(params)
-    val experimentId=validRequiredAlphaNumericField("experiment_id")
-    val nodeId=validRequiredAlphaNumericField("node_id")
-    val streamId=validRequiredAlphaNumericField("stream_id")
-    halfIfError
+    (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid")),EntityId(params.get("nid"))) match {
+      case (Some((userId,userName)),Some(sid),Some(eid),Some(nid))=>
+      case errors => haltMsg()
+    }
   }
 
   put("/streams"){
