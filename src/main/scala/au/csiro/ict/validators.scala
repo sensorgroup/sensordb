@@ -10,7 +10,7 @@ import java.util.Date
 import javax.servlet.http.HttpSession
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-
+import Cache._
 
 object Validators {
   val sanitize = Jsoup.clean(_:String, Whitelist.basic())
@@ -72,14 +72,14 @@ object Validators {
   }
 
   def UniqueUsername(v:Option[String])(implicit validator:Validator):Option[String]=v.flatMap{u=>
-    if (User.findByName(u).isDefined)
+    if (Users.count(Map("name"->u))==1)
       validator.addError("Username is not availale")
     else
       Some(u)
   }
 
   def UniqueEmail(v:Option[String])(implicit validator:Validator):Option[String]=v.flatMap{u=>
-    if (Cache.Users.findOne(MongoDBObject("email"->u)).isDefined)
+    if (Users.findOne(MongoDBObject("email"->u)).isDefined)
       validator.addError("Email is already used")
     else
       Some(u)
@@ -105,8 +105,8 @@ object Validators {
   def UserSession(session:HttpSession)(implicit validator:Validator):Option[(ObjectId,String)]={
     val sessionId=session.getAttribute(SESSION_ID)
     if(sessionId !=null) {
-      Cache.cache.expire(sessionId,Cache.CACHE_TIMEOUT)
-      Some(new ObjectId(Cache.cache.hget(sessionId,Cache.CACHE_UID).get)->Cache.cache.hget(sessionId,Cache.CACHE_USER_NAME).get)
+      cache.expire(sessionId,Cache.CACHE_TIMEOUT)
+      Some(new ObjectId(Cache.cache.hget(sessionId,Cache.CACHE_UID).get)->cache.hget(sessionId,Cache.CACHE_USER_NAME).get)
     } else {
       validator.addError("Invalid session")
       None
@@ -119,9 +119,13 @@ object Validators {
   }
 
   def ExperimentIdFromNodeId(nid:Option[ObjectId])(implicit validator:Validator):Option[ObjectId]=nid.flatMap(nid=>
-    Cache.Nodes.findOne(Map("_id"->nid),Map("eid"->1)).flatMap(_.getAs[ObjectId]("eid"))
+    Nodes.findOne(Map("_id"->nid),Map("eid"->1)).flatMap(_.getAs[ObjectId]("eid"))
+  )
+  def NodeIdFromStreamId(sid:Option[ObjectId])(implicit validator:Validator):Option[ObjectId]=sid.flatMap(sid=>
+    Streams.findOne(Map("_id"->sid),Map("nid"->1)).flatMap(_.getAs[ObjectId]("nid"))
   )
 
+  def MeasurementId(unitId:Option[ObjectId])(implicit validator:Validator):Option[ObjectId]=unitId.filter(unitId=> Measurements.count(Map("_id"->unitId)) == 1)
 
   def LatLonAlt(v:Option[String])(implicit validator:Validator):Option[String]=v.orElse(EMPTY_STR).map(_.trim).filter(x=> x.isEmpty || isDouble(x))
 

@@ -42,6 +42,12 @@ class ControllerTests extends ScalatraSuite with FunSuite{
     var exp3:Map[String,String]=Map()
     var user1:Map[String,Any]=Map()
     var user2:Map[String,Any]=Map()
+    var units:List[Map[String,String]]=List()
+
+    get("/measurements"){
+      units = parse[List[Map[String,String]]](body)
+      status must equal(200)
+    }
 
     session{
       post("/session"){
@@ -80,7 +86,6 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
       post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1","timezone"->"000")) {
         body should include ("token")
-        println(body)
         user1 = parse[Map[String,Any]](body)
         status must equal(200)
       }
@@ -110,7 +115,21 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         user1("user").asInstanceOf[LinkedHashMap[String,String]].get("token") must not equal(user2("user").asInstanceOf[LinkedHashMap[String,String]].get("token"))
         user1("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at") should be < (user2("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at"))
       }
+      post("/session"){
+        body should include ("ali2")
+      }
 
+      post("/experiments",Map("name"->"exp3","timezone"->"1000")){
+        //        successful creation of exp3 experiment for use2
+        exp3 = parse[Map[String,String]](body)
+        body should include ("token")
+        status should equal(200)
+      }
+
+      post("/logout"){
+        body should include ("{}")
+        status should equal (200)
+      }
       post("/login",Map("name"->"ali","password"->"secret1")) {
         status should equal (200)
         body should include ("token")
@@ -173,6 +192,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
 
       post("/session"){
+        body should not include ("exp3")
         body should include ("exp2")
         body should include ("exp 123")
         body should include ("desc-123")
@@ -198,12 +218,30 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         node2 = parse[Map[String,String]](body)
         status should equal(200)
       }
+      post("/streams",Map("name"->"stream1","nid"->node1("_id"),"mid"->units.head.apply("_id"))){
+        // successful creation of stream1 within exp1
+        body should include ("token")
+        stream1 = parse[Map[String,String]](body)
+        status should equal(200)
+      }
+      post("/streams",Map("name"->"stream1","nid"->node1("_id"),"mid"->units.head.apply("_id"))){
+        // failed name not available
+        body should include ("error")
+        status should equal(400)
+      }
+      post("/streams",Map("name"->"stream1","nid"->"dfkjgflkdjgdfljgd","mid"->units.head.apply("_id"))){
+        // failed bad nodeId not valid
+        body should include ("error")
+        status should equal(400)
+      }
+
       post("/session"){
         body should  include ("node1")
         body should  include ("node2")
+        body should  include ("stream1")
         body should not include ("node1 renamed")
-
       }
+
       put("/nodes",Map("field"->"name","value"->"node1 renamed","nid"->node1("_id"))){
         // successful renaming of node1 to node1 renamed experiment
         node1 = parse[Map[String,String]](body)
@@ -237,6 +275,11 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should not include (exp1("_id"))
         body should include (exp2("_id"))
         status should equal(200)
+      }
+      put("/nodes",Map("field"->"eid","value"->exp3("_id"),"nid"->node1("_id"))){
+        // invalid move; permission denied
+        body should include ("error")
+        status should equal(400)
       }
       put("/nodes",Map("field"->"eid","value"->"   ","nid"->node1("_id"))){
         // invalid move, should return 400

@@ -9,6 +9,14 @@ import scala.collection.JavaConversions._
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
 import au.csiro.ict.Validators.Validator
+import java.util.Properties
+
+object Configuration{
+  private val config = new Properties()
+  config.load(getClass.getResourceAsStream("/config.properties"))
+  val config_map = config.entrySet().map(x=>(x.getKey.toString.trim().toLowerCase,x.getValue.toString.trim())).toMap[String, String]
+  def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
+}
 
 object Cache {
 
@@ -21,7 +29,6 @@ object Cache {
   val queue = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)
   cache.select(CACHE_DB)
   queue.select(QUEUE_DB)
-
 
   val EXPERIMENT_ACCESS_PUBLIC=0
 
@@ -36,5 +43,7 @@ object Cache {
   val Users = MongoConnection()("sensordb")("users")
 
   val Streams = MongoConnection()("sensordb")("streams")
+
+  val Measurements = MongoConnection()("sensordb")("measurements")
 
 }

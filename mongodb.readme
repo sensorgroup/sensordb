@@ -17,6 +17,11 @@ db.nodes.ensureIndex({"experiment_id":1},{});
 db.streams.ensureIndex({"node_id":1},{});
 db.widgetinstances.ensureIndex({"analysis_id":1},{});
 
+db.measurements.insert({name:"Celsius", website:"http://en.wikipedia.org/wiki/Celsius",description:"Celsius, formerly known as centigrades, a scale and unit of measurement for temperature.",created_at:parseInt((new Date()).getTime()),updated_at:parseInt((new Date()).getTime())});
+db.measurements.insert({name:"Relativ Humidity", website:"http://en.wikipedia.org/wiki/Relative_humidity",description:"Relative humidity is a term used to describe the amount of water vapor in a mixture of air and water vapor. It is defined as the ratio of the partial pressure of water vapor in the air-water mixture to the saturated vapor pressure of a flat sheet of pure water at those conditions. The relative humidity of air depends not only on temperature but also on the pressure of the system of interest. Relative humidity is often used instead of absolute humidity in situations where the rate of water evaporation is important, as it takes into account the variation in saturated vapor pressure.",created_at:parseInt((new Date()).getTime()),updated_at:parseInt((new Date()).getTime())});
+db.measurements.insert({name:"Vapour Pressure Deficit (VPD)", website:"http://en.wikipedia.org/wiki/Vapour_Pressure_Deficit",description:"Vapour Pressure Deficit, or VPD, is the difference (deficit) between the amount of moisture in the air and how much moisture the air can hold when it is saturated. Once air becomes saturated water will condense out to form clouds, dew or films of water over leaves.",created_at:parseInt((new Date()).getTime()),updated_at:parseInt((new Date()).getTime())});
+db.measurements.insert({name:"Kilopascals (KPa)", website:"http://en.wikipedia.org/wiki/KPa",description:"The pascal is the SI derived unit of pressure, internal pressure, stress, Young's modulus and tensile strength, named after the French mathematician, physicist, inventor, writer, and philosopher Blaise Pascal. It is a measure of force per unit area, defined as one newton per square metre.",created_at:parseInt((new Date()).getTime()),updated_at:parseInt((new Date()).getTime())});
+
 /**
  * Example, to remove all the documents which have reference to an experiment number 7, execute:
  * cascade('experiment_id',7)
