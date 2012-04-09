@@ -1276,7 +1276,7 @@ table .span12 {
   height: 14px;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../img/glyphicons-halflings.png");
+  background-image: url("/i/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
   *margin-right: .3em;
@@ -1286,7 +1286,7 @@ table .span12 {
   *margin-left: 0;
 }
 .icon-white {
-  background-image: url("../img/glyphicons-halflings-white.png");
+  background-image: url("/i/glyphicons-halflings-white.png");
 }
 .icon-glass {
   background-position: 0      0;
@@ -3743,7 +3743,24 @@ div#first-page .vertical-band {
 }
 .page-header {
   padding-bottom: 0;
-  border-bottom: 1px dotted #666;
+  /* border-bottom: 1px dotted #666;*/
+
+}
+table.table.span12,
+.no-left-margin {
+  margin-left: 0px;
+}
+table.tablesorter thead tr {
+  cursor: pointer;
+}
+table.tablesorter thead tr .header {
+  background: url(/i/bg.gif) no-repeat center right;
+}
+table.tablesorter thead tr .headerSortDown {
+  background: url(/i/desc.gif) no-repeat center right;
+}
+table.tablesorter thead tr .headerSortUp {
+  background: url(/i/asc.gif) no-repeat center right;
 }
 .sensor-menu {
   padding-bottom: 5px;
@@ -3787,4 +3804,7 @@ div#first-page .vertical-band {
 }
 .flot {
   margin-bottom: 10px;
+}
+.data-page #properties {
+  margin-bottom: 0px;
 }

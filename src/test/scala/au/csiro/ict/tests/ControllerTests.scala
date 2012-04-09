@@ -3,12 +3,12 @@ package au.csiro.ict.tests
 import org.scalatest.FunSuite
 import org.scalatra.test.scalatest.ScalatraSuite
 import com.codahale.jerkson.Json._
-import au.csiro.ict.{Controller}
+import au.csiro.ict.{SensorDB}
 import java.util.LinkedHashMap
 import org.bson.types.ObjectId
 
 class ControllerTests extends ScalatraSuite with FunSuite{
-  addServlet(classOf[Controller], "/*")
+  addServlet(classOf[SensorDB], "/*")
   test("Validators") {
     import au.csiro.ict.Validators._
     implicit val validator=new Validator()

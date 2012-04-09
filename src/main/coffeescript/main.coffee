@@ -19,7 +19,7 @@
 				docType:'<!DOCTYPE html>',
 				docCSSFile:"", 
 				bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
- 
+
 		@guid= ->
 			S4 = -> (((1+Math.random())*0x10000)|0).toString(16).substring(1)
 			(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
@@ -34,7 +34,7 @@
 	class @DataRequest 
 		constructor: (@local_info,@user_id,@experiment,@node,@stream,@fields,@checkCache,@live,@from,@to) ->
 			@id = [@user_id,@experiment,@node,@stream,_.map(@fields,(v,k)->"#{k}->#{v}"),@checkCache,@live,@from,@to].join('$')
-	
+
 	class @GroupedDataRequest
 		# The call_back is called using @data requests_array which contains DataRequest objects along with _res attribtue containing responses.
 		# 
@@ -42,9 +42,9 @@
 			_.each(@data_requests,(r)->r._res=undefined)
 			@id = _.map(@data_requests,(req)->req.id).join("$$")
 			@live = _.any(@data_requests,(r)-> r.live)
-			
+
 		fire: -> @call_back(@data_requests)
-				
+
 	class @GroupedRequestManager
 		constructor: (@db) ->
 			@listeners = {}
@@ -67,14 +67,14 @@
 						if (not grouped_data_request.live)
 							delete @listeners[grouped_data_request.id] 
 							console.debug("Grouped Data Request #{grouped_data_request.id} is triggered and removed (not live).")
-		
+
 	class @Database
 		analysis: (username) ->
 		#  callback parameter is called with one parameter, a json object returned from server (not modified).
 		download: (data_request,callback) ->
 			# User pub, sub to download data.
 		catalog: (selectors) ->
-			
+
 	class @Widget extends Backbone.Events # use modules to define namespaces and extend across them
 		constructor: (@widget)->
 			@db = window.db
@@ -83,21 +83,21 @@
 			@process_config(@widget.conf)
 		dataFeeds: (conf)-> alert('not implemented')
 		process_config: (new_conf)-> 
-		
+
 		sample_config: -> alert('not implemented')
-		
+
 	class Experiment extends Backbone.Model
 		defaults: () -> 
 			user_id:123
-		
+
 		initialize: ()->
-		
+
 		validate:(attrs)->
-	
+
 	class Experiments extends Backbone.Collection
 		url: '/experiments'
 		model:Experiment
-	
+
 
 class WidgetStore
 	constructor: -> 
@@ -165,7 +165,7 @@ class SampleDatabase extends sensordb.Database
 					from_date: '10/10/2004'
 					to_date:  ''	
 		'analysis2':{}
-	
+
 	catalog : (selectors) ->
 		'ali':
 			'Yanco1':
@@ -258,16 +258,18 @@ window.db = new SampleDatabase()
 window.rm = new sensordb.GroupedRequestManager(window.db)
 
 class Router extends Backbone.Router
-
 	routes:
 		"": "home"
 		":user/analysis/:name" : "analysis"
 		"experiments/create" : "create_experiment"
 		"nodes/create" : "create_node"
 		"streams/create" : "create_stream"
-		
+		":user/data" : "data_page"
 		'*path':  'default_route'
 
+	data_page: (username) ->
+		$("#main").html(_.template($("#tpl-data-page").html(),{}))
+		$("#data-table").tablesorter()
 	analysis: (user,name) ->
 		widgets = db.analysis(user)[name]
 		_.each widgets,(value) ->
@@ -279,15 +281,15 @@ class Router extends Backbone.Router
 					alert("Failed! Loading widget #{value.handler}")
 
 		$("#main").html( _.template( $("#tpl-analysis").html(), {widgets} ) )
-		
+
 	home: ()-> $("#main").html(_.template($("#tpl-first-page").html(),{}))
-	
+
 	create_experiment: () ->
 		$("#main").html(_.template($("#tpl-experiment-create").html(),{}))
 		$("#main textarea").cleditor(sensordb.Utils.editor_config)		     
 		$(".container form").ajaxForm -> 
 			alert("Thank you for your comment!")
-	
+
 	create_node: () ->
 		$("#main").html(_.template($("#tpl-node-create").html(),{}))
 		$("#main textarea").cleditor(sensordb.Utils.editor_config)		     
@@ -298,12 +300,11 @@ class Router extends Backbone.Router
 		$("#main textarea").cleditor(sensordb.Utils.editor_config)		     
 		$(".container form").ajaxForm -> 
 			alert("Thank you for your comment!")
-	
-	
+
+
 	default_route: (path) -> $("#main").html(_.template($("#tpl-404").html(),{path}))
 
 $ () ->
 	routes = new Router()
 	Backbone.history.start({pushState:false, root: "/sample"})
 
-	

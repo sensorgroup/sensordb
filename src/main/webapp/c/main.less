@@ -27,6 +27,7 @@ body {
     margin-top:  20px;
   }
 }
+
 div#first-page  {
 
     img.bg {
@@ -72,7 +73,16 @@ div#first-page  {
 }
 .page-header{
  padding-bottom:0;
- border-bottom: 1px dotted #666;
+ /* border-bottom: 1px dotted #666;*/
+}
+table.table.span12, .no-left-margin{
+	margin-left:0px;
+}
+table.tablesorter thead tr {
+	.header{background: url(/i/bg.gif) no-repeat center right ;}
+	.headerSortDown {background: url(/i/desc.gif) no-repeat center right ;}
+	.headerSortUp {background: url(/i/asc.gif) no-repeat center right;}
+	cursor: pointer;
 }
 
 .sensor-menu{
@@ -104,4 +114,7 @@ div#first-page  {
 }
 .flot {
   margin-bottom:10px;
+}
+.data-page #properties {
+	margin-bottom:0px;
 }

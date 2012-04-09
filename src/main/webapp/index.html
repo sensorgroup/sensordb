@@ -15,6 +15,7 @@
 		<script src="j/underscore-1.3.1.dev.js" type="text/javascript"></script>
 		<script src="j/underscore.string.min.js" type="text/javascript"></script>
 		<script src="j/backbone-min.js" type="text/javascript"></script>
+		<script src="j/jquery.tablesorter.min.js" type="text/javascript"></script>
 		<script src="j/jquery.flot.min.js" type="text/javascript"></script>
 		<script src="j/jquery.form.js" type="text/javascript"></script>
 		<script src="j/jquery.flot.selection.min.js" type="text/javascript"></script>
@@ -309,6 +310,586 @@
 		</div>
 		<%= _.template($("#footer-tpl").html(),{}) %>
 		</script>
+        <script type="html/template" id="tpl-data-page">
+			<div class="container data-page">
+				<div class="description">
+					<div class="page-header">
+						<div class="btn-group pull-right">
+							<a class="btn"><i class="icon-download-alt"></i> Download</a>	
+							<button class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#"><i class="icon-barcode"></i> Show/Generate Token</a></li>
+								<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+								<li><a href="#"><i class="icon-trash"></i> Remove</a></li>
+							</ul>
+						</div><!-- /btn-group -->
+						<h2><a>Experiment1</a> &rarr; <a>Node 1</a> &rarr; <a>Stream 1</a> </h2>
+					</div>
+					<div class="row">
+						<div class="span9">
+							<p></p>
+						</div>
+						<div class="span3">
+							<table class="table table-bordered" id="properties">
+								<tbody>
+									<tr><td>Owner</td><td>Ali</td></tr>
+									<tr><td>Nodes</td><td>34</td></tr>
+									<tr><td>Streams</td><td>492</td></tr>
+									<tr><td>Streams</td><td>492</td></tr>
+									<tr><td>Streams</td><td>492</td></tr>
+									<tr><td>Elements</td><td>492</td></tr>
+									<tr><td>Updated</td><td>135 minutes ago</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<hr/>
+				</div>
+				<div>
+					<form class="form-horizontal">
+					<label class="pull-left span2 no-left-margin"><h3>Filters</h3></label>					
+						<div class="btn-toolbar" style="margin-top: 18px;">
+							<div class="btn-group">
+								<button class="btn dropdown-toggle " data-toggle="dropdown">All Experiments<span class="caret"></span></button>
+								<ul class="dropdown-menu">
+									<li><a href="#">All Experiments</a></li>
+									<li class="divider"></li>
+									<li><a href="#">Experiment 1</a></li>
+									<li><a href="#">Experiment 2</a></li>
+								</ul>
+							</div><!-- /btn-group -->
+							<div class="btn-group">
+								<button class="btn dropdown-toggle" data-toggle="dropdown">All Nodes<span class="caret"></span></button>
+								<ul class="dropdown-menu">
+									<li><a href="#">All Nodes</a></li>
+									<li class="divider"></li>
+									<li><a href="#">Node 1</a></li>
+									<li><a href="#">Node 2</a></li>
+								</ul>
+							</div><!-- /btn-group -->
+							<div class="btn-group">
+								<a class="btn dropdown-toggle" data-toggle="dropdown">All Streams<span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="#">All Streams</a></li>
+									<li class="divider"></li>
+									<li><a href="#">Temperature</a></li>
+									<li><a href="#">Humiditiy</a></li>			  
+								</ul>
+							</div><!-- /btn-group -->
+							<div class="btn-group pull-right" data-toggle="buttons-radio">
+								<button class="btn active">24h</button>
+								<button class="btn">7d</button>
+								<button class="btn">1m</button>
+								<button class="btn">1y</button>
+								<button class="btn">All</button>
+								 
+								
+							</div>
+							
+							
+						</div>
+					</form>
+				<table class="table table-bordered table-striped tablesorter" id="data-table">
+					<thead>
+						<tr>
+							<th>Experiment</th>
+							<th>Node</th>
+							<th>Stream</th>
+							<th>Count</th>
+							<th>Min</th>
+							<th>Max</th>
+							<th>StDev</th>
+							<th>Avg</th>
+							<th>Last Value</th>
+							<th>Last Timestamp</th>
+						</tr>
+					</thead>
+					<tbody>					
+					<tr>
+						<td><a>Yanco Experiment 2</a></td>
+						<td><a>Janz [Irrigated]</a></td>
+						<td><a>Temperature</a></td>
+						<td>24,541</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					<tr>
+						<td>Yanco Experiment 1</td>
+						<td>Janz [Irrigated]</td>
+						<td>Temperature</td>
+						<td>3,542</td>
+						<td>-10.231</td>
+						<td>43.654</td>
+						<td>3.432</td>
+						<td>17.342</td>
+						<td>19.342</td>
+						<td>25 minutes ago</td>
+					</tr>
+					</tbody>
+				</table>
+            </div>
+            <%= _.template($("#footer-tpl").html(),{}) %>
+        </script>
 		<script type="html/template" id="tpl-stream-create">
 		<div class="container">
 		<legend><h2>Create Stream</h2></legend>
@@ -465,15 +1046,13 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Data</a>
 							<ul class="dropdown-menu">
-								<li>
-									<a href="#">Yanco</a>
-								</li>
-								<li>
-									<a href="#">Western Australia</a>
-								</li>
-								<li>
-									<a href="#">Deployment Sample</a>
-								</li>
+								<li><a href="#experiments/create">New Experiment</a></li>
+								<li><a href="#nodes/create">New Node</a></li>
+								<li><a href="#streams/create">New Stream</a></li>
+								<li class="divider"></li>
+								<li><a href="#ali/data"><i class="icon-th"></i> Data Explorer</a></li>
+								<li><a href="#ali/data"><i class="icon-download-alt"></i> Data Download</a></li>
+								
 							</ul>
 						</li>
 						<li class="dropdown">
