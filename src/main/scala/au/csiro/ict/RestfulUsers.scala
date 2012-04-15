@@ -84,7 +84,7 @@ trait RestfulUsers {
     (Username(params.get("name")),Password(params.get("password"))) match {
       case (Some(user),Some(password))=>
         Users.findOne(Map("name"->user)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).foreach{u=>
-          delUser(user)
+          delUser(u._id.get)
           logout()
         }
       case errors=> haltMsg()

@@ -46,16 +46,18 @@ object Cache {
 
   val Measurements = MongoConnection()("sensordb")("measurements")
 
-  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String) {
-    Experiments.insert(Map("name" -> name, "uid" -> uid, "timezone" -> timezone, "access_restriction" -> public_access,
-      "picture" -> picture, "website" -> website, "token" -> Utils.uuid(),
+  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId] ={
+    val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "timezone" -> timezone, "access_restriction" -> public_access,
+      "picture" -> picture, "website" -> website, "token" -> tokenOption.getOrElse(Utils.uuid()),
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),
-      "description" -> description))
+      "description" -> description)
+    Experiments.insert(toInsert)
+    toInsert._id
   }
-  def addUser(name: String, password: String, timezone: String, email: String, pic: String, website: String, description: String) {
-    val user = Map("name" -> name,
-      "token" -> Utils.uuid(),
+  def addUser(name: String, password: String, timezone: String, email: String, pic: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId]= {
+    val user = MongoDBObject("name" -> name,
+      "token" ->tokenOption.getOrElse(Utils.uuid()),
       "password" -> BCrypt.hashpw(password, BCrypt.gensalt()),
       "timezone" -> timezone,
       "email" -> email,
@@ -65,37 +67,50 @@ object Cache {
       "created_at" -> System.currentTimeMillis(),
       "updated_at" -> System.currentTimeMillis())
     Users.insert(user)
+    user._id
   }
 
-  def addStream(name: String, uid: ObjectId, nid: ObjectId, mid: ObjectId, picture: String, website: String, description: String) {
-    Streams.insert(Map("name" -> name, "uid" -> uid, "nid" -> nid, "mid" -> mid,
-      "picture" -> picture, "website" -> website, "token" -> Utils.uuid(),
+  def addStream(name: String, uid: ObjectId, nid: ObjectId, mid: ObjectId, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId]= {
+    val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "nid" -> nid, "mid" -> mid,
+      "picture" -> picture, "website" -> website, "token" -> tokenOption.getOrElse(Utils.uuid()),
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),
-      "description" -> description))
+      "description" -> description)
+    Streams.insert(toInsert)
+    toInsert._id
   }
 
-  def addNode(name: String, uid: ObjectId, eid: ObjectId, lat: String, lon: String, alt: String, picture: String, website: String, description: String) {
-    Nodes.insert(Map("name" -> name, "uid" -> uid, "eid" -> eid, "lat" -> lat, "lon" -> lon, "alt" -> alt,
-      "picture" -> picture, "website" -> website, "token" -> Utils.uuid(),
+  def addNode(name: String, uid: ObjectId, eid: ObjectId, lat: String, lon: String, alt: String, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId] ={
+    val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "eid" -> eid, "lat" -> lat, "lon" -> lon, "alt" -> alt,
+      "picture" -> picture, "website" -> website, "token" -> tokenOption.getOrElse(Utils.uuid()),
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),
-      "description" -> description))
+      "description" -> description)
+    Nodes.insert(toInsert)
+    toInsert._id
   }
-  def delUser(user: String) {
-    Users.remove(Map("name" -> user))
-  }
-
-  def delExperiment(uid: ObjectId, expId: ObjectId) {
-    Experiments.remove(Map("uid" -> uid, "_id" -> expId))
-  }
-
-  def delStream(uid: ObjectId, sid: ObjectId) {
-    Streams.remove(Map("uid" -> uid, "_id" -> sid))
+  def delUser(uId: ObjectId) {
+    Streams.remove(MongoDBObject("uid"->uId))
+    Nodes.remove(MongoDBObject("uid"->uId))
+    Experiments.remove(MongoDBObject("uid"->uId))
+    Users.remove(MongoDBObject("_id" -> uId))
   }
 
-  def delNode(uid: ObjectId, nid: ObjectId) {
-    Nodes.remove(Map("uid" -> uid, "_id" -> nid))
+  def delExperiment(uId: ObjectId, expId: ObjectId) {
+    Nodes.find(MongoDBObject("uid"->uId,"eid"->expId),MongoDBObject("_id"->1)).foreach{nId=>
+      Streams.remove(MongoDBObject("uid"->uId,"nid"->nId))
+    }
+    Nodes.remove(MongoDBObject("uid"->uId,"eid"->expId))
+    Experiments.remove(MongoDBObject("uid" -> uId, "_id" -> expId))
+  }
+
+  def delNode(uId: ObjectId, nId: ObjectId) {
+    Streams.remove(MongoDBObject("uid"->uId,"nid"->nId))
+    Nodes.remove(Map("uid" -> uId, "_id" -> nId))
+  }
+
+  def delStream(uId: ObjectId, sid: ObjectId) {
+    Streams.remove(Map("uid" -> uId, "_id" -> sid))
   }
 
 }

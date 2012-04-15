@@ -116,7 +116,6 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         user1("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at") should be < (user2("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at"))
       }
       post("/session"){
-        println("body ...>"+body)
         body should include ("ali2")
       }
 
