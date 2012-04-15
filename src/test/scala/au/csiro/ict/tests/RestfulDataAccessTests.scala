@@ -4,7 +4,7 @@ import org.scalatra.test.scalatest.ScalatraSuite
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter, FunSuite}
 import au.csiro.ict.Cache._
 import org.bson.types.ObjectId
-import au.csiro.ict.SensorDB
+import au.csiro.ict.{InputProcessingSystemProxy, InputProcessingBackend, Task, SensorDB}
 
 class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndAfterAll{
 
@@ -64,6 +64,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   }
 
   override protected def afterAll() {
+    val ips = new InputProcessingSystemProxy
+    ips.process(new Task("my-queue1"))
     delUser(user1Id)
     delUser(user2Id)
   }

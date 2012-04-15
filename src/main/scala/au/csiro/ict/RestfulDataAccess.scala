@@ -6,8 +6,15 @@ import com.codahale.jerkson.Json._
 import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulDataAccess {
+
   self:ScalatraServlet with RestfulHelpers=>
+
+//  val ips = InputProcessingBackend.ips
+//  val ips = new InputProcessingSystemProxy
+
   post("/data"){
+    // to insert new time series data items
+    // [[token,ts,value],[token,ts,value]]
     params.get("data") match {
       case Some(s:String) if !s.trim.isEmpty =>
         try{
@@ -26,7 +33,8 @@ trait RestfulDataAccess {
             haltMsg("Bad request, invalid security tokens")
 
           allKeysMapped.foreach{item=>
-            Cache.queue.lpush(Utils.inputQueueIdFor(item._1),generate(item._2))
+            val qName=Utils.inputQueueIdFor(item._1)
+            Cache.queue.lpush(qName,generate(item._2))
           }
 
           generate(Map("length"->data.size))
