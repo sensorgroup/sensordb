@@ -5,11 +5,10 @@ import com.mongodb.casbah.Imports._
 import au.csiro.ict.Validators._
 import org.scalatra.ScalatraServlet
 import scala.collection.JavaConversions._
+import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulNodes {
   self:ScalatraServlet with RestfulHelpers=>
-
-  import SDBSerializer.generate
 
   get("/nodes"){
     // List the nodes

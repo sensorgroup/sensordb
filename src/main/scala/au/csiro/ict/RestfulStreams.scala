@@ -7,11 +7,10 @@ import org.scalatra.ScalatraServlet
 import au.csiro.ict.Cache._
 import com.mongodb.casbah.Imports._
 import scala.collection.JavaConversions._
+import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulStreams {
   self:ScalatraServlet with RestfulHelpers=>
-
-  import SDBSerializer.generate
 
   delete("/streams"){
     (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid")),EntityId(params.get("nid"))) match {
@@ -22,9 +21,9 @@ trait RestfulStreams {
 
   put("/streams"){
     // update/replace stream information
-    val validators:Map[String,()=>Option[_]] = Map(
-      "name"-> (()=> Name(params.get("value"))),
-      "mid"-> (()=> MeasurementId(EntityId(params.get("value")))),
+      val validators:Map[String,()=>Option[_]] = Map(
+        "name"-> (()=> Name(params.get("value"))),
+        "mid"-> (()=> MeasurementId(EntityId(params.get("value")))),
       "description"-> (()=> Description(params.get("value"))),
       "picture"-> (()=> PictureUrl(params.get("value"))),
       "website"-> (()=>WebUrl(params.get("value"))),

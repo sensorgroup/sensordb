@@ -6,11 +6,10 @@ import au.csiro.ict.Cache._
 import com.mongodb.casbah.Imports._
 import au.csiro.ict.Validators._
 import scala.collection.JavaConversions._
+import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulExperiments {
   self:ScalatraServlet with RestfulHelpers=>
-
-  import SDBSerializer.generate
 
   delete("/experiments"){
     //TODO: Test cascading deletes

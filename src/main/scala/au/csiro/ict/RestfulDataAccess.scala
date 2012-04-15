@@ -1,15 +1,14 @@
 package au.csiro.ict
 
-import au.csiro.ict.Cache.Measurements
 import org.scalatra.ScalatraServlet
 import com.mongodb.casbah.Imports._
 import au.csiro.ict.JsonGenerator.generate
 
-trait RestfulMeasurements {
+trait RestfulDataAccess {
   self:ScalatraServlet with RestfulHelpers=>
 
+  post("/data"){
 
-  get("/measurements"){
-    generate(Measurements.find())
   }
+
 }

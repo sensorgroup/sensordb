@@ -116,11 +116,12 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         user1("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at") should be < (user2("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at"))
       }
       post("/session"){
+        println("body ...>"+body)
         body should include ("ali2")
       }
 
       post("/experiments",Map("name"->"exp3","timezone"->"1000")){
-        //        successful creation of exp3 experiment for use2
+        //        successful creation of exp3 experiment for user2
         exp3 = parse[Map[String,String]](body)
         body should include ("token")
         status should equal(200)

@@ -9,11 +9,10 @@ import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
 import com.mongodb.casbah.Imports._
 import scala.collection.JavaConversions._
+import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulUsers {
   self:ScalatraServlet with RestfulHelpers=>
-
-  import SDBSerializer.generate
 
   val protectedFields = Map("token"->0,"password"->0,"email"->0)
 
