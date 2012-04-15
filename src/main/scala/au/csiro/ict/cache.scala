@@ -46,4 +46,56 @@ object Cache {
 
   val Measurements = MongoConnection()("sensordb")("measurements")
 
+  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String) {
+    Experiments.insert(Map("name" -> name, "uid" -> uid, "timezone" -> timezone, "access_restriction" -> public_access,
+      "picture" -> picture, "website" -> website, "token" -> Utils.uuid(),
+      "updated_at" -> System.currentTimeMillis(),
+      "created_at" -> System.currentTimeMillis(),
+      "description" -> description))
+  }
+  def addUser(name: String, password: String, timezone: String, email: String, pic: String, website: String, description: String) {
+    val user = Map("name" -> name,
+      "token" -> Utils.uuid(),
+      "password" -> BCrypt.hashpw(password, BCrypt.gensalt()),
+      "timezone" -> timezone,
+      "email" -> email,
+      "picture" -> pic,
+      "website" -> website,
+      "description" -> description,
+      "created_at" -> System.currentTimeMillis(),
+      "updated_at" -> System.currentTimeMillis())
+    Users.insert(user)
+  }
+
+  def addStream(name: String, uid: ObjectId, nid: ObjectId, mid: ObjectId, picture: String, website: String, description: String) {
+    Streams.insert(Map("name" -> name, "uid" -> uid, "nid" -> nid, "mid" -> mid,
+      "picture" -> picture, "website" -> website, "token" -> Utils.uuid(),
+      "updated_at" -> System.currentTimeMillis(),
+      "created_at" -> System.currentTimeMillis(),
+      "description" -> description))
+  }
+
+  def addNode(name: String, uid: ObjectId, eid: ObjectId, lat: String, lon: String, alt: String, picture: String, website: String, description: String) {
+    Nodes.insert(Map("name" -> name, "uid" -> uid, "eid" -> eid, "lat" -> lat, "lon" -> lon, "alt" -> alt,
+      "picture" -> picture, "website" -> website, "token" -> Utils.uuid(),
+      "updated_at" -> System.currentTimeMillis(),
+      "created_at" -> System.currentTimeMillis(),
+      "description" -> description))
+  }
+  def delUser(user: String) {
+    Users.remove(Map("name" -> user))
+  }
+
+  def delExperiment(uid: ObjectId, expId: ObjectId) {
+    Experiments.remove(Map("uid" -> uid, "_id" -> expId))
+  }
+
+  def delStream(uid: ObjectId, sid: ObjectId) {
+    Streams.remove(Map("uid" -> uid, "_id" -> sid))
+  }
+
+  def delNode(uid: ObjectId, nid: ObjectId) {
+    Nodes.remove(Map("uid" -> uid, "_id" -> nid))
+  }
+
 }

@@ -60,17 +60,7 @@ trait RestfulUsers {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
     (UniqueUsername(Username(params.get("name"))),Password(params.get("password")),TimeZone(params.get("timezone")),UniqueEmail(Email(params.get("email"))),Description(params.get("description")),PictureUrl(params.get("picture")),WebUrl(params.get("website"))) match {
       case (Some(name),Some(password),Some(timezone),Some(email),Some(description),Some(pic),Some(website))=>
-        val user = Map("name"->name,
-          "token"->Utils.uuid(),
-          "password"->BCrypt.hashpw(password, BCrypt.gensalt()),
-          "timezone"->timezone,
-          "email"->email,
-          "picture"->pic,
-          "website"->website,
-          "description"->description,
-          "created_at"->System.currentTimeMillis(),
-          "updated_at"->System.currentTimeMillis())
-        Users.insert(user)
+        addUser(name, password, timezone, email, pic, website, description)
         login(name,password)
         forward()
       case errors => haltMsg()
@@ -89,11 +79,12 @@ trait RestfulUsers {
       case errors=>  haltMsg()
     }
   }
+
   post("/remove"){
     (Username(params.get("name")),Password(params.get("password"))) match {
       case (Some(user),Some(password))=>
         Users.findOne(Map("name"->user)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).foreach{u=>
-          Users.remove(Map("name"->user))
+          delUser(user)
           logout()
         }
       case errors=> haltMsg()

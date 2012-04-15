@@ -14,10 +14,11 @@ trait RestfulNodes {
     // List the nodes
 
   }
+
   delete("/nodes"){
     (UserSession(session),EntityId(params.get("nid"))) match {
       case (Some((uid,userName)),Some(nid))=>
-        Nodes.remove(Map("uid"->uid,"_id"->nid))
+        delNode(uid, nid)
         if(Nodes.findOne(Map("uid"->uid,"_id"->nid)).isDefined)
           haltMsg("Delete Failed")
         else
@@ -48,15 +49,12 @@ trait RestfulNodes {
     }
   }
 
+
   post("/nodes"){
     // Create a new node
     (UserSession(session),Name(params.get("name")),EntityId(params.get("eid")),LatLonAlt(params.get("lat")),LatLonAlt(params.get("lon")),LatLonAlt(params.get("alt")),Description(params.get("description")),WebUrl(params.get("website")),PictureUrl(params.get("picture"))) match{
       case (Some((uid,user_name)),Some(name),Some(eid),Some(lat),Some(lon),Some(alt),Some(description),Some(website),Some(picture)) if UniqueName(Nodes,"name"->name,"eid"->eid)=>
-        Nodes.insert(Map("name"->name,"uid"->uid,"eid"->eid,"lat"->lat,"lon"->lon,"alt"->alt,
-          "picture"->picture,"website"->website, "token"->Utils.uuid(),
-          "updated_at"->System.currentTimeMillis(),
-          "created_at"->System.currentTimeMillis(),
-          "description"->description))
+        addNode(name, uid, eid, lat, lon, alt, picture, website, description)
         generate(Nodes.findOne(Map("uid"->uid,"name"->name,"eid"->eid)))
       case error=>haltMsg()
     }

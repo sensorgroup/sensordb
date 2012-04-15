@@ -15,7 +15,7 @@ trait RestfulExperiments {
     //TODO: Test cascading deletes
     (UserSession(session),EntityId(params.get("eid"))) match{
       case (Some((uid,userName)),Some(expId))=>
-        Experiments.remove(Map("uid"->uid,"_id"->expId))
+        delExperiment(uid, expId)
         val failed=Experiments.findOne(Map("uid"->uid,"_id"->expId)).isDefined
         if(failed)
           haltMsg("Delete Failed")
@@ -30,12 +30,7 @@ trait RestfulExperiments {
     // Add a new experiments
     (UserSession(session),Name(params.get("name")),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{
       case (Some((uid,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueName(Experiments,"name"->name,"uid"->uid)=>
-        Experiments.insert(Map("name"->name,"uid"->uid,"timezone"->timezone,"access_restriction"-> public_access,
-          "picture"->picture,"website"->website, "token"->Utils.uuid(),
-          "updated_at"->System.currentTimeMillis(),
-          "created_at"->System.currentTimeMillis(),
-          "description"->description))
-
+        addExperiment(name, uid, timezone, public_access, picture, website, description)
         generate(Experiments.findOne(Map("uid"->uid,"name"->name)))
       case error=>haltMsg()
     }
