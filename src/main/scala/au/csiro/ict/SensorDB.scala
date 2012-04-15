@@ -4,12 +4,13 @@ import org.scalatra._
 import org.scalatra.fileupload.FileUploadSupport
 
 class SensorDB extends ScalatraServlet  with FileUploadSupport with FlashMapSupport
-  with RestfulUsers
-  with RestfulExperiments
-  /* with ScalateSupport */
-  with RestfulNodes
-  with RestfulStreams
-  with RestfulMeasurements
+with RestfulDataAccess
+with RestfulUsers
+with RestfulExperiments
+/* with ScalateSupport */
+with RestfulNodes
+with RestfulStreams
+with RestfulMeasurements
   with RestfulHelpers {
 
   notFound {

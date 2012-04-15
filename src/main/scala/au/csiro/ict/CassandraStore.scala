@@ -111,6 +111,12 @@ object Utils {
   def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
   def generateRowKey(sensor:String, date:String) = sensor+"$"+date
+
+  val TOKEN_LEN = Utils.uuid().length
+  val KeyPattern = ("[a-zA-Z0-9\\-]{"+TOKEN_LEN+"}").r.pattern
+  def keyPatternMatcher(s:String) = KeyPattern.matcher(s).matches
+  def inputQueueIdFor(streamId:String)=  "q@"+streamId
+
 }
 
 class CassandraDataStore extends SensorDataStore{

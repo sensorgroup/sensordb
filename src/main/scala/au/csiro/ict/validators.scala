@@ -129,4 +129,9 @@ object Validators {
 
   def LatLonAlt(v:Option[String])(implicit validator:Validator):Option[String]=v.orElse(EMPTY_STR).map(_.trim).filter(x=> x.isEmpty || isDouble(x))
 
+  def Required(v:Option[String],errorMessage:String)(implicit validator:Validator):Option[String]=v.filterNot(isEmpty).orElse{
+    validator.addError(errorMessage)
+    None
+  }
+
 }
