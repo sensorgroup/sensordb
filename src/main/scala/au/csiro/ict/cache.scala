@@ -46,18 +46,17 @@ object Cache {
 
   val Measurements = MongoConnection()("sensordb")("measurements")
 
-  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId] ={
+  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String):Option[ObjectId] ={
     val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "timezone" -> timezone, "access_restriction" -> public_access,
-      "picture" -> picture, "website" -> website, "token" -> tokenOption.getOrElse(Utils.uuid()),
+      "picture" -> picture, "website" -> website,
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),
       "description" -> description)
     Experiments.insert(toInsert)
     toInsert._id
   }
-  def addUser(name: String, password: String, timezone: String, email: String, pic: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId]= {
+  def addUser(name: String, password: String, timezone: String, email: String, pic: String, website: String, description: String):Option[ObjectId]= {
     val user = MongoDBObject("name" -> name,
-      "token" ->tokenOption.getOrElse(Utils.uuid()),
       "password" -> BCrypt.hashpw(password, BCrypt.gensalt()),
       "timezone" -> timezone,
       "email" -> email,
@@ -80,9 +79,9 @@ object Cache {
     toInsert._id
   }
 
-  def addNode(name: String, uid: ObjectId, eid: ObjectId, lat: String, lon: String, alt: String, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId] ={
+  def addNode(name: String, uid: ObjectId, eid: ObjectId, lat: String, lon: String, alt: String, picture: String, website: String, description: String):Option[ObjectId] ={
     val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "eid" -> eid, "lat" -> lat, "lon" -> lon, "alt" -> alt,
-      "picture" -> picture, "website" -> website, "token" -> tokenOption.getOrElse(Utils.uuid()),
+      "picture" -> picture, "website" -> website,
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),
       "description" -> description)

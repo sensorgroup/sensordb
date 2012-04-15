@@ -1,9 +1,9 @@
 use sensordb;
 db.users.ensureIndex({"name":1},{unique:true,dropDups:true});
 
-db.users.ensureIndex({"token":1},{unique:true,dropDups:true});
-db.experiments.ensureIndex({"token":1},{unique:true,dropDups:true});
-db.nodes.ensureIndex({"token":1},{unique:true,dropDups:true});
+//db.users.ensureIndex({"token":1},{unique:true,dropDups:true});
+//db.experiments.ensureIndex({"token":1},{unique:true,dropDups:true});
+//db.nodes.ensureIndex({"token":1},{unique:true,dropDups:true});
 db.streams.ensureIndex({"token":1},{unique:true,dropDups:true});
 
 db.experiments.ensureIndex({"user_id":1},{});
