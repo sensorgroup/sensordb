@@ -20,9 +20,7 @@ class InputProcessingWorker extends Actor{
   }
 }
 
-class InputProcessingMaster extends Actor {
-
-  val remoteWorker = context.system.actorOf(Props[InputProcessingWorker], "InputProcessingWorker")
+class InputProcessingMaster(val remoteWorker:ActorRef) extends Actor {
 
   var workers = Set[String]()
 
@@ -43,12 +41,14 @@ class InputProcessingSystemProxy extends Bootable{
 
   val system = ActorSystem("InputProcessingWorkersProxy", ConfigFactory.load.getConfig("InputProcessingWorkersProxy"))
 
-  val worker = system.actorOf(Props[InputProcessingMaster])
+  val remoteWorker = system.actorOf(Props[InputProcessingWorker], "InputProcessingWorker")
+
+  val master = system.actorOf(Props(new InputProcessingMaster(remoteWorker)))
 
   def startup() {
   }
 
-  def process(msg:SDBMsg) = worker ! msg
+  def process(msg:SDBMsg) = master ! msg
 
   def shutdown() {
     system.shutdown()

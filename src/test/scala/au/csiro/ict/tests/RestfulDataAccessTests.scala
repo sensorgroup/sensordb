@@ -64,10 +64,12 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   }
 
   override protected def afterAll() {
-    val ips = new InputProcessingSystemProxy
+//    val ips = new InputProcessingSystemProxy
+    val ips = InputProcessingBackend.ips
     ips.process(new Task("my-queue1"))
     delUser(user1Id)
     delUser(user2Id)
+    ips.shutdown()
   }
 
 }
