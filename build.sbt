@@ -12,6 +12,8 @@ scalaVersion := "2.9.1"
 
 seq(webSettings :_*)
 
+port in container.Configuration := 9001
+
 libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.0.4",
   "org.scalatra" %% "scalatra-scalate" % "2.0.4",
