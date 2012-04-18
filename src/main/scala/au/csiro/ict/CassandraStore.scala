@@ -1,11 +1,11 @@
 package au.csiro.ict
 
-import java.io.{PrintStream}
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, Period, Days, DateTimeZone}
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import java.util.Date
+import java.io.{PrintWriter, PrintStream}
 
 /**
  * Generates keys per day per stream bases
@@ -16,10 +16,10 @@ import java.util.Date
  */
 class KeyListIterator(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[List[String]] {
   override def hasNext = !from.isAfter(to)
-  var from = Utils.format.parseDateTime(fromDay)
-  val to = Utils.format.parseDateTime(toDay)
+  var from = Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(fromDay)
+  val to = Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(toDay)
   override def next() = {
-    val to_return= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.format.print(from)).toString())
+    val to_return= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_STORAGE_FORMAT.print(from)).toString())
     from = from.plusDays(1)
     to_return
   }
@@ -65,7 +65,7 @@ class InMemWriter extends ChunkWriter{
   def getData = to_return
 }
 
-class JSONWriter(val output:PrintStream) extends ChunkWriter{
+class JSONWriter(val output:PrintWriter) extends ChunkWriter{
   def openWriter() =output.print("{")
   var started = false;
   def insertData(sensor:String, ts:String,value:String)= {
@@ -86,10 +86,10 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
   var tempYearDay:String = null
   def insert(sensor:String, newYearDay:String,secInDay:Int,value:String):Boolean={
     if (tempYearDay !=newYearDay) {
-      dayIdx= Utils.format.parseDateTime(newYearDay)
+      dayIdx= Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(newYearDay)
       tempYearDay=newYearDay
     }
-    val ts = Utils.inputTimeFormat.print(dayIdx.plusSeconds(secInDay))
+    val ts = Utils.isoDateTimeFormat.print(dayIdx.plusSeconds(secInDay))
     count+=1
     writer.insert(sensor,ts,value)
     true
@@ -105,8 +105,10 @@ trait SensorDataStore {
   def shutdown()
 }
 object Utils {
-  val format = DateTimeFormat.forPattern("yyyyD")
-  val inputTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
+  val TIMESTAMP_STORAGE_FORMAT = DateTimeFormat.forPattern("yyyyD")
+  val isoDateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
+  val UkDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
+  val TimeParser = DateTimeFormat.forPattern("HH:mm")
   val zoneUTC = DateTimeZone.UTC
   val SEPARATOR = '$'
   def uuid() = java.util.UUID.randomUUID().toString
@@ -157,7 +159,7 @@ class CassandraDataStore extends SensorDataStore{
       s._2.foreach {(v) =>
         val ts = v._1
         val value = v._2
-        val row_key = Utils.generateRowKey(sensorId,Utils.format.print(ts))
+        val row_key = Utils.generateRowKey(sensorId,Utils.TIMESTAMP_STORAGE_FORMAT.print(ts))
         mutator.addInsertion(row_key, nodeId, HFactory.createColumn(Utils.getSecondOfDay(ts), value,ls,ss))
         total +=1
         if (total % 250 ==0) mutator.execute()
@@ -221,8 +223,8 @@ object Sample{
     //    })
     //    val start=System.currentTimeMillis()
     //    var count = 0;
-    val cs = new CassandraDataStore()
-    cs.queryNode("node5",new KeyListIterator(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
+//    val cs = new CassandraDataStore()
+//    cs.queryNode("node5",new KeyListIterator(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
     //    println(count/((System.currentTimeMillis()-start)/1000.0))
     //    println("count"+count)
 

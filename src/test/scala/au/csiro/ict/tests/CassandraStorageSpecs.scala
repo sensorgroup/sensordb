@@ -10,11 +10,7 @@ class CassandraDataStoreTests extends Specification {
   "Cassandra should be able to store and retrive sensor data" should {
     val c = new CassandraDataStore()
     val n = "testnode"
-//    "Can iterate over rows matching a regex" in {
-//      c.addNodeData(n, Map("s1" -> Map("2011-01-02T00:01:15" -> "-100")))
-//      c.addNodeData(n, Map("s2" -> Map("2011-01-02T00:01:15" -> "-101")))
-//      c.addNodeData(n, Map("s1" -> Map("2011-02-02T00:01:15" -> "-102")))
-//    }
+
     "Can Query none existing nodes" in {
       c.dropNode(n)
       val writer = new InMemWriter()
@@ -25,7 +21,7 @@ class CassandraDataStoreTests extends Specification {
 
     "Query inserting one element" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:15").getMillis -> "-100")))
+      c.addNodeData(n, Map("s1" -> Map(Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:15").getMillis -> "-100")))
       c.listKeys(n).head must_== "s1$20112"
       c.listKeys(n).size must_== 1
       val writer = new InMemWriter()
@@ -58,8 +54,8 @@ class CassandraDataStoreTests extends Specification {
     }
     "Query inserting multiple element" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:15").getMillis -> "1",
-        Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:16").getMillis -> "2")))
+      c.addNodeData(n, Map("s1" -> Map(Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:15").getMillis -> "1",
+        Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:16").getMillis -> "2")))
       val writer = new InMemWriter()
       new KeyListIterator(List("s1"), "20111", "20112").length must_== 2
       c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
@@ -91,10 +87,10 @@ class CassandraDataStoreTests extends Specification {
 
     "Query inserting multiple element in Multiple sensors" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:15").getMillis -> "15",
-        Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:16").getMillis -> "16"),
-        "s2" -> Map(Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:17").getMillis -> "17",
-          Utils.inputTimeFormat.parseDateTime("2011-01-02T00:01:16").getMillis -> "16")))
+      c.addNodeData(n, Map("s1" -> Map(Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:15").getMillis -> "15",
+        Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:16").getMillis -> "16"),
+        "s2" -> Map(Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:17").getMillis -> "17",
+          Utils.isoDateTimeFormat.parseDateTime("2011-01-02T00:01:16").getMillis -> "16")))
 
       val writer = new InMemWriter()
       new KeyListIterator(List("s1"), "20111", "20112").length must_== 2

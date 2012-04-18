@@ -7,14 +7,13 @@ import akka.util.duration._
 import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 import com.codahale.jerkson.Json._
-import au.csiro.ict.Cache.queue
+import au.csiro.ict.Cache.{queue,store}
 
 trait SDBMsg
 case class Done(queueName:String) extends SDBMsg
 case class Task(queueName:String) extends SDBMsg
 
 class InputProcessingWorker extends Actor{
-  val store:SensorDataStore = new CassandraDataStore()
 
   def receive = {
     case Task(queueName)=>

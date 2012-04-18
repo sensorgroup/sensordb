@@ -117,6 +117,28 @@ object Validators {
     validator.addError("Invalid entity id")
     None
   }
+  // formats the date to yyyyD
+  def DateParam(v:Option[String])(implicit validator:Validator):Option[String]=v.flatMap(x=>
+    try {
+      Some(Utils.TIMESTAMP_STORAGE_FORMAT.print(Utils.UkDateFormat.parseDateTime(x)))
+    } catch {
+      case err =>None
+    }
+  ).orElse{
+    validator.addError("Invalid date parameter")
+    None
+  }
+  def TimeParam(v:Option[String])(implicit validator:Validator):Option[Long]=v.flatMap(x=>
+    try {
+      val ts = Utils.TimeParser.parseDateTime(x)
+      Some(ts.getSecondOfDay.asInstanceOf[Long])
+    } catch {
+      case err =>None
+    }
+  ).orElse{
+    validator.addError("Invalid date parameter")
+    None
+  }
 
   def ExperimentIdFromNodeId(nid:Option[ObjectId])(implicit validator:Validator):Option[ObjectId]=nid.flatMap(nid=>
     Nodes.findOne(Map("_id"->nid),Map("eid"->1)).flatMap(_.getAs[ObjectId]("eid"))

@@ -20,6 +20,8 @@ object Configuration{
 
 object Cache {
 
+  val store:SensorDataStore = new CassandraDataStore()
+
   val CACHE_UID="uid"
   val CACHE_USER_NAME="user"
   val CACHE_TIMEOUT=15*60 // in seconds
@@ -36,6 +38,8 @@ object Cache {
 
   val EXPERIMENT_ACCESS_FRIENDS=2
 
+  val ACCESS_RESTRICTION_FIELD = "access_restriction"
+
   val Experiments = MongoConnection()("sensordb")("experiments")
 
   val Nodes = MongoConnection()("sensordb")("nodes")
@@ -47,7 +51,7 @@ object Cache {
   val Measurements = MongoConnection()("sensordb")("measurements")
 
   def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String):Option[ObjectId] ={
-    val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "timezone" -> timezone, "access_restriction" -> public_access,
+    val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "timezone" -> timezone, ACCESS_RESTRICTION_FIELD -> public_access,
       "picture" -> picture, "website" -> website,
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),

@@ -19,6 +19,7 @@ trait RestfulNodes {
     (UserSession(session),EntityId(params.get("nid"))) match {
       case (Some((uid,userName)),Some(nid))=>
         delNode(uid, nid)
+        Cache.store.dropNode(nid.toString)
         if(Nodes.findOne(Map("uid"->uid,"_id"->nid)).isDefined)
           haltMsg("Delete Failed")
         else
