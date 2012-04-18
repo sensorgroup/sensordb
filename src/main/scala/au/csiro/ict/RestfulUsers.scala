@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulUsers {
-  self:ScalatraServlet with RestfulHelpers=>
+  self:ScalatraServlet with RestfulHelpers with Logger=>
 
   val protectedFields = Map("token"->0,"password"->0,"email"->0)
 

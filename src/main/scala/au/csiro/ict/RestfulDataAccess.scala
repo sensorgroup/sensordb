@@ -9,12 +9,12 @@ trait RestfulDataAccess {
 
   self:ScalatraServlet with RestfulHelpers=>
 
-//  val ips = InputProcessingBackend.ips
-//  val ips = new InputProcessingSystemProxy
+  val ips = InputProcessingBackend.ips
+//  val ips = new InputProcessingSystemProxy // activate this line for distributed message processing
 
   post("/data"){
     // to insert new time series data items
-    // [[token,ts,value],[token,ts,value]]
+    // looking for data parameter with a string value with the following format of [[token,ts,value],[token,ts,value]]
     params.get("data") match {
       case Some(s:String) if !s.trim.isEmpty =>
         try{
@@ -25,16 +25,20 @@ trait RestfulDataAccess {
           }
           if(!packed.keys.forall(Utils.keyPatternMatcher))
             haltMsg("Bad request, invalid tokens")
-          val allKeysMapped = Cache.Streams.find(MongoDBObject("token"->MongoDBObject("$in"->packed.keys.toArray)),MongoDBObject("_id"->1,"token"->1)).map(x=>x("token").toString->x("_id").toString).map{x=>
-            x._2 -> packed(x._1)
+
+          val allKeysMapped = Cache.Streams.find(MongoDBObject("token"->MongoDBObject("$in"->packed.keys.toArray)),MongoDBObject("_id"->1,"token"->1,"nid"->1)).map{x=>
+            val token = x("token").toString
+            val sid=x("_id").toString
+            val nid=x("nid").toString
+            Utils.inputQueueIdFor(nid,sid) -> packed(token)
           }.toMap
 
           if(allKeysMapped.size != packed.size)
-            haltMsg("Bad request, invalid security tokens")
+            haltMsg("Bad request, invalid security token(s)")
 
           allKeysMapped.foreach{item=>
-            val qName=Utils.inputQueueIdFor(item._1)
-            Cache.queue.lpush(qName,generate(item._2))
+            Cache.queue.lpush(item._1,generate(item._2))
+            ips.process(Task(item._1))
           }
 
           generate(Map("length"->data.size))

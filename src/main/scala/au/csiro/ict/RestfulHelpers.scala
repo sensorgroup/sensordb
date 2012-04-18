@@ -2,7 +2,6 @@ package au.csiro.ict
 
 import org.bson.types.ObjectId
 import au.csiro.ict.Validators.Validator
-import grizzled.slf4j.Logger
 import org.scalatra.ScalatraServlet
 import au.csiro.ict.JsonGenerator.generate
 
@@ -24,7 +23,6 @@ trait RestfulHelpers {
       halt(400,generate(Map("errors"->errors.errors)))
   }
 
-  val logger: Logger = Logger[this.type]
 
   def forward(path:String="/session")=servletContext.getRequestDispatcher(path).forward(request, response)
 

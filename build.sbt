@@ -38,6 +38,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-actor" % "2.0.1",
   "com.typesafe.akka" % "akka-remote" % "2.0.1",
   "com.typesafe.akka" % "akka-kernel" % "2.0.1",
+  "com.typesafe.akka" % "akka-testkit" % "2.0.1",
   "com.typesafe.akka" % "akka-redis-mailbox" % "2.0.1",
   "org.apache.commons" % "commons-lang3" % "3.1",
   "org.jsoup" % "jsoup" % "1.6.2",

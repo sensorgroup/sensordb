@@ -3,7 +3,9 @@ package au.csiro.ict
 import org.scalatra._
 import org.scalatra.fileupload.FileUploadSupport
 
-class SensorDB extends ScalatraServlet  with FileUploadSupport with FlashMapSupport
+class SensorDB extends ScalatraServlet
+with FileUploadSupport
+with FlashMapSupport
 with RestfulDataAccess
 with RestfulUsers
 with RestfulExperiments
@@ -11,7 +13,8 @@ with RestfulExperiments
 with RestfulNodes
 with RestfulStreams
 with RestfulMeasurements
-  with RestfulHelpers {
+with RestfulHelpers
+with Logger{
 
   notFound {
     //    findTemplate(requestPath) map {

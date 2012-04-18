@@ -5,6 +5,7 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, Period, Days, DateTimeZone}
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
+import java.util.Date
 
 /**
  * Generates keys per day per stream bases
@@ -97,7 +98,7 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
 }
 
 trait SensorDataStore {
-  def addNodeData(nodeId: String, data: Map[String, Map[String, String]])
+  def addNodeData(nodeId: String, data: Map[String, Map[Long, String]])
   def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T
   def dropNode(nodeId:String)
   def deleteRows(colFamName:String, keys:Iterable[String])
@@ -115,10 +116,14 @@ object Utils {
   val TOKEN_LEN = Utils.uuid().length
   val KeyPattern = ("[a-zA-Z0-9\\-]{"+TOKEN_LEN+"}").r.pattern
   def keyPatternMatcher(s:String) = KeyPattern.matcher(s).matches
-  def inputQueueIdFor(streamId:String)=  "q@"+streamId
+  def inputQueueIdFor(nId:String,streamId:String)=  "q@"+nId+"@"+streamId
+  def getSecondOfDay(ts:Long):Long=new DateTime(ts).getSecondOfDay
 
 }
 
+/**
+ * A node is presented by a column family.
+ */
 class CassandraDataStore extends SensorDataStore{
   /**Resource: https://github.com/rantav/hector/blob/master/core/src/test/java/me/prettyprint/cassandra/service/CassandraClusterTest.java#L102-156 */
 
@@ -141,21 +146,19 @@ class CassandraDataStore extends SensorDataStore{
 
   def addCf(c: Cluster, ksName: String, cfName: String) = c.addColumnFamily(HFactory.createColumnFamilyDefinition(ksName, cfName, ComparatorType.LONGTYPE))
 
-  def isColFamilyExists(cfName: String) = {
-    c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
-  }
+  def isColFamilyExists(cfName: String) = c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
 
-  override def addNodeData(nodeId: String, data: Map[String, Map[String, String]]) = {
+  override def addNodeData(nodeId: String, data: Map[String, Map[Long, String]]) = {
     if (!isColFamilyExists(nodeId)) addCf(c, ks.getKeyspaceName, nodeId)
     val mutator: Mutator[String] = HFactory.createMutator(ks, ss)
     var total = 0
     data.foreach { (s) =>
       val sensorId = s._1
       s._2.foreach {(v) =>
-        val ts = Utils.inputTimeFormat.parseDateTime(v._1)
+        val ts = v._1
         val value = v._2
         val row_key = Utils.generateRowKey(sensorId,Utils.format.print(ts))
-        mutator.addInsertion(row_key, nodeId, HFactory.createColumn(ts.getSecondOfDay.asInstanceOf[Long], value,ls,ss))
+        mutator.addInsertion(row_key, nodeId, HFactory.createColumn(Utils.getSecondOfDay(ts), value,ls,ss))
         total +=1
         if (total % 250 ==0) mutator.execute()
       }

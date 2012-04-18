@@ -4,7 +4,8 @@ import org.scalatra.test.scalatest.ScalatraSuite
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter, FunSuite}
 import au.csiro.ict.Cache._
 import org.bson.types.ObjectId
-import au.csiro.ict.{InputProcessingSystemProxy, InputProcessingBackend, Task, SensorDB}
+import au.csiro.ict._
+import akka.actor.{Actor, Props, ActorSystem}
 
 class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndAfterAll{
 
@@ -62,6 +63,19 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       status should equal(200)
     }
   }
+
+
+  test("Starting a sample actor"){
+    val system = ActorSystem()
+    val mockWorker = system.actorOf(Props[MockActor])
+    val master = system.actorOf(Props(new InputProcessingMaster(mockWorker)))
+    master ! "someQ"
+//    mockWorker. //todo investigate akka test package
+    system.shutdown()
+    1 should equal(1)
+
+  }
+
 
   override protected def afterAll() {
 //    val ips = new InputProcessingSystemProxy
