@@ -17,10 +17,10 @@ import scala._
  */
 class KeyListIterator(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[List[String]] {
   override def hasNext = !from.isAfter(to)
-  var from = Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(fromDay)
-  val to = Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(toDay)
+  var from = Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(fromDay)
+  val to = Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(toDay)
   override def next() = {
-    val to_return= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_STORAGE_FORMAT.print(from)).toString())
+    val to_return= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_YYYYD_FORMAT.print(from)).toString())
     from = from.plusDays(1)
     to_return
   }
@@ -89,7 +89,7 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
   var tempYearDay:String = null
   def insert(sensor:String, newYearDay:String,secInDay:Int,value:String):Boolean={
     if (tempYearDay !=newYearDay) {
-      dayIdx= Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(newYearDay)
+      dayIdx= Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(newYearDay)
       tempYearDay=newYearDay
     }
     val ts = (dayIdx.plusSeconds(secInDay).getMillis/1000).toString
@@ -108,7 +108,7 @@ trait SensorDataStore {
   def shutdown()
 }
 object Utils {
-  val TIMESTAMP_STORAGE_FORMAT = DateTimeFormat.forPattern("yyyyD")
+  val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD")
   val isoDateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
   val UkDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
   val TimeParser = DateTimeFormat.forPattern("HH:mm:ss")
@@ -116,7 +116,7 @@ object Utils {
   val SEPARATOR = '$'
   def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
-  def generateRowKey(sensor:String, ts:Int) = sensor+"$"+Utils.TIMESTAMP_STORAGE_FORMAT.print(ts*1000L)
+  def generateRowKey(sensor:String, tsInSeconds:Int) = sensor+"$"+Utils.TIMESTAMP_YYYYD_FORMAT.print(tsInSeconds*1000L)
 
   val TOKEN_LEN = Utils.uuid().length
   val KeyPattern = ("[a-zA-Z0-9\\-]{"+TOKEN_LEN+"}").r.pattern
@@ -173,6 +173,9 @@ class CassandraDataStore extends SensorDataStore{
     }
     mutator.execute()
   }
+
+
+
 
   override def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Int, Int)] = None,chunker:T):T={
     if (!isColFamilyExists(colFamName)) {

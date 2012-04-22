@@ -27,10 +27,17 @@ object Cache {
   val CACHE_TIMEOUT=15*60 // in seconds
   val CACHE_DB = 1
   val QUEUE_DB = 2
+  val STREAM_STAT = 3 // storing min/max/avg/count/sum/std per day per stream
+  val STREAM_STAT_TIME_IDX = 4 // storing presence index per stream per day, bit index of 86400 elements (mainly zeros)
+
   val cache = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
   val queue = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)
+  val stat = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
+  val stat_time_idx = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)
   cache.select(CACHE_DB)
   queue.select(QUEUE_DB)
+  stat.select(STREAM_STAT)
+  stat_time_idx.select(STREAM_STAT_TIME_IDX)
 
   val EXPERIMENT_ACCESS_PUBLIC="0"
 
