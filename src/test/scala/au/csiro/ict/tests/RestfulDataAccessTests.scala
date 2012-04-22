@@ -59,14 +59,14 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
   }
   test("Data insertion, good format, zero entry") {
-    post("/data",Map("data"->"[]")){
+    post("/data",Map("data"->"{}")){
       body should include("0")
       status should equal(200)
     }
   }
 
   test("Data insertion, good format, one entry") {
-    post("/data",Map("data"->("[[\""+token1+"\","+(date1)+","+100+"]]"))){
+    post("/data",Map("data"->("{\""+token1+"\":{\""+(date1)+"\":"+100+"}}"))){
       body should include("1")
       status should equal(200)
     }
@@ -74,7 +74,6 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   test("Check that stream 1 is not empty") {
     Thread.sleep(100)
     get("/data",Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
-      println(body)
       body should include(stream1Id.toString)
       body should include("100")
       body should include((date1)+",")
@@ -82,12 +81,45 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
   }
 
-  test("Data insertion, good format, two entries with same timestamp entry") {
-    post("/data",Map("data"->("[[\""+token1+"\","+10+","+100+"],[\""+token1+"\","+10+","+100+"]]"))){
+  test("Data insertion, good format, two entries with different timestamps, one updating") {
+    post("/data",Map("data"->("{\""+token1+"\":{\""+date1+"\":"+102+",\""+date2+"\":"+101+"}}"))){
       body should include("2")
       status should equal(200)
     }
   }
+  test("Check that stream 1 should receive an update and and insert") {
+    Thread.sleep(100)
+    get("/data",Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
+      body should include(stream1Id.toString)
+      body should not include("100")
+      body should include("101")
+      body should include("102")
+      body should include((date1)+",")
+      body should include((date2)+",")
+      status should equal(200)
+    }
+  }
+
+  test("Data insertion, good format, two entries with different timestamps, one removing") {
+    post("/data",Map("data"->("{\""+token1+"\":{\""+date1+"\":"+103+",\""+date2+"\":null}}"))){
+      body should include("2")
+      status should equal(200)
+    }
+  }
+  test("Check that stream 1 should receive a remove and a update") {
+    Thread.sleep(100)
+    get("/data",Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
+      body should include(stream1Id.toString)
+      body should not include("100")
+      body should not include("101")
+      body should not include("102")
+      body should include("103")
+      body should include((date1)+",")
+      body should not include(date2.toString)
+      status should equal(200)
+    }
+  }
+
 
 
   test("Starting a sample actor"){

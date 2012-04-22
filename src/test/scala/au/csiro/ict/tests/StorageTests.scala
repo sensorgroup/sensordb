@@ -21,7 +21,7 @@ class CassandraDataStoreTests extends Specification {
 
     "Query inserting one element" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15")-> "-100")))
+      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15")-> Some("-100"))))
       c.listKeys(n).head must_== "s1$20112"
       c.listKeys(n).size must_== 1
       val writer = new InMemWriter()
@@ -54,8 +54,8 @@ class CassandraDataStoreTests extends Specification {
     }
     "Query inserting multiple element" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15") -> "1",
-        Utils.isoToInt("2011-01-02T00:01:16") -> "2")))
+      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15") -> Some("1"),
+        Utils.isoToInt("2011-01-02T00:01:16") -> Some("2"))))
       val writer = new InMemWriter()
       new KeyListIterator(List("s1"), "20111", "20112").length must_== 2
       c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
@@ -87,10 +87,10 @@ class CassandraDataStoreTests extends Specification {
 
     "Query inserting multiple element in Multiple sensors" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15") -> "15",
-        Utils.isoToInt("2011-01-02T00:01:16") -> "16"),
-        "s2" -> Map(Utils.isoToInt("2011-01-02T00:01:17") -> "17",
-          Utils.isoToInt("2011-01-02T00:01:16") -> "16")))
+      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15") -> Some("15"),
+        Utils.isoToInt("2011-01-02T00:01:16") -> Some("16")),
+        "s2" -> Map(Utils.isoToInt("2011-01-02T00:01:17") -> Some("17"),
+          Utils.isoToInt("2011-01-02T00:01:16") -> Some("16"))))
 
       val writer = new InMemWriter()
       new KeyListIterator(List("s1"), "20111", "20112").length must_== 2

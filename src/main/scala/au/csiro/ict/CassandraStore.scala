@@ -70,12 +70,14 @@ class JSONWriter(val output:PrintWriter) extends ChunkWriter{
   def openWriter() =output.print("{")
   var started = false;
   def insertData(sensor:String, ts:String,value:String)= {
-    if (started){
-      output.print(",")
-      started=true
+    if (!value.equalsIgnoreCase("null")){
+      if (started){
+        output.print(",")
+        started=true
+      }
+      val to_write = "["+sensor+","+ts+","+value+"]";
+      output.print(to_write)
     }
-    val to_write = "["+sensor+","+ts+","+value+"]";
-    output.print(to_write)
   }
   def closeWriter() = output.print("}")
 }
@@ -99,7 +101,7 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
 }
 
 trait SensorDataStore {
-  def addNodeData(nodeId: String, data: Map[String, Map[Int, String]])
+  def addNodeData(nodeId: String, data: Map[String, Map[Int, Option[String]]])
   def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Int, Int)] = None,chunker:T):T
   def dropNode(nodeId:String)
   def deleteRows(colFamName:String, keys:Iterable[String])
@@ -154,7 +156,7 @@ class CassandraDataStore extends SensorDataStore{
   def isColFamilyExists(cfName: String) = c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
 
 
-  override def addNodeData(nodeId: String, data: Map[String, Map[Int, String]]) = {
+  override def addNodeData(nodeId: String, data: Map[String, Map[Int, Option[String]]]) = {
     if (!isColFamilyExists(nodeId)) addCf(c, ks.getKeyspaceName, nodeId)
     val mutator: Mutator[String] = HFactory.createMutator(ks, ss)
     var total = 0
@@ -164,7 +166,7 @@ class CassandraDataStore extends SensorDataStore{
         val ts = v._1
         val value = v._2
         val row_key = Utils.generateRowKey(sensorId,ts)
-        mutator.addInsertion(row_key, nodeId, HFactory.createColumn(Utils.getSecondOfDay(ts), value,is,ss))
+        mutator.addInsertion(row_key, nodeId, HFactory.createColumn(Utils.getSecondOfDay(ts), value.getOrElse("null"),is,ss))
         total +=1
         if (total % 250 ==0) mutator.execute()
       }
@@ -231,8 +233,8 @@ object Sample{
     //    })
     //    val start=System.currentTimeMillis()
     //    var count = 0;
-//    val cs = new CassandraDataStore()
-//    cs.queryNode("node5",new KeyListIterator(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
+    //    val cs = new CassandraDataStore()
+    //    cs.queryNode("node5",new KeyListIterator(List("light","humidity"),"201230", "201290"),None,new DefaultChunkFormatter(new JSONWriter(System.out)))
     //    println(count/((System.currentTimeMillis()-start)/1000.0))
     //    println("count"+count)
 

@@ -17,16 +17,13 @@ trait RestfulDataAccess {
   post("/data"){
     /* Inserting time series data into a group of streams by sending POST requests.
     * Required parameters:
-    * data: a string value with in the following format of [[token,ts,value],[token,ts,value]]
+    * data: a string value with in the following format of {token:{ts,value},token:{ts,value}} where,
+    * token is a security token, ts is timestamp in form of seconds from epoch (int) and value is double number or null
     */
     params.get("data") match {
       case Some(s:String) if !s.trim.isEmpty =>
         try{
-          val data = parse[List[List[String]]](s)
-          val packed:Map[String,Map[Int,Double]]=data.foldLeft(Map[String,Map[Int,Double]]()){(sum,item)=>
-            val key =item(0)
-            sum + (key->(sum.get(key).getOrElse(Map[Int,Double]()) + (item(1).toInt->item(2).toDouble)))
-          }
+          val packed = parse[Map[String,Map[Int,Option[Double]]]](s)
           if(!packed.keys.forall(Utils.keyPatternMatcher))
             haltMsg("Bad request, invalid tokens")
 
@@ -45,7 +42,7 @@ trait RestfulDataAccess {
             ips.process(Task(item._1))
           }
 
-          generate(Map("length"->data.size))
+          generate(Map("length"->packed.values.map(_.size).sum))
         } catch {
           case e:java.lang.Exception =>
             haltMsg("Bad input, can't parse the data parameter, please verify the body of your request")

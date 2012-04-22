@@ -19,9 +19,10 @@ class InputProcessingWorker extends Actor{
     case Task(queueName)=>
       println("I am a worker and now I am processing:"+queueName)
       val Array(_,nid,sid)=queueName.split("@")
-      while(queue.llen().isDefined){
-        store.addNodeData(nid,Map(sid->parse[Map[Int,String]](queue.lrange(queueName,0,0).head.head.get)))
-        Cache.queue.lpop()
+      while(queue.llen(queueName).getOrElse(0)>0){
+        val to_write=queue.lrange(queueName,0,0).head.head.get
+        store.addNodeData(nid,Map(sid->parse[Map[Int,Option[String]]](to_write)))
+        Cache.queue.lpop(queueName)
       }
       sender ! Done(queueName)
 
