@@ -39,7 +39,7 @@ object Validators {
 
   def TimeZone(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x=>timezones.indexOf(x)>=0).orElse(validator.addError( "Timezone is not valid"))
 
-  def Privacy(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).orElse(Some("0"))
+  def Privacy(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
 
   def Description(value:Option[String]):Option[String]=value.map(x=>sanitize(x.trim())).orElse(EMPTY_STR)
 
@@ -128,10 +128,10 @@ object Validators {
     validator.addError("Invalid date parameter")
     None
   }
-  def TimeParam(v:Option[String])(implicit validator:Validator):Option[Long]=v.flatMap(x=>
+  def TimeParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
     try {
       val ts = Utils.TimeParser.parseDateTime(x)
-      Some(ts.getSecondOfDay.asInstanceOf[Long])
+      Some(ts.getSecondOfDay)
     } catch {
       case err =>None
     }

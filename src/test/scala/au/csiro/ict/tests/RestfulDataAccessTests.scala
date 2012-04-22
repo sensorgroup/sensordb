@@ -6,6 +6,8 @@ import au.csiro.ict.Cache._
 import org.bson.types.ObjectId
 import au.csiro.ict._
 import akka.actor.{Actor, Props, ActorSystem}
+import org.scalatra.test.ScalatraTests._
+import scala.None
 
 class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndAfterAll{
 
@@ -18,12 +20,24 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
 
   val user1Id = addUser("u1","pass1","000","u1@example.com","","","").get
   val user2Id = addUser("u2","pass2","000","u1@example.com","","","").get
-  val exp1Id = addExperiment("exp1",user1Id,"000","","","","").get
-  val exp2Id = addExperiment("exp2",user2Id,"000","","","","").get
+  val exp1Id = addExperiment("exp1",user1Id,"000",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
+  val exp2Id = addExperiment("exp2",user2Id,"000",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
   val node1Id =addNode("node1",user1Id,exp1Id,"-1","-1","-1","","","").get
   val node2Id = addNode("node2",user2Id,exp2Id,"-1","-1","-1","","","").get
   val stream1Id = addStream("stream1",user1Id,node1Id,measurementId,"","","",Some(token1)).get
   val stream2Id = addStream("stream2",user2Id,node2Id,measurementId,"","","",Some(token2)).get
+  val date1 = Utils.isoDateTimeFormat.parseDateTime("2010-01-30T07:15:20").getMillis/1000
+  val date2 = Utils.isoDateTimeFormat.parseDateTime("2010-01-30T07:15:21").getMillis/1000
+  val date3 = Utils.isoDateTimeFormat.parseDateTime("2010-01-30T07:15:22").getMillis/1000
+  val date4 = Utils.isoDateTimeFormat.parseDateTime("2010-01-30T20:15:00").getMillis/1000
+
+  test("Check the stream2  to be empty") {
+    get("/data",Map("sid"->stream2Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
+      println(body)
+      body should include("{}")
+      status should equal(200)
+    }
+  }
 
   test("Data insertion, missing data parameter") {
     post("/data"){
@@ -31,6 +45,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       status should equal(400)
     }
   }
+
   test("Data insertion, bad json format") {
     post("/data",Map("data"->"[xx]")){
       body should include("parse")
@@ -51,8 +66,18 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   }
 
   test("Data insertion, good format, one entry") {
-    post("/data",Map("data"->("[[\""+token1+"\","+10+","+100+"]]"))){
+    post("/data",Map("data"->("[[\""+token1+"\","+(date1)+","+100+"]]"))){
       body should include("1")
+      status should equal(200)
+    }
+  }
+  test("Check that stream 1 is not empty") {
+    Thread.sleep(100)
+    get("/data",Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
+      println(body)
+      body should include(stream1Id.toString)
+      body should include("100")
+      body should include((date1)+",")
       status should equal(200)
     }
   }
@@ -70,20 +95,27 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     val mockWorker = system.actorOf(Props[MockActor])
     val master = system.actorOf(Props(new InputProcessingMaster(mockWorker)))
     master ! "someQ"
-//    mockWorker. //todo investigate akka test package
+    //    mockWorker. //todo investigate akka test package
     system.shutdown()
     1 should equal(1)
 
   }
 
 
-  override protected def afterAll() {
-//    val ips = new InputProcessingSystemProxy
-    val ips = InputProcessingBackend.ips
-    ips.process(new Task("my-queue1"))
+  test("Dummy, cleaning ..."){
     delUser(user1Id)
     delUser(user2Id)
-    ips.shutdown()
+    1 should equal(1)
+  }
+
+
+  override protected def afterAll() {
+    // todo: Don't know why this is not executed at the end rather close to begining
+//    println("after all called ...............")
+    //    val ips = new InputProcessingSystemProxy
+    //    val ips = InputProcessingBackend.ips
+    //    ips.process(new Task("my-queue1"))
+    //    ips.shutdown()
   }
 
 }

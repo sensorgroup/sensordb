@@ -10,6 +10,8 @@ To compile CSS use *lessc main.less >main.css*
 
 If you would like to use Cassandra for storing sensor data, start it with (v1.0.8+):  *sudo ./cassandra*
 
+Note that before using sensordb, you need to create sensordb namespace within cassandra.
+
 GUI to investigate contents of cassandra, use [Cassandra-Cluster-Admin(PHP)](https://github.com/sebgiroux/Cassandra-Cluster-Admin.git)
 
 Redis (v2.4.8+) compiled in 32bit mode *redis-server /path/to/sensordb/conf/redis.conf*

@@ -6,6 +6,7 @@ import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import java.util.Date
 import java.io.{PrintWriter, PrintStream}
+import scala._
 
 /**
  * Generates keys per day per stream bases
@@ -89,7 +90,7 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
       dayIdx= Utils.TIMESTAMP_STORAGE_FORMAT.parseDateTime(newYearDay)
       tempYearDay=newYearDay
     }
-    val ts = Utils.isoDateTimeFormat.print(dayIdx.plusSeconds(secInDay))
+    val ts = (dayIdx.plusSeconds(secInDay).getMillis/1000).toString
     count+=1
     writer.insert(sensor,ts,value)
     true
@@ -98,8 +99,8 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
 }
 
 trait SensorDataStore {
-  def addNodeData(nodeId: String, data: Map[String, Map[Long, String]])
-  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T
+  def addNodeData(nodeId: String, data: Map[String, Map[Int, String]])
+  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Int, Int)] = None,chunker:T):T
   def dropNode(nodeId:String)
   def deleteRows(colFamName:String, keys:Iterable[String])
   def shutdown()
@@ -108,18 +109,20 @@ object Utils {
   val TIMESTAMP_STORAGE_FORMAT = DateTimeFormat.forPattern("yyyyD")
   val isoDateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
   val UkDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
-  val TimeParser = DateTimeFormat.forPattern("HH:mm")
+  val TimeParser = DateTimeFormat.forPattern("HH:mm:ss")
   val zoneUTC = DateTimeZone.UTC
   val SEPARATOR = '$'
   def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
-  def generateRowKey(sensor:String, date:String) = sensor+"$"+date
+  def generateRowKey(sensor:String, ts:Int) = sensor+"$"+Utils.TIMESTAMP_STORAGE_FORMAT.print(ts*1000L)
 
   val TOKEN_LEN = Utils.uuid().length
   val KeyPattern = ("[a-zA-Z0-9\\-]{"+TOKEN_LEN+"}").r.pattern
   def keyPatternMatcher(s:String) = KeyPattern.matcher(s).matches
   def inputQueueIdFor(nId:String,streamId:String)=  "q@"+nId+"@"+streamId
-  def getSecondOfDay(ts:Long):Long=new DateTime(ts).getSecondOfDay
+  def getSecondOfDay(ts:Long):Int=new DateTime(ts*1000).getSecondOfDay
+  def isoToInt(s:String):Int=(isoDateTimeFormat.parseDateTime(s).getMillis/1000).asInstanceOf[Int]
+
 
 }
 
@@ -141,16 +144,17 @@ class CassandraDataStore extends SensorDataStore{
   val c = getClusterFor(Configuration("cassandra.cluster").get, Configuration("cassandra.host").get+":"+Configuration("cassandra.port").get)
   val ks = HFactory.createKeyspace(keyspace_name, c)
   val ss = StringSerializer.get()
-  val ls = LongSerializer.get().asInstanceOf[Serializer[Any]]
+  val is = IntegerSerializer.get().asInstanceOf[Serializer[Any]]
   val ds = DoubleSerializer.get()
 
   def getClusterFor(clusterName: String, address: String) = HFactory.getOrCreateCluster(clusterName, address)
 
-  def addCf(c: Cluster, ksName: String, cfName: String) = c.addColumnFamily(HFactory.createColumnFamilyDefinition(ksName, cfName, ComparatorType.LONGTYPE))
+  def addCf(c: Cluster, ksName: String, cfName: String) = c.addColumnFamily(HFactory.createColumnFamilyDefinition(ksName, cfName, ComparatorType.INTEGERTYPE))
 
   def isColFamilyExists(cfName: String) = c.describeKeyspace(keyspace_name).getCfDefs().exists((cf) => cf.getName == cfName)
 
-  override def addNodeData(nodeId: String, data: Map[String, Map[Long, String]]) = {
+
+  override def addNodeData(nodeId: String, data: Map[String, Map[Int, String]]) = {
     if (!isColFamilyExists(nodeId)) addCf(c, ks.getKeyspaceName, nodeId)
     val mutator: Mutator[String] = HFactory.createMutator(ks, ss)
     var total = 0
@@ -159,8 +163,8 @@ class CassandraDataStore extends SensorDataStore{
       s._2.foreach {(v) =>
         val ts = v._1
         val value = v._2
-        val row_key = Utils.generateRowKey(sensorId,Utils.TIMESTAMP_STORAGE_FORMAT.print(ts))
-        mutator.addInsertion(row_key, nodeId, HFactory.createColumn(Utils.getSecondOfDay(ts), value,ls,ss))
+        val row_key = Utils.generateRowKey(sensorId,ts)
+        mutator.addInsertion(row_key, nodeId, HFactory.createColumn(Utils.getSecondOfDay(ts), value,is,ss))
         total +=1
         if (total % 250 ==0) mutator.execute()
       }
@@ -168,25 +172,22 @@ class CassandraDataStore extends SensorDataStore{
     mutator.execute()
   }
 
-  override def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Long, Long)] = None,chunker:T):T={
+  override def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Int, Int)] = None,chunker:T):T={
     if (!isColFamilyExists(colFamName)) {
       chunker.done()
       return chunker
     }
-    val colStart = colRange.getOrElse(Pair(0L,86400L))._1.asInstanceOf[AnyVal]
-    val colEnd = colRange.getOrElse(Pair(0L,86400L))._2.asInstanceOf[AnyVal]
-    if (keys.isEmpty){
-       // TODO: iterate through all the keys and add the respective columns to the result
-    }
+    val colStart = colRange.getOrElse(Pair(0,86400))._1.asInstanceOf[AnyVal]
+    val colEnd = colRange.getOrElse(Pair(0,86400))._2.asInstanceOf[AnyVal]
     while(keys.hasNext){
       val keys_iterator = keys.next().iterator
       while(keys_iterator.hasNext){
         val key=keys_iterator.next()
         val measurment_dayIdx=key.split(Utils.SEPARATOR)
-        val cols = new ColumnSliceIterator[String, Any, String](HFactory.createSliceQuery(ks, ss, ls, ss).setKey(key).setColumnFamily(colFamName), colStart, colEnd, false)
+        val cols = new ColumnSliceIterator[String, Any, String](HFactory.createSliceQuery(ks, ss, is, ss).setKey(key).setColumnFamily(colFamName), colStart, colEnd, false)
         while(cols.hasNext){
           val column=cols.next()
-          val secInDay=column.getName.asInstanceOf[Long].asInstanceOf[Int]
+          val secInDay=column.getName.asInstanceOf[Int]
           val value = column.getValue
           chunker.insert(measurment_dayIdx(0),measurment_dayIdx(1),secInDay,value)
         }
@@ -195,7 +196,14 @@ class CassandraDataStore extends SensorDataStore{
     chunker.done()
     chunker
   }
-  override def dropNode(colFamName:String)= if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
+
+  /**
+   * A node is presented as a column family.
+   * @param colFamName, name of a node
+   */
+  override def dropNode(colFamName:String)= {
+    if (isColFamilyExists(colFamName)) c.dropColumnFamily(keyspace_name, colFamName,true)
+  }
 
   def listKeys(cf:String,select:(String)=>Boolean = (_=>true)):Iterable[String]= new KeyIterator[String](ks,cf,ss).filter(select)
 

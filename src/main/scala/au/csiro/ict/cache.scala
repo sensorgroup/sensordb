@@ -32,11 +32,11 @@ object Cache {
   cache.select(CACHE_DB)
   queue.select(QUEUE_DB)
 
-  val EXPERIMENT_ACCESS_PUBLIC=0
+  val EXPERIMENT_ACCESS_PUBLIC="0"
 
-  val EXPERIMENT_ACCESS_PRIVATE=1
+  val EXPERIMENT_ACCESS_PRIVATE="1"
 
-  val EXPERIMENT_ACCESS_FRIENDS=2
+  val EXPERIMENT_ACCESS_FRIENDS="2"
 
   val ACCESS_RESTRICTION_FIELD = "access_restriction"
 
@@ -93,9 +93,7 @@ object Cache {
     toInsert._id
   }
   def delUser(uId: ObjectId) {
-    Streams.remove(MongoDBObject("uid"->uId))
-    Nodes.remove(MongoDBObject("uid"->uId))
-    Experiments.remove(MongoDBObject("uid"->uId))
+    List(Streams,Nodes,Experiments).foreach(_.remove(MongoDBObject("uid"->uId)))
     Users.remove(MongoDBObject("_id" -> uId))
   }
 
