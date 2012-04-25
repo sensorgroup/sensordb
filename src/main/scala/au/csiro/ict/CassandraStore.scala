@@ -7,6 +7,7 @@ import scala.collection.JavaConverters._
 import java.util.Date
 import java.io.{PrintWriter, PrintStream}
 import scala._
+import collection.mutable.ListBuffer
 
 /**
  * Generates keys per day per stream bases
@@ -15,14 +16,17 @@ import scala._
  * @param toDay (inclusive)
  * @param separator Separator used to separate dayIdx from prefixes
  */
-class KeyListIterator(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[List[String]] {
-  override def hasNext = !from.isAfter(to)
+class KeyListIterator(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[String] {
+  override def hasNext = !buffer.isEmpty || !from.isAfter(to)
   var from = Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(fromDay)
   val to = Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(toDay)
+  val buffer = ListBuffer[String]()
   override def next() = {
-    val to_return= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_YYYYD_FORMAT.print(from)).toString())
-    from = from.plusDays(1)
-    to_return
+    if (buffer.isEmpty){
+      buffer ++= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_YYYYD_FORMAT.print(from)).toString())
+      from = from.plusDays(1)
+    }
+    buffer.remove(0)
   }
 }
 
@@ -102,7 +106,7 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
 
 trait SensorDataStore {
   def addNodeData(nodeId: String, data: Map[String, Map[Int, Option[String]]])
-  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Int, Int)] = None,chunker:T):T
+  def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[String],colRange:Option[(Int, Int)] = None,chunker:T):T
   def dropNode(nodeId:String)
   def deleteRows(colFamName:String, keys:Iterable[String])
   def shutdown()
@@ -177,27 +181,24 @@ class CassandraDataStore extends SensorDataStore{
 
 
 
-  override def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[List[String]],colRange:Option[(Int, Int)] = None,chunker:T):T={
+  override def queryNode[T <: ChunkFormatter](colFamName:String,keys:Iterator[String],colRange:Option[(Int, Int)] = None,chunker:T):T={
     if (!isColFamilyExists(colFamName)) {
       chunker.done()
       return chunker
     }
     val colStart = colRange.getOrElse(Pair(0,86400))._1.asInstanceOf[AnyVal]
     val colEnd = colRange.getOrElse(Pair(0,86400))._2.asInstanceOf[AnyVal]
-    while(keys.hasNext){
-      val keys_iterator = keys.next().iterator
-      while(keys_iterator.hasNext){
-        val key=keys_iterator.next()
-        val measurment_dayIdx=key.split(Utils.SEPARATOR)
-        val cols = new ColumnSliceIterator[String, Any, String](HFactory.createSliceQuery(ks, ss, is, ss).setKey(key).setColumnFamily(colFamName), colStart, colEnd, false)
-        while(cols.hasNext){
-          val column=cols.next()
-          val secInDay=column.getName.asInstanceOf[Int]
-          val value = column.getValue
-          chunker.insert(measurment_dayIdx(0),measurment_dayIdx(1),secInDay,value)
-        }
+    keys.foreach{key=>
+      val measurment_dayIdx=key.split(Utils.SEPARATOR)
+      val cols = new ColumnSliceIterator[String, Any, String](HFactory.createSliceQuery(ks, ss, is, ss).setKey(key).setColumnFamily(colFamName), colStart, colEnd, false)
+      while(cols.hasNext){
+        val column=cols.next()
+        val secInDay=column.getName.asInstanceOf[Int]
+        val value = column.getValue
+        chunker.insert(measurment_dayIdx(0),measurment_dayIdx(1),secInDay,value)
       }
     }
+
     chunker.done()
     chunker
   }

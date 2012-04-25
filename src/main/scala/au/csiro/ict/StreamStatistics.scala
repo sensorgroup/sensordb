@@ -2,6 +2,7 @@ package au.csiro.ict
 
 import au.csiro.ict.Cache._
 import com.codahale.jerkson.Json._
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics
 
 object InsertionType extends Enumeration{
   type Action = Value
@@ -9,6 +10,20 @@ object InsertionType extends Enumeration{
   // Nop example, deleting a non existing element
 }
 
+class StatChunker(streamDayKey:String) extends ChunkFormatter{
+  def done() = {
+    if(summaryStat.getN>0)
+      stat.set(streamDayKey,generate(List(summaryStat.getMax,summaryStat.getMin,summaryStat.getN,summaryStat.getSum,summaryStat.getSumsq)))
+    else
+      stat.del(streamDayKey)
+  }
+  val summaryStat = new SummaryStatistics()
+  def insert(sensor:String, newYearDay:String,secInDay:Int,value:String):Boolean ={
+    if (!value.equals("null"))
+      summaryStat.addValue(value.toDouble)
+    true
+  }
+}
 object StreamStatistics {
   def findAction(set:Set[Int])(secIdx:Int,value:Option[Double]):InsertionType.Action={
     import InsertionType._
@@ -27,10 +42,17 @@ object StreamStatistics {
 
   def getStatFor(keys:String*):Map[String,List[Double]]=keys.zip(stat.mget(keys).get.flatMap(_.map(parse[List[Double]]))).toMap
 
-  def updateStatistics(sensorId:String, timeStamp:Int,value:Option[Double],invalidator:(String=>Unit)):Unit=
+
+  def updateInterDayStatistics(nid:String,sensorDayKey:String){
+    store.queryNode(nid,List(sensorDayKey).iterator,None,new StatChunker(sensorDayKey))
+  }
+
+  def updateIntraDayStatistics(sensorId:String, timeStamp:Int,value:Option[Double],invalidator:(String=>Unit)):Unit=
     updateStatisticsInstructions(sensorId,timeStamp,value,invalidator) match {
       case Some((streamDayKey,bitVector,Nil))=> //for updates and removes
         stat_time_idx.set(streamDayKey,generate(bitVector))
+        invalidator(streamDayKey)
+
       case Some((streamDayKey,bitVector,statInfo))=> // for insertions
         stat_time_idx.set(streamDayKey,generate(bitVector))
         stat.set(streamDayKey,generate(statInfo))
@@ -53,14 +75,12 @@ object StreamStatistics {
         bv +=secIdx
         Some((streamDayKey,bv,calculateStatTable(value.get,max,min,count,sum,m2)))
       case e@InsertionType.UPDATE =>
-        invalidator(streamDayKey)
         Some((streamDayKey,bv,Nil))
       case e@InsertionType.DELETE =>
         bv -=secIdx
-        invalidator(streamDayKey)
         Some((streamDayKey,bv,Nil))
       case InsertionType.NOP=>
-         None
+        None
     }
   }
 

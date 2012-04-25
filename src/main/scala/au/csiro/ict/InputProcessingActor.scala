@@ -17,15 +17,15 @@ class InputProcessingWorker extends Actor{
 
   def receive = {
     case Task(queueName)=>
-      println("I am a worker and now I am processing:"+queueName)
       val Array(_,nid,sid)=queueName.split("@")
       while(queue.llen(queueName).getOrElse(0)>0){
-        val to_write=queue.lrange(queueName,0,0).head.head.get
-        store.addNodeData(nid,Map(sid->parse[Map[Int,Option[String]]](to_write)))
+        val msg=queue.lrange(queueName,0,0).head.head.get
+        val data = parse[Map[Int,Option[String]]](msg)
+        store.addNodeData(nid,Map(sid->data))
+        data.foreach(item => StreamStatistics.updateIntraDayStatistics(sid,item._1,item._2.map(_.toDouble), (streamDayKey:String)=> Cache.stat.sadd(Cache.InterdayStatIncomingQueueName,streamDayKey)))
         Cache.queue.lpop(queueName)
       }
       sender ! Done(queueName)
-
   }
 }
 // todo: making sure there is only one instanceof this actor exists

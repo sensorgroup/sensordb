@@ -23,19 +23,19 @@ class StatTests extends ScalatraSuite with FunSuite {
   }
 
   test("inserting new sensor readings to stats") {
-    StreamStatistics.updateStatistics(sid, ts1, Some(value1), mock) // insertion
+    StreamStatistics.updateIntraDayStatistics(sid, ts1, Some(value1), mock) // insertion
     mock_called.length should equal(0)
 
-    StreamStatistics.updateStatistics(sid, ts2, Some(value2), mock) // insertion
+    StreamStatistics.updateIntraDayStatistics(sid, ts2, Some(value2), mock) // insertion
     mock_called.length should equal(0)
   }
   test("updating an existing sensor reading ") {
-    StreamStatistics.updateStatistics(sid, ts1, Some(value1), mock) // update
+    StreamStatistics.updateIntraDayStatistics(sid, ts1, Some(value1), mock) // update
     mock_called.length should equal(1)
     mock_called.head should include(sid)
     mock_called.head should include(Utils.TIMESTAMP_YYYYD_FORMAT.print(ts1*1000L))
 
-    StreamStatistics.updateStatistics(sid, ts2, Some(value2), mock) // update
+    StreamStatistics.updateIntraDayStatistics(sid, ts2, Some(value2), mock) // update
     mock_called.length should equal(2)
     mock_called.head should include(sid)
     mock_called.head should include(Utils.TIMESTAMP_YYYYD_FORMAT.print(ts2*1000L))
@@ -43,31 +43,31 @@ class StatTests extends ScalatraSuite with FunSuite {
 
   test("deleting existing sensor readings") {
 
-    StreamStatistics.updateStatistics(sid, ts1, None, mock) // remove
+    StreamStatistics.updateIntraDayStatistics(sid, ts1, None, mock) // remove
     mock_called.length should equal(3)
     mock_called.head should include(sid)
     mock_called.head should include(Utils.TIMESTAMP_YYYYD_FORMAT.print(ts1*1000L))
 
-    StreamStatistics.updateStatistics(sid, ts2, None, mock) // remove
+    StreamStatistics.updateIntraDayStatistics(sid, ts2, None, mock) // remove
     mock_called.length should equal(4)
     mock_called.head should include(sid)
     mock_called.head should include(Utils.TIMESTAMP_YYYYD_FORMAT.print(ts2*1000L))
 
   }
   test("deleting already deleted sensor readings") {
-    StreamStatistics.updateStatistics(sid, ts1, None, mock) // remove
+    StreamStatistics.updateIntraDayStatistics(sid, ts1, None, mock) // remove
     mock_called.length should equal(4) //no change from previous round
 
   }
   test("deleting non existing sensor readings") {
-    StreamStatistics.updateStatistics(sid, ts3, None, mock) // remove of non exsiting item
+    StreamStatistics.updateIntraDayStatistics(sid, ts3, None, mock) // remove of non exsiting item
     mock_called.length should equal(4) //no change from previous round
   }
   test("Inserting on already deleted sensor readings") {
-    StreamStatistics.updateStatistics(sid, ts1, None, mock) // insert
+    StreamStatistics.updateIntraDayStatistics(sid, ts1, None, mock) // insert
     mock_called.length should equal(4)
 
-    StreamStatistics.updateStatistics(sid, ts2, None, mock) // insert
+    StreamStatistics.updateIntraDayStatistics(sid, ts2, None, mock) // insert
     mock_called.length should equal(4)
   }
   test("Actual min,max,sum,count,std calculations") {

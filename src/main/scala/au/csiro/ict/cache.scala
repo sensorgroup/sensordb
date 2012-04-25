@@ -39,6 +39,10 @@ object Cache {
   stat.select(STREAM_STAT)
   stat_time_idx.select(STREAM_STAT_TIME_IDX)
 
+  val InterdayStatIncomingQueueName = "interday-incoming-q"
+
+  val InterdayStatProcessingQueueName = "interday-processing-q"
+
   val EXPERIMENT_ACCESS_PUBLIC="0"
 
   val EXPERIMENT_ACCESS_PRIVATE="1"
