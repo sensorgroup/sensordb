@@ -77,7 +77,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       }
     }
     Thread.sleep(1000)
-   }
+  }
   test("Check that stream 1 is not empty") {
     get(DATA_RAW_URI,Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
       body should include(stream1Id.toString)
@@ -93,12 +93,6 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     StreamStatistics.findAction(Set(10))(10,None) should equal(InsertionType.DELETE)
     StreamStatistics.findAction(Set(10))(11,None) should equal(InsertionType.NOP)
 
-//    val insertion1 = StreamStatistics.updateStatisticsInstructions(stream1Id.toString,date2,Some(1))
-//    val insertion2 = StreamStatistics.updateStatisticsInstructions(stream1Id.toString,date3,Some(2))
-//    val update1 = StreamStatistics.updateStatisticsInstructions(stream1Id.toString,date2,Some(1))
-//    val update2 = StreamStatistics.updateStatisticsInstructions(stream1Id.toString,date3,Some(2))
-//    val delete1 = StreamStatistics.updateStatisticsInstructions(stream1Id.toString,date3,None)
-//    val delete2 = StreamStatistics.updateStatisticsInstructions(stream1Id.toString,date3,None)
     implicit val validator = Validators.Validator()
     Validators.EntityIdList(Some("[]")) should have size(0)
     validator.errors should have size(1)
@@ -155,49 +149,46 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
   }
 
-  //
-  //  test("Data insertion, good format, two entries with different timestamps, one updating") {
-  //    post(DATA_RAW_URI,Map("data"->("{\""+token1+"\":{\""+date1+"\":"+102+",\""+date2+"\":"+101+"}}"))){
-  //      body should include("2")
-  //      status should equal(200)
-  //    }
-  //  }
-  //  test("Check that stream 1 should receive an update and and insert") {
-  //    Thread.sleep(100)
-  //    get(DATA_RAW_URI,Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
-  //      body should include(stream1Id.toString)
-  //      body should not include("100")
-  //      body should include("101")
-  //      body should include("102")
-  //      body should include((date1)+",")
-  //      body should include((date2)+",")
-  //      status should equal(200)
-  //    }
-  //  }
-  //
-  //  test("Data insertion, good format, two entries with different timestamps, one removing") {
-  //    post(DATA_RAW_URI,Map("data"->("{\""+token1+"\":{\""+date1+"\":"+103+",\""+date2+"\":null}}"))){
-  //      body should include("2")
-  //      status should equal(200)
-  //    }
-  //  }
-  //  test("Check that stream 1 should receive a remove and a update") {
-  //    Thread.sleep(100)
-  //    get(DATA_RAW_URI,Map("sid"->stream1Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"00:00:00","et"->"23:59:59")){
-  //      body should include(stream1Id.toString)
-  //      body should not include("100")
-  //      body should not include("101")
-  //      body should not include("102")
-  //      body should include("103")
-  //      body should include((date1)+",")
-  //      body should not include(date2.toString)
-  //      status should equal(200)
-  //    }
-  //  }
-  //
-  //
-  //
 
+  test("Data insertion, good format, two entries with different timestamps, one inserting and one updating") {
+    /**
+     * Updated timestamp date1 to 123.321
+     * Updated timestamp date1+110 to -333
+     */
+    post(DATA_RAW_URI,Map("data"->generate(Map(token1->Map(date1->123.321,(date1+110).toString-> -333 ))))){
+      body should include("2")
+      status should equal(200)
+    }
+    Thread.sleep(200) // waiting until processing being done
+
+    InterdayStatCalculator.process().get._1 should equal(1) // because there was one update
+
+    get(DATA_SUMMARY_DAILY_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat)){
+      body should include("[123.321,-333.0,101.0,4740.321,454447.069041]")
+      body should include(stream1Id.toString)
+      status should equal(200)
+    }
+    //todo: need to test this part more ... // removal, updates and respective stats updates
+  }
+  test("Data insertion, good format, two entries with different timestamps, one deleting and one updating") {
+    /**
+     * Updated timestamp date1 to 123.321
+     * Updated timestamp date1+110 to -333
+     */
+    post(DATA_RAW_URI,Map("data"->generate(Map(token1->Map(date1->None,(date1+110).toString-> 77.7 ))))){
+      body should include("2")
+      status should equal(200)
+    }
+    Thread.sleep(200) // waiting until processing being done
+
+    InterdayStatCalculator.process().get._1 should equal(1) // because there was one update
+
+    get(DATA_SUMMARY_DAILY_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat)){
+      body should include("[99.0,1.0,100.0,5027.7,334387.29]")
+      body should include(stream1Id.toString)
+      status should equal(200)
+    }
+  }
 
   test("Dummy, cleaning ..."){
     delUser(user1Id)
