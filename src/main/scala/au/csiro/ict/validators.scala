@@ -11,6 +11,9 @@ import javax.servlet.http.HttpSession
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import Cache._
+  import com.codahale.jerkson.Json._
+import scala.{Option, None}
+import scala.Predef._
 
 object Validators {
   val sanitize = Jsoup.clean(_:String, Whitelist.basic())
@@ -29,6 +32,8 @@ object Validators {
       _errors::=msg
       None
     }
+
+    def reset() = _errors=Nil
   }
 
   def PictureUrl(value:Option[String])(implicit validator:Validator)=value.orElse(EMPTY_STR).filter(url=>url.isEmpty || isUrl(url)).orElse(validator.addError( "Picture URL is not valid"))
@@ -112,6 +117,28 @@ object Validators {
       None
     }
   }
+  def EntityIdList(v:Option[String])(implicit validator:Validator):Set[ObjectId] = v match {
+    case Some(sids:String) => try {
+      parse[Set[String]](sids).map{ x=>
+        if (ObjectId.isValid(x))
+          new ObjectId(x)
+        else
+          throw new Exception("Invalid streamId:"+x)
+      } match {
+        case s:Set[ObjectId] if s.size>0 => s
+        case empty=>
+          validator.addError("Empty sid parameter")
+          Set[ObjectId]()
+      }
+    }catch{
+      case exception =>
+        validator.addError("An invalid Stream id")
+        Set[ObjectId]()
+    }
+    case others =>
+      validator.addError("Missing or invalid sid parameter")
+      Set[ObjectId]()
+  }
 
   def EntityId(v:Option[String])(implicit validator:Validator):Option[ObjectId]=v.filter(org.bson.types.ObjectId.isValid).map(x=>new ObjectId(x)).orElse{
     validator.addError("Invalid entity id")
@@ -155,5 +182,6 @@ object Validators {
     validator.addError(errorMessage)
     None
   }
-
 }
+
+

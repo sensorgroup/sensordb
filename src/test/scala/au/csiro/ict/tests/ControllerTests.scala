@@ -3,9 +3,10 @@ package au.csiro.ict.tests
 import org.scalatest.FunSuite
 import org.scalatra.test.scalatest.ScalatraSuite
 import com.codahale.jerkson.Json._
-import au.csiro.ict.{SensorDB}
 import java.util.LinkedHashMap
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import au.csiro.ict.{Utils, Cache, StorageIdGenerator, SensorDB}
 
 class ControllerTests extends ScalatraSuite with FunSuite{
   addServlet(classOf[SensorDB], "/*")
@@ -30,6 +31,25 @@ class ControllerTests extends ScalatraSuite with FunSuite{
     Password(Some("1234")) should equal(None)
     Password(Some("123456")) should not equal(None)
 
+  }
+  test ("Storage Key Generator"){
+    val empty = new StorageIdGenerator(Nil,new DateTime(),new DateTime())
+    empty.hasNext should be(false)
+    empty.toList.isEmpty should be(true)
+
+    val empty2 = new StorageIdGenerator(Nil,new DateTime(),new DateTime(0))
+    empty2.hasNext should be(false)
+    empty2.toList.isEmpty should be(true)
+
+    val sample1 = new StorageIdGenerator(List("s1"),new DateTime(),new DateTime())
+    sample1.hasNext should be(true)
+    sample1.toList.length should be(1)
+
+    val sample2 = new StorageIdGenerator(List("s1","s2"),new DateTime(),new DateTime())
+    sample2.toList.length should be(2)
+
+    val sample3 = new StorageIdGenerator(List("s1","s2"),Utils.ukDateFormat.parseDateTime("01-02-2010"),Utils.ukDateFormat.parseDateTime("15-02-2010"))
+    sample3.toList.length should be(30)
   }
 
   test("Full CRUD Restful API") {

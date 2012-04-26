@@ -15,38 +15,38 @@ class CassandraDataStoreTests extends Specification {
       c.dropNode(n)
       val writer = new InMemWriter()
       writer.isClosed() must beFalse
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
       writer.isClosed() must beTrue
     }
 
     "Query inserting one element" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15")-> Some("-100"))))
+      c.addNodeData(n, Map("s1" -> Map(Utils.ukDateTimeToInt("02-01-2011T00:01:15")-> Some("-100"))))
       c.listKeys(n).head must_== "s1$20112"
       c.listKeys(n).size must_== 1
       val writer = new InMemWriter()
-      new KeyListIterator(List("s1"), "20111", "20112").length must_== 2
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
+      new StorageIdGenerator(List("s1"), "20111", "20112").length must_== 2
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
       writer.getData.length must_== 1
       val writer2 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(0, 74), new DefaultChunkFormatter(writer2))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(0, 74), new DefaultChunkFormatter(writer2))
       writer2.getData.length must_== 0
 
       val writer3 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(74, 74), new DefaultChunkFormatter(writer3))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(74, 74), new DefaultChunkFormatter(writer3))
       writer3.getData.length must_== 0
 
       val writer4 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(75, 75), new DefaultChunkFormatter(writer4))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(75, 75), new DefaultChunkFormatter(writer4))
       writer4.getData.length must_== 1
 
       val writer5 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(75, 86400), new DefaultChunkFormatter(writer5))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(75, 86400), new DefaultChunkFormatter(writer5))
       writer5.getData.length must_== 1
       writer5.getData.head.last must_== "-100"
 
       val writer6 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer6))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer6))
       writer6.getData.length must_== 0
       c.listKeys(n).size must_== 1
       c.deleteRows(n,c.listKeys(n,(x)=>x.startsWith("s1$")))
@@ -54,32 +54,32 @@ class CassandraDataStoreTests extends Specification {
     }
     "Query inserting multiple element" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15") -> Some("1"),
-        Utils.isoToInt("2011-01-02T00:01:16") -> Some("2"))))
+      c.addNodeData(n, Map("s1" -> Map(Utils.ukDateTimeToInt("02-01-2011T00:01:15") -> Some("1"),
+        Utils.ukDateTimeToInt("02-01-2011T00:01:16") -> Some("2"))))
       val writer = new InMemWriter()
-      new KeyListIterator(List("s1"), "20111", "20112").length must_== 2
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
+      new StorageIdGenerator(List("s1"), "20111", "20112").length must_== 2
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
       writer.getData.length must_== 2
       val writer2 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(0, 74), new DefaultChunkFormatter(writer2))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(0, 74), new DefaultChunkFormatter(writer2))
       writer2.getData.length must_== 0
 
       val writer3 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(74, 74), new DefaultChunkFormatter(writer3))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(74, 74), new DefaultChunkFormatter(writer3))
       writer3.getData.length must_== 0
 
       val writer4 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(75, 75), new DefaultChunkFormatter(writer4))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(75, 75), new DefaultChunkFormatter(writer4))
       writer4.getData.length must_== 1
 
       val writer5 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(75, 86400), new DefaultChunkFormatter(writer5))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(75, 86400), new DefaultChunkFormatter(writer5))
       writer5.getData.length must_== 2
       writer5.getData.last.last must_== "1"
       writer5.getData.head.last must_== "2"
 
       val writer6 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer6))
+      c.queryNode(n, new StorageIdGenerator(List("s1"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer6))
       writer6.getData.length must_== 1
       writer5.getData.head.last must_== "2"
 
@@ -87,22 +87,22 @@ class CassandraDataStoreTests extends Specification {
 
     "Query inserting multiple element in Multiple sensors" in {
       c.dropNode(n)
-      c.addNodeData(n, Map("s1" -> Map(Utils.isoToInt("2011-01-02T00:01:15") -> Some("15"),
-        Utils.isoToInt("2011-01-02T00:01:16") -> Some("16")),
-        "s2" -> Map(Utils.isoToInt("2011-01-02T00:01:17") -> Some("17"),
-          Utils.isoToInt("2011-01-02T00:01:16") -> Some("16"))))
+      c.addNodeData(n, Map("s1" -> Map(Utils.ukDateTimeToInt("02-01-2011T00:01:15") -> Some("15"),
+        Utils.ukDateTimeToInt("02-01-2011T00:01:16") -> Some("16")),
+        "s2" -> Map(Utils.ukDateTimeToInt("02-01-2011T00:01:17") -> Some("17"),
+          Utils.ukDateTimeToInt("02-01-2011T00:01:16") -> Some("16"))))
 
       val writer = new InMemWriter()
-      new KeyListIterator(List("s1"), "20111", "20112").length must_== 2
-      c.queryNode(n, new KeyListIterator(List("s1", "s2"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
+      new StorageIdGenerator(List("s1"), "20111", "20112").length must_== 2
+      c.queryNode(n, new StorageIdGenerator(List("s1", "s2"), "20111", "20112"), None, new DefaultChunkFormatter(writer))
       writer.getData.length must_== 4
 
       val writer4 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1", "s2"), "20111", "20112"), Option(76, 76), new DefaultChunkFormatter(writer4))
+      c.queryNode(n, new StorageIdGenerator(List("s1", "s2"), "20111", "20112"), Option(76, 76), new DefaultChunkFormatter(writer4))
       writer4.getData.length must_== 2
 
       val writer5 = new InMemWriter()
-      c.queryNode(n, new KeyListIterator(List("s1", "s2"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer5))
+      c.queryNode(n, new StorageIdGenerator(List("s1", "s2"), "20111", "20112"), Option(76, 86400), new DefaultChunkFormatter(writer5))
       writer5.getData.length must_== 3
     }
   }

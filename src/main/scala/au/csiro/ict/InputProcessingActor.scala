@@ -7,7 +7,9 @@ import akka.util.duration._
 import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 import com.codahale.jerkson.Json._
-import au.csiro.ict.Cache.{queue,store}
+import au.csiro.ict.Cache.{store}
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait SDBMsg
 case class Done(queueName:String) extends SDBMsg
@@ -18,12 +20,15 @@ class InputProcessingWorker extends Actor{
   def receive = {
     case Task(queueName)=>
       val Array(_,nid,sid)=queueName.split("@")
-      while(queue.llen(queueName).getOrElse(0)>0){
-        val msg=queue.lrange(queueName,0,0).head.head.get
-        val data = parse[Map[Int,Option[String]]](msg)
-        store.addNodeData(nid,Map(sid->data))
-        data.foreach(item => StreamStatistics.updateIntraDayStatistics(sid,item._1,item._2.map(_.toDouble), (streamDayKey:String)=> Cache.stat.sadd(Cache.InterdayStatIncomingQueueName,streamDayKey)))
-        Cache.queue.lpop(queueName)
+      Cache.queue.call{queue=>
+        while(queue.llen(queueName)>0){
+          val msg=queue.lrange(queueName,0,0).head
+          val data = parse[Map[Int,Option[String]]](msg)
+          store.addNodeData(nid,Map(sid->data))
+          data.foreach(item => StreamStatistics.updateIntraDayStatistics(sid,item._1,item._2.map(_.toDouble), (streamDayKey:String)=>
+            Cache.stat.sadd(Cache.InterdayStatIncomingQueueName,Utils.generateNidStreamDayKey(nid,streamDayKey))))
+          queue.lpop(queueName)
+        }
       }
       sender ! Done(queueName)
   }
@@ -46,7 +51,7 @@ class InputProcessingMaster(val workers:ActorRef) extends Actor with Logger {
         logger.info("Current length of queue:"+workerSet.size)
       }
     case Done(queueName)=>
-      println("task done on "+queueName)
+      println("task done on --------------->"+queueName)
       workerSet-=queueName
   }
 }

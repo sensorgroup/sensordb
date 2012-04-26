@@ -21,6 +21,7 @@ trait RestfulHelpers {
       errors.addError(newErrorMessage)
     if (!errors.errors.isEmpty)
       halt(400,generate(Map("errors"->errors.errors)))
+    None
   }
 
 

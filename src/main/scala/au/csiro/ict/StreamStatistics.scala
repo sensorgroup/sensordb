@@ -12,9 +12,9 @@ object InsertionType extends Enumeration{
 
 class StatChunker(streamDayKey:String) extends ChunkFormatter{
   def done() = {
-    if(summaryStat.getN>0)
+    if(summaryStat.getN>0){
       stat.set(streamDayKey,generate(List(summaryStat.getMax,summaryStat.getMin,summaryStat.getN,summaryStat.getSum,summaryStat.getSumsq)))
-    else
+  }else
       stat.del(streamDayKey)
   }
   val summaryStat = new SummaryStatistics()
@@ -36,19 +36,18 @@ object StreamStatistics {
       case false if value.isEmpty => NOP
     }
   }
-  def getBitVectorFor(key:String):Option[Set[Int]]=stat_time_idx.get(key).map(parse[Set[Int]])
+  def getBitVectorFor(streamDayKey:String):Set[Int]=stat_time_idx.get(streamDayKey).map(parse[Set[Int]]).getOrElse(Set[Int]())
 
-  def getStatFor(key:String):Option[List[Double]]=stat.get(key).map(parse[List[Double]])
+  def getStatFor(streamDayKey:String):Option[List[Double]]=stat.get(streamDayKey).map(parse[List[Double]])
 
-  def getStatFor(keys:String*):Map[String,List[Double]]=keys.zip(stat.mget(keys).get.flatMap(_.map(parse[List[Double]]))).toMap
-
+//  def getStatFor(streamDayKeys:String*):Map[String,List[Double]]=streamDayKeys.zip(stat.mget(streamDayKeys).get.flatMap(_.map(parse[List[Double]]))).toMap
 
   def updateInterDayStatistics(nid:String,sensorDayKey:String){
     store.queryNode(nid,List(sensorDayKey).iterator,None,new StatChunker(sensorDayKey))
   }
 
   def updateIntraDayStatistics(sensorId:String, timeStamp:Int,value:Option[Double],invalidator:(String=>Unit)):Unit=
-    updateStatisticsInstructions(sensorId,timeStamp,value,invalidator) match {
+    updateStatisticsInstructions(sensorId,timeStamp,value) match {
       case Some((streamDayKey,bitVector,Nil))=> //for updates and removes
         stat_time_idx.set(streamDayKey,generate(bitVector))
         invalidator(streamDayKey)
@@ -64,23 +63,17 @@ object StreamStatistics {
   def calculateStatTable(v:Double,max:Double,min:Double,count:Double,sum:Double,sum2:Double):List[Double]=
     List(if (v > max) v else max,if (v < min) v else min,count + 1,sum+v,sum2+v*v)
 
-  def updateStatisticsInstructions(sensorId:String, timeStamp:Int,value:Option[Double],invalidator:(String=>Unit)):Option[(String,Set[Int],List[Double])]={
+  def updateStatisticsInstructions(sensorId:String, timeStamp:Int,value:Option[Double]):Option[(String,Set[Int],List[Double])]={
     val streamDayKey = Utils.generateRowKey(sensorId,timeStamp)
     val secIdx = Utils.getSecondOfDay(timeStamp)
-    var bv=getBitVectorFor(streamDayKey).getOrElse(Set[Int]())
-    var List(max,min,count,sum,m2) = getStatFor(streamDayKey).getOrElse(List(Double.MinValue,Double.MaxValue,0,0.0,0.0)) //Max,Min,Count,Sum,m2
+    val bv=getBitVectorFor(streamDayKey)
+    val List(max,min,count,sum,m2) = getStatFor(streamDayKey).getOrElse(List(Double.MinValue,Double.MaxValue,0,0.0,0.0)) //Max,Min,Count,Sum,SumSq
 
     findAction(bv)(secIdx,value) match {
-      case InsertionType.INSERT=>
-        bv +=secIdx
-        Some((streamDayKey,bv,calculateStatTable(value.get,max,min,count,sum,m2)))
-      case e@InsertionType.UPDATE =>
-        Some((streamDayKey,bv,Nil))
-      case e@InsertionType.DELETE =>
-        bv -=secIdx
-        Some((streamDayKey,bv,Nil))
-      case InsertionType.NOP=>
-        None
+      case InsertionType.INSERT=> Some((streamDayKey,bv +secIdx,calculateStatTable(value.get,max,min,count,sum,m2)))
+      case e@InsertionType.UPDATE => Some((streamDayKey,bv,Nil))
+      case e@InsertionType.DELETE => Some((streamDayKey,bv-secIdx,Nil))
+      case InsertionType.NOP=> None
     }
   }
 

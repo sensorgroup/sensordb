@@ -18,6 +18,7 @@ object JsonGenerator extends com.codahale.jerkson.Json{
       context.addSerializers(new ObjectIdSerializer)
     }
   }
+
   class ObjectIdSerializer extends Serializers.Base {
     override def findSerializer(config: SerializationConfig, javaType: JavaType, beanDesc: BeanDescription, beanProp: BeanProperty) = {
       val ser: Object = if (classOf[ObjectId].isAssignableFrom(beanDesc.getBeanClass)) { new ObjectIdSerlization } else null

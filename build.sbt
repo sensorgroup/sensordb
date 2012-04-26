@@ -42,7 +42,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-redis-mailbox" % "2.0.1",
   "org.apache.commons" % "commons-lang3" % "3.1",
   "org.jsoup" % "jsoup" % "1.6.2",
-  "org.skife.com.typesafe.config" % "typesafe-config" % "0.3.0"
+  "org.skife.com.typesafe.config" % "typesafe-config" % "0.3.0",
+  "redis.clients" % "jedis" % "2.0.0"
 )
 
 resolvers ++= Seq("Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",

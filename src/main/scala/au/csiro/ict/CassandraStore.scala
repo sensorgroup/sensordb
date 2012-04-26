@@ -10,25 +10,11 @@ import scala._
 import collection.mutable.ListBuffer
 
 /**
- * Generates keys per day per stream bases
- * @param prefix
- * @param fromDay (inclusive)
- * @param toDay (inclusive)
- * @param separator Separator used to separate dayIdx from prefixes
- */
-class KeyListIterator(prefix:List[String],fromDay: String, toDay: String,separator:Char=Utils.SEPARATOR) extends Iterator[String] {
-  override def hasNext = !buffer.isEmpty || !from.isAfter(to)
-  var from = Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(fromDay)
-  val to = Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(toDay)
-  val buffer = ListBuffer[String]()
-  override def next() = {
-    if (buffer.isEmpty){
-      buffer ++= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_YYYYD_FORMAT.print(from)).toString())
-      from = from.plusDays(1)
-    }
-    buffer.remove(0)
-  }
-}
+* Generates keys per day per stream bases
+* @param prefix , a list of string items prefixed with the resulting elements
+* @param from (inclusive)
+* @param to (inclusive)
+*/
 
 trait ChunkFormatter{
   def done()
@@ -111,30 +97,11 @@ trait SensorDataStore {
   def deleteRows(colFamName:String, keys:Iterable[String])
   def shutdown()
 }
-object Utils {
-  val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD")
-  val isoDateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
-  val UkDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
-  val TimeParser = DateTimeFormat.forPattern("HH:mm:ss")
-  val zoneUTC = DateTimeZone.UTC
-  val SEPARATOR = '$'
-  def uuid() = java.util.UUID.randomUUID().toString
-  DateTimeZone.setDefault(zoneUTC)
-  def generateRowKey(sensor:String, tsInSeconds:Int) = sensor+"$"+Utils.TIMESTAMP_YYYYD_FORMAT.print(tsInSeconds*1000L)
 
-  val TOKEN_LEN = Utils.uuid().length
-  val KeyPattern = ("[a-zA-Z0-9\\-]{"+TOKEN_LEN+"}").r.pattern
-  def keyPatternMatcher(s:String) = KeyPattern.matcher(s).matches
-  def inputQueueIdFor(nId:String,streamId:String)=  "q@"+nId+"@"+streamId
-  def getSecondOfDay(ts:Long):Int=new DateTime(ts*1000).getSecondOfDay
-  def isoToInt(s:String):Int=(isoDateTimeFormat.parseDateTime(s).getMillis/1000).asInstanceOf[Int]
-
-
-}
 
 /**
- * A node is presented by a column family.
- */
+* A node is presented by a column family.
+*/
 class CassandraDataStore extends SensorDataStore{
   /**Resource: https://github.com/rantav/hector/blob/master/core/src/test/java/me/prettyprint/cassandra/service/CassandraClusterTest.java#L102-156 */
 

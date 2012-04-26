@@ -10,12 +10,24 @@ import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
 import au.csiro.ict.Validators.Validator
 import java.util.Properties
+import redis.clients.jedis.{Jedis, JedisPoolConfig, JedisPool}
+import redis.clients.jedis.JedisPool.JedisFactory
 
 object Configuration{
   private val config = new Properties()
   config.load(getClass.getResourceAsStream("/config.properties"))
   val config_map = config.entrySet().map(x=>(x.getKey.toString.trim().toLowerCase,x.getValue.toString.trim())).toMap[String, String]
   def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
+}
+
+class Queue(val host:String,val port:Int,selectIdx:Int){
+  private val queue = new JedisPool(new JedisPoolConfig(), host,port)
+  def call(x:(Jedis=>Unit)){
+    val jedis = queue.getResource
+    jedis.select(selectIdx)
+    x(jedis)
+    queue.returnBrokenResource(jedis)
+  }
 }
 
 object Cache {
@@ -26,16 +38,14 @@ object Cache {
   val CACHE_USER_NAME="user"
   val CACHE_TIMEOUT=15*60 // in seconds
   val CACHE_DB = 1
-  val QUEUE_DB = 2
   val STREAM_STAT = 3 // storing min/max/avg/count/sum/std per day per stream
   val STREAM_STAT_TIME_IDX = 4 // storing presence index per stream per day, bit index of 86400 elements (mainly zeros)
-
+  val queue = new Queue(Configuration("redis.queue.host").get,Configuration("redis.queue.port").get.toInt,2)
   val cache = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
-  val queue = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)
   val stat = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
   val stat_time_idx = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)
   cache.select(CACHE_DB)
-  queue.select(QUEUE_DB)
+
   stat.select(STREAM_STAT)
   stat_time_idx.select(STREAM_STAT_TIME_IDX)
 
@@ -83,6 +93,8 @@ object Cache {
     Users.insert(user)
     user._id
   }
+
+  def NidUidFromSid(sid: ObjectId) = Streams.findOne(MongoDBObject("_id" -> sid), MongoDBObject("nid" -> 1, "uid" -> 1))
 
   def addStream(name: String, uid: ObjectId, nid: ObjectId, mid: ObjectId, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId]= {
     val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "nid" -> nid, "mid" -> mid,
