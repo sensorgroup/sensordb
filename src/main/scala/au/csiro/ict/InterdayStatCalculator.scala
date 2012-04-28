@@ -1,7 +1,5 @@
 package au.csiro.ict
 
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
 import Cache._
 
 object InterdayStatCalculator extends Logger{

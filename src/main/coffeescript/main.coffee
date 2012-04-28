@@ -282,7 +282,10 @@ class Router extends Backbone.Router
 
 		$("#main").html( _.template( $("#tpl-analysis").html(), {widgets} ) )
 
-	home: ()-> $("#main").html(_.template($("#tpl-first-page").html(),{}))
+	home: ()->
+		$("#main").html(_.template($("#tpl-first-page").html(),{}))
+		$("[rel=tooltip]").tooltip()
+		$("a [rel=tooltip]").click(->$(this).tooltip('hide')) # this is required for single page apps as page rewrite even is not received by tooltip
 
 	create_experiment: () ->
 		$("#main").html(_.template($("#tpl-experiment-create").html(),{}))
