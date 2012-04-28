@@ -265,7 +265,15 @@ class Router extends Backbone.Router
 		"nodes/create" : "create_node"
 		"streams/create" : "create_stream"
 		":user/data" : "data_page"
+		"register" : "register"
 		'*path':  'default_route'
+
+	register: ->
+		$("#main").html(_.template($("#tpl-register").html(),{}))
+		$("#main textarea").cleditor(sensordb.Utils.editor_config)
+		$(".container form").ajaxForm ->
+			alert("Thank you for your comment!")
+
 
 	data_page: (username) ->
 		$("#main").html(_.template($("#tpl-data-page").html(),{}))
