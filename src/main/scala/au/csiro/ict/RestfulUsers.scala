@@ -14,8 +14,6 @@ import au.csiro.ict.JsonGenerator.generate
 trait RestfulUsers {
   self:ScalatraServlet with RestfulHelpers with Logger=>
 
-  val protectedFields = Map("token"->0,"password"->0,"email"->0)
-
   def login(name:String, password:String)(implicit session:HttpSession):Option[DBObject]= {
     UserSession(session) match{
       case Some((uid,userName))=>Users.findOne(Map("_id"->uid))
@@ -34,26 +32,11 @@ trait RestfulUsers {
     val ident=session.getAttribute(SESSION_ID)
     if (ident !=null) cache.del(ident)
     session.invalidate()
-    forward()
+    sendSession()
   }
 
-  post("/session"){
-    val current:Option[ObjectId] = UserSession(session).map(_._1)
-    val user:Option[ObjectId] = params.get("user").filterNot(_.trim.isEmpty).flatMap{uname=>
-      Users.findOne(Map("name"->uname),Map("_id"->1))
-    }.flatMap(x=>x.getAs[ObjectId]("_id"))
-    val fields = if (current.exists(x=>user.isEmpty || x.equals(user.get)))
-      Map("password"->0)
-    else
-      protectedFields
-    user.orElse(current).flatMap((u:ObjectId)=>Users.findOne(Map("_id"->u),fields)).map{user=>
-      val uid = user._id.get
-      user.put("_id",uid.toString)
-      generate(Map("user"->user,
-        "experiments"->Experiments.find(Map("uid"->uid),fields), //.map((o:DBObject)=> o.toMap+("_id"->o("_id").toString)),
-        "nodes"->Nodes.find(Map("uid"->uid),fields),
-        "streams"->Streams.find(Map("uid"->uid),fields)))
-    }.getOrElse("{}")
+  get("/session"){
+    sendSession()
   }
 
   post("/register") {
@@ -62,7 +45,7 @@ trait RestfulUsers {
       case (Some(name),Some(password),Some(timezone),Some(email),Some(description),Some(pic),Some(website))=>
         addUser(name, password, timezone, email, pic, website, description)
         login(name,password)
-        forward()
+        sendSession()
       case errors => haltMsg()
     }
   }
@@ -75,7 +58,7 @@ trait RestfulUsers {
       case (Some(user),Some(password))=>
         logger.info("User login request with username:"+user)
         login(user,password)
-        forward()
+        sendSession()
       case errors=>  haltMsg()
     }
   }

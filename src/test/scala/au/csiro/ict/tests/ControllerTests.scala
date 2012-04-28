@@ -70,7 +70,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
     }
 
     session{
-      post("/session"){
+      get("/session"){
         body should not include("_id")
         body should not include("token")
       }
@@ -110,14 +110,14 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         user1 = parse[Map[String,Any]](body)
         status must equal(200)
       }
-      post("/session"){
+      get("/session"){
         body should include ("_id")
       }
       post("/logout"){
         body should include ("{}")
         status should equal (200)
       }
-      post("/session",Map("user"->"ali")){
+      get("/session",Map("user"->"ali")){
         body should include ("_id")
         body should not include ("password")
         body should include ("created_at")
@@ -134,7 +134,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status must equal(200)
         user1("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at") should be < (user2("user").asInstanceOf[LinkedHashMap[String,Long]].get("created_at"))
       }
-      post("/session"){
+      get("/session"){
         body should include ("ali2")
       }
 
@@ -169,7 +169,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         // missing timezone
         body should include ("error")
       }
-      post("/session"){
+      get("/session"){
         body should not include ("exp2")
         body should not include ("exp1")
       }
@@ -185,7 +185,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status should equal(400)
       }
 
-      post("/session"){
+      get("/session"){
         body should not include ("exp2")
         body should include ("exp1")
       }
@@ -210,7 +210,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status should equal(200)
       }
 
-      post("/session"){
+      get("/session"){
         body should not include ("exp3")
         body should include ("exp2")
         body should include ("exp 123")
@@ -227,7 +227,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("error")
         status should equal(400)
       }
-      post("/session"){
+      get("/session"){
         body should include ("node1")
         body should not include ("node2")
       }
@@ -255,7 +255,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status should equal(400)
       }
 
-      post("/session"){
+      get("/session"){
         body should  include ("node1")
         body should  include ("node2")
         body should  include ("stream1")
@@ -269,7 +269,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("node1 renamed")
         status should equal(200)
       }
-      post("/session"){
+      get("/session"){
         // confirm renamed work
         body should include ("node1 renamed")
       }
@@ -318,7 +318,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status should equal(400)
       }
 
-      post("/session"){
+      get("/session"){
         // machine is used in ObjectId's if they aren't stored as strings
         body should include ("token")
         body should not include ("machine")
@@ -327,7 +327,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status should equal(200)
       }
 
-      post("/session"){
+      get("/session"){
         body should not include ("node1 renamed")
         status should equal(200)
       }
@@ -335,7 +335,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       delete("/experiments",Map("eid"->exp1("_id"))){
         status should equal(200)
       }
-      post("/session"){
+      get("/session"){
         body should not include ("exp 123")
         body should include ("exp2")
       }
@@ -343,7 +343,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       delete("/experiments",Map("eid"->exp2("_id"))){
         status should equal(200)
       }
-      post("/session"){
+      get("/session"){
         body should not include ("exp 123")
         body should not include ("exp2")
       }
@@ -351,7 +351,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       post("/remove",Map("name"->"ali","password"->"secret2")) {
         status should equal (200)
       }
-      post("/session"){
+      get("/session"){
         body should not include ("token")
       }
 
@@ -361,7 +361,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       post("/remove",Map("name"->"ali2","password"->"secret2")) {
         status should equal (200)
       }
-      post("/session"){
+      get("/session"){
         body should include ("{}")
       }
       post("/remove",Map("name"->"nonexist","password"->"secret1")) {
