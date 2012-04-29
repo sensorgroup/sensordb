@@ -52,7 +52,12 @@ trait RestfulStreams {
         generate(Streams.findOne(Map("nid"->nid,"name"->name,"uid"->uid)))
       case error=>haltMsg()
     }
-
   }
 
+  get("/tokens"){
+    UserSession(session) match {
+      case Some((uid,userName))=> generate(Streams.find(MongoDBObject("uid"->uid),MongoDBObject("_id"->1,"token"->1)))
+      case noSession => haltMsg("No session available. You need to login before calling this url")
+    }
+  }
 }

@@ -83,6 +83,9 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         // Delete without providing eid nor nid
         body should include ("error")
       }
+      get("/tokens"){
+        body should include ("error")
+      }
       delete("/streams",Map("eid"->"123A")){
         // Delete without providing nid nor sid
         body should include ("error")
@@ -112,9 +115,15 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       get("/session"){
         body should include ("_id")
       }
+      get("/tokens"){
+        body should include ("[]")
+      }
       post("/logout"){
         body should include ("{}")
         status should equal (200)
+      }
+      get("/tokens"){
+        body should include ("error")
       }
       get("/session",Map("user"->"ali")){
         body should include ("_id")
@@ -242,6 +251,11 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("token")
         stream1 = parse[Map[String,String]](body)
         status should equal(200)
+      }
+      get("/tokens"){
+        body should include ("_id")
+        body should include (stream1("_id"))
+        body should include (stream1("token"))
       }
       post("/streams",Map("name"->"stream1","nid"->node1("_id"),"mid"->units.head.apply("_id"))){
         // failed name not available
