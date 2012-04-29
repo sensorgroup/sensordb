@@ -29,50 +29,51 @@
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container" style="width: auto;">
+				<a class="ajax-loading"><img src="i/loading.gif"/></a>
 				<a class="brand" href="/"><img src="i/sensordb-logo.png"></a>
 				<ul class="nav">
-					<li>
-						<a href="#">Home</a>
-					</li>
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile</a>
-						<ul class="dropdown-menu">
-							<li>
-								<a href="#">Profile</a>
-							</li>
-							<li>
-								<a href="#">Data</a>
-							</li>
-							<li>
-								<a href="#">Analysis</a>
-							</li>
-						</ul>
-					</li>
+					<!--<li>-->
+					<!--<a href="#">Home</a>-->
+					<!--</li>-->
+					<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile</a>-->
+					<!--<ul class="dropdown-menu">-->
+					<!--<li>-->
+					<!--<a href="#">Profile</a>-->
+					<!--</li>-->
+					<!--<li>-->
+					<!--<a href="#">Data</a>-->
+					<!--</li>-->
+					<!--<li>-->
+					<!--<a href="#">Analysis</a>-->
+					<!--</li>-->
+					<!--</ul>-->
+					<!--</li>-->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Data</a>
 						<ul class="dropdown-menu">
-							<li><a href="#experiments/create">New Experiment</a></li>
-							<li><a href="#nodes/create">New Node</a></li>
-							<li><a href="#streams/create">New Stream</a></li>
-							<li class="divider"></li>
+							<!--<li><a href="#experiments/create">New Experiment</a></li>-->
+							<!--<li><a href="#nodes/create">New Node</a></li>-->
+							<!--<li><a href="#streams/create">New Stream</a></li>-->
+							<!--<li class="divider"></li>-->
 							<li><a href="#ali/data"><i class="icon-th"></i> Data Explorer</a></li>
 							<li><a href="#ali/data"><i class="icon-download-alt"></i> Data Download</a></li>
 						</ul>
 					</li>
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Analysis</a>
-						<ul class="dropdown-menu">
-							<li>
-								<a href="#/experiment/">Yanco</a>
-							</li>
-							<li>
-								<a href="#/experiment/">Western Australia Rainy Season Data Analysis 2010 Visualized</a>
-							</li>
-							<li>
-								<a href="#/experiment/">Deployment Sample</a>
-							</li>
-						</ul>
-					</li>
+					<!--<li class="dropdown">-->
+					<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Analysis</a>-->
+					<!--<ul class="dropdown-menu">-->
+					<!--<li>-->
+					<!--<a href="#/experiment/">Yanco</a>-->
+					<!--</li>-->
+					<!--<li>-->
+					<!--<a href="#/experiment/">Western Australia Rainy Season Data Analysis 2010 Visualized</a>-->
+					<!--</li>-->
+					<!--<li>-->
+					<!--<a href="#/experiment/">Deployment Sample</a>-->
+					<!--</li>-->
+					<!--</ul>-->
+					<!--</li>-->
 					<li>
 						<a href="#register">Register</a>
 					</li>
@@ -222,13 +223,15 @@
 </script>
 <script type="html/tmpl" id="tpl-first-page">
 	<!-- This template is used on the very first welcome page containing full page background image -->
+	<img class="bg" src="i/crops.jpeg"/>
+
 	<div id="first-page" >
-		<img class="bg" src="i/crops.jpeg"/>
 		<div class="vertical-band full-center">
-			<h1 class="center">
-				<a href="#phenomics/data" ><img rel="tooltip" title="User: Phenonet" src="i/phenomics-user.png"></a>
-				<a href="#ali/data" ><img rel="tooltip" title="User: Ali" src="i/ali-user.png"></a></h1>
-			<h1 class="center"><img src="i/sensordb-logo.png"></h1>
+			<div class="center">
+				<a href="#phenomics/data" ><img rel="tooltip" title="User: Phenonet" src="i/phenomics-user.png" /></a>
+				<a href="#ali/data" ><img rel="tooltip" title="User: Ali" src="i/ali-user.png" /></a>
+				<h1 class="center"><img src="i/sensordb-logo.png"></h1>
+			</div>
 		</div>
 	</div>
 </script>
@@ -423,111 +426,111 @@
 	</div>
 </script>
 <script type="html/template" id="tpl-data-page">
-<div class="container data-page">
-<div class="description">
-	<div class="page-header">
-		<div class="btn-group pull-right">
-			<a class="btn"><i class="icon-download-alt"></i> Download</a>
-			<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>
-			<ul class="dropdown-menu">
-				<li><a href="#"><i class="icon-barcode"></i> Show/Generate Token</a></li>
-				<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-				<li><a href="#"><i class="icon-trash"></i> Remove</a></li>
-			</ul>
-		</div><!-- /btn-group -->
-		<h2><a>Experiment1</a> &rarr; <a>Node 1</a> &rarr; <a>Stream 1</a> </h2>
-	</div>
-	<div class="row">
-		<div class="span9">
-			<p></p>
+	<div class="container data-page">
+		<div class="description">
+			<div class="page-header">
+				<div class="btn-group pull-right">
+					<a class="btn"><i class="icon-download-alt"></i> Download</a>
+					<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#"><i class="icon-barcode"></i> Show/Generate Token</a></li>
+						<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+						<li><a href="#"><i class="icon-trash"></i> Remove</a></li>
+					</ul>
+				</div><!-- /btn-group -->
+				<h2><a>Experiment1</a> &rarr; <a>Node 1</a> &rarr; <a>Stream 1</a> </h2>
+			</div>
+			<div class="row">
+				<div class="span9">
+					<p></p>
+				</div>
+				<div class="span3">
+					<table class="table table-bordered" id="properties">
+						<tbody>
+						<tr><td>Owner</td><td>Ali</td></tr>
+						<tr><td>Nodes</td><td>34</td></tr>
+						<tr><td>Streams</td><td>492</td></tr>
+						<tr><td>Streams</td><td>492</td></tr>
+						<tr><td>Streams</td><td>492</td></tr>
+						<tr><td>Elements</td><td>492</td></tr>
+						<tr><td>Updated</td><td>135 minutes ago</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<hr/>
 		</div>
-		<div class="span3">
-			<table class="table table-bordered" id="properties">
+		<div>
+			<form class="form-horizontal">
+				<h3 class="pull-left span2 no-left-margin">Filters</h3>
+				<div class="btn-toolbar" style="margin-top: 18px;">
+					<div class="btn-group">
+						<button class="btn dropdown-toggle " data-toggle="dropdown">All Experiments<span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="#">All Experiments</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Experiment 1</a></li>
+							<li><a href="#">Experiment 2</a></li>
+						</ul>
+					</div><!-- /btn-group -->
+					<div class="btn-group">
+						<button class="btn dropdown-toggle" data-toggle="dropdown">All Nodes<span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="#">All Nodes</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Node 1</a></li>
+							<li><a href="#">Node 2</a></li>
+						</ul>
+					</div><!-- /btn-group -->
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown">All Streams<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">All Streams</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Temperature</a></li>
+							<li><a href="#">Humiditiy</a></li>
+						</ul>
+					</div><!-- /btn-group -->
+					<div class="btn-group pull-right" data-toggle="buttons-radio">
+						<button class="btn active">24h</button>
+						<button class="btn">7d</button>
+						<button class="btn">1m</button>
+						<button class="btn">1y</button>
+						<button class="btn">All</button>
+					</div>
+				</div>
+			</form>
+			<table class="table table-bordered table-striped tablesorter" id="data-table">
+				<thead>
+				<tr>
+					<th>Experiment</th>
+					<th>Node</th>
+					<th>Stream</th>
+					<th>Count</th>
+					<th>Min</th>
+					<th>Max</th>
+					<th>StDev</th>
+					<th>Avg</th>
+					<th>Last Value</th>
+					<th>Last Timestamp</th>
+				</tr>
+				</thead>
 				<tbody>
-				<tr><td>Owner</td><td>Ali</td></tr>
-				<tr><td>Nodes</td><td>34</td></tr>
-				<tr><td>Streams</td><td>492</td></tr>
-				<tr><td>Streams</td><td>492</td></tr>
-				<tr><td>Streams</td><td>492</td></tr>
-				<tr><td>Elements</td><td>492</td></tr>
-				<tr><td>Updated</td><td>135 minutes ago</td></tr>
+				<tr>
+					<td><a>Yanco Experiment 2</a></td>
+					<td><a>Janz [Irrigated]</a></td>
+					<td><a>Temperature</a></td>
+					<td>24,541</td>
+					<td>-10.231</td>
+					<td>43.654</td>
+					<td>3.432</td>
+					<td>17.342</td>
+					<td>19.342</td>
+					<td>25 minutes ago</td>
+				</tr>
 				</tbody>
 			</table>
 		</div>
-	</div>
-	<hr/>
-</div>
-<div>
-<form class="form-horizontal">
-	<h3 class="pull-left span2 no-left-margin">Filters</h3>
-	<div class="btn-toolbar" style="margin-top: 18px;">
-		<div class="btn-group">
-			<button class="btn dropdown-toggle " data-toggle="dropdown">All Experiments<span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#">All Experiments</a></li>
-				<li class="divider"></li>
-				<li><a href="#">Experiment 1</a></li>
-				<li><a href="#">Experiment 2</a></li>
-			</ul>
-		</div><!-- /btn-group -->
-		<div class="btn-group">
-			<button class="btn dropdown-toggle" data-toggle="dropdown">All Nodes<span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#">All Nodes</a></li>
-				<li class="divider"></li>
-				<li><a href="#">Node 1</a></li>
-				<li><a href="#">Node 2</a></li>
-			</ul>
-		</div><!-- /btn-group -->
-		<div class="btn-group">
-			<a class="btn dropdown-toggle" data-toggle="dropdown">All Streams<span class="caret"></span></a>
-			<ul class="dropdown-menu">
-				<li><a href="#">All Streams</a></li>
-				<li class="divider"></li>
-				<li><a href="#">Temperature</a></li>
-				<li><a href="#">Humiditiy</a></li>
-			</ul>
-		</div><!-- /btn-group -->
-		<div class="btn-group pull-right" data-toggle="buttons-radio">
-			<button class="btn active">24h</button>
-			<button class="btn">7d</button>
-			<button class="btn">1m</button>
-			<button class="btn">1y</button>
-			<button class="btn">All</button>
-		</div>
-	</div>
-</form>
-<table class="table table-bordered table-striped tablesorter" id="data-table">
-<thead>
-<tr>
-	<th>Experiment</th>
-	<th>Node</th>
-	<th>Stream</th>
-	<th>Count</th>
-	<th>Min</th>
-	<th>Max</th>
-	<th>StDev</th>
-	<th>Avg</th>
-	<th>Last Value</th>
-	<th>Last Timestamp</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-	<td><a>Yanco Experiment 2</a></td>
-	<td><a>Janz [Irrigated]</a></td>
-	<td><a>Temperature</a></td>
-	<td>24,541</td>
-	<td>-10.231</td>
-	<td>43.654</td>
-	<td>3.432</td>
-	<td>17.342</td>
-	<td>19.342</td>
-	<td>25 minutes ago</td>
-</tr>
-</tbody>
-</table>
-</div>
 </script>
 <script type="html/template" id="tpl-stream-create">
 	<div class="container">

@@ -367,6 +367,10 @@ class Router extends Backbone.Router
 	error404: (path) -> @layout("#tpl-404",{path})
 
 $ () ->
+	$.ajaxSetup
+		beforeSend: -> $('.ajax-loading img').show()
+		complete: -> $('.ajax-loading img').hide()
+
 	window.routes = new Router()
 	Backbone.history.start({pushState:false, root: "/"})
 	$("body").on "click","a#login-btn",(e)->

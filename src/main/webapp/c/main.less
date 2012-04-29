@@ -29,28 +29,24 @@ body {
 .margin-10{
 	margin: 10px;
 }
-#main {
-  margin-top: @navbarHeight;
 
-  div.container {
-    margin-top:  20px;
-  }
-}
 .no-scrollbar{
 	overflow:hidden;
 }
 
+img.bg {
+	z-index: -999;
+	min-height: 100%;
+	min-width: 1024px;
+	width: 100%;
+	height: auto;
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
 div#first-page  {
-		img.bg {
-				z-index: -999;
-				min-height: 100%;
-				min-width: 1024px;
-				width: 100%;
-				height: auto;
-				position: fixed;
-				top: 0;
-				left: 0;
-    }
+
     .vertical-band {
         position: relative;
         width: 100%;
@@ -69,6 +65,7 @@ div#first-page  {
     .brand{
         padding-top: 3px;
         padding-bottom: 0;
+        padding-left: 0;
         margin: 0;
     }
 }
@@ -134,10 +131,9 @@ table.tablesorter thead tr {
 .no-round-corner{
 	.border-radius(0px)
 }
-.my-alert{
-	#translucent > .background(@red, 0.8);
-	width: 100%;
-	color: @white;
 
-	border-bottom: 1px @errorBorder;
+.navbar .ajax-loading {
+	float: left;
+	padding: 8px 0px 12px 10px;
+	min-width: 25px;
 }
