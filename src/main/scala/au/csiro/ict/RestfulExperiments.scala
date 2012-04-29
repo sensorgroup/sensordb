@@ -32,7 +32,7 @@ trait RestfulExperiments {
       case (Some((uid,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueName(Experiments,"name"->name,"uid"->uid)=>
         addExperiment(name, uid, timezone, public_access, picture, website, description)
         generate(Experiments.findOne(Map("uid"->uid,"name"->name)))
-      case error=>haltMsg()
+      case error=>haltMsg("Creating a new experiment failed")
     }
   }
 

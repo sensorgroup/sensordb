@@ -14,9 +14,9 @@ import au.csiro.ict.JsonGenerator.generate
 trait RestfulUsers {
   self:ScalatraServlet with RestfulHelpers with Logger=>
 
-  def login(name:String, password:String)(implicit session:HttpSession):Option[DBObject]= {
+  def login(name:String, password:String)(implicit session:HttpSession):Option[ObjectId]= {
     UserSession(session) match{
-      case Some((uid,userName))=>Users.findOne(Map("_id"->uid))
+      case Some((uid,userName))=> Some(uid)
       case None=>
         Users.findOne(Map("name"->name)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
           val session_id = Utils.uuid()
@@ -24,7 +24,10 @@ trait RestfulUsers {
           cache.hset(session_id,CACHE_UID, user._id.get.toString)
           cache.hset(session_id,CACHE_USER_NAME, user.getAs[String]("name").get)
           cache.expire(session_id,CACHE_TIMEOUT)
-          user
+          user._id.get
+        }.orElse{
+          haltMsg("Login failed")
+          None
         }
     }
   }
@@ -41,7 +44,13 @@ trait RestfulUsers {
 
   post("/register") {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
-    (UniqueUsername(Username(params.get("name"))),Password(params.get("password")),TimeZone(params.get("timezone")),UniqueEmail(Email(params.get("email"))),Description(params.get("description")),PictureUrl(params.get("picture")),WebUrl(params.get("website"))) match {
+    (UniqueUsername(Username(params.get("name"))),
+      Password(params.get("password")),
+      TimeZone(params.get("timezone")),
+      UniqueEmail(Email(params.get("email"))),
+      Description(params.get("description")),
+      PictureUrl(params.get("picture")),
+      WebUrl(params.get("website"))) match {
       case (Some(name),Some(password),Some(timezone),Some(email),Some(description),Some(pic),Some(website))=>
         addUser(name, password, timezone, email, pic, website, description)
         login(name,password)

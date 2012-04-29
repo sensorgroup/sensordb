@@ -102,7 +102,6 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
       post("/experiments",Map("name"->"exp1","timezone"->"1000")){
         // no valid session
-        body should include ("error")
         status should equal(400)
       }
       post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1","timezone"->"000")) {

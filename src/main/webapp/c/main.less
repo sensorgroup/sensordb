@@ -20,6 +20,15 @@ body {
 .pad-20 {
     padding: 20px 0;
 }
+.pad-10 {
+    padding: 20px 0;
+}
+.margin-20{
+	margin: 20px;
+}
+.margin-10{
+	margin: 10px;
+}
 #main {
   margin-top: @navbarHeight;
 
@@ -64,12 +73,7 @@ div#first-page  {
     }
 }
 
-
-#nav-spacer{
-  clear: both;
-  padding-top: @navbarHeight;
-}
-#footer {
+.footer-contents {
   border-top:1px solid #E5E5E5;
   padding: 20px 0;
   background: @white;
@@ -121,4 +125,19 @@ table.tablesorter thead tr {
 .data-page #properties {
 	margin-bottom:0px;
 }
-//a { display: inline-block; }
+.no-margin{
+	margin: 0;
+}
+.clear-both{
+	clear:both;
+}
+.no-round-corner{
+	.border-radius(0px)
+}
+.my-alert{
+	#translucent > .background(@red, 0.8);
+	width: 100%;
+	color: @white;
+
+	border-bottom: 1px @errorBorder;
+}

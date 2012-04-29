@@ -57,9 +57,9 @@ object Validators {
       Some(v)
   }
 
-  def Email(value:Option[String])(implicit validator:Validator)=value.orElse(validator.addError( "Email is missing")).filter(isEmail).orElse(validator.addError("Email is invalid"))
+  def Email(value:Option[String])(implicit validator:Validator)=value.filter(isEmail).orElse(validator.addError("Email is invalid"))
 
-  def Password(value:Option[String])(implicit validator:Validator):Option[String]=value.orElse(validator.addError( "Name is missing")).flatMap{p=>
+  def Password(value:Option[String])(implicit validator:Validator):Option[String]=value.orElse(validator.addError( "Password is missing")).flatMap{p=>
     if (!isAsciiPrintable(p))
       validator.addError("Password should only contain valid printable ascii characters")
     else if (!isInRange(p.size,6,30))
@@ -113,7 +113,6 @@ object Validators {
       cache.expire(sessionId,Cache.CACHE_TIMEOUT)
       Some(new ObjectId(Cache.cache.hget(sessionId,Cache.CACHE_UID).get)->cache.hget(sessionId,Cache.CACHE_USER_NAME).get)
     } else {
-      validator.addError("Invalid session")
       None
     }
   }
