@@ -10,6 +10,27 @@
   };
   this.module("sensordb", function() {
     var Experiment, Experiments;
+    this.show_errors = function(res) {
+      var errors;
+      errors = _.reduce((_.defaults(jQuery.parseJSON(res.responseText), {
+        "errors": []
+      }))["errors"], (function(sum, msg) {
+        return sum + ("<p>" + msg + "</p>");
+      }), "");
+      if (errors.length > 0) {
+        $(".alert-error").show().find("div.messages").html(errors);
+        return sensordb.Utils.scroll_top();
+      }
+    };
+    this.show_alert = function(selector, messages) {
+      messages = _.reduce(messages, (function(sum, msg) {
+        return sum + ("<p>" + msg + "</p>");
+      }), "");
+      if (messages.length > 0) {
+        $(selector).show().find("div.messages").html(messages);
+        return sensordb.Utils.scroll_top();
+      }
+    };
     this.Utils = (function() {
       function Utils() {}
       Utils.editor_config = {
@@ -23,12 +44,15 @@
         docCSSFile: "",
         bodyStyle: "margin:4px; font:10pt Arial,Verdana; cursor:text"
       };
-      Utils.guid = function() {
-        var S4;
-        S4 = function() {
-          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      Utils.scroll_top = function() {
+        $("body").scrollTop(0);
+        return this.guid = function() {
+          var S4;
+          S4 = function() {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+          };
+          return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
         };
-        return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
       };
       Utils.find_in_catalog_by_stream_id = function(stream_id, catalog) {
         var exp_name, experiments, node_name, nodes, s_id, stream_name, streams, user;
@@ -409,6 +433,7 @@
   window.db = new SampleDatabase();
   window.rm = new sensordb.GroupedRequestManager(window.db);
   Router = (function() {
+    var first_page_tpl;
     __extends(Router, Backbone.Router);
     function Router() {
       Router.__super__.constructor.apply(this, arguments);
@@ -419,7 +444,92 @@
       "experiments/create": "create_experiment",
       "nodes/create": "create_node",
       "streams/create": "create_stream",
-      '*path': 'default_route'
+      ":user/data": "data_page",
+      "register": "register",
+      "test": "test",
+      '*path': 'error404'
+    };
+    Router.prototype.test = function() {
+      return this.session();
+    };
+    Router.prototype.session = function(callback_func) {
+      var session_name;
+      if (_.isUndefined(callback_func)) {
+        return;
+      }
+      session_name = "sdb-session";
+      if (_.isNull(lscache.get(session_name)) || _.isEmpty(lscache.get(session_name))) {
+        return $.ajax({
+          type: 'get',
+          url: '/session',
+          success: (function(res) {
+            var session_info;
+            session_info = jQuery.parseJSON(res);
+            lscache.set(session_name, session_info);
+            return callback_func(session_info);
+          }),
+          error: (function(errors) {
+            sensordb.show_errors(errors);
+            return callback_func({});
+          })
+        });
+      } else {
+        return callback_func(lscache.get(session_name));
+      }
+    };
+    Router.prototype.default_route = function() {
+      return this.navigate("/#");
+    };
+    first_page_tpl = "#tpl-first-page";
+    Router.prototype.layout = function(template_id, template_params, callback_func) {
+      if (template_params == null) {
+        template_params = {};
+      }
+      if (callback_func == null) {
+        callback_func = function(session) {
+          return {};
+        };
+      }
+      return this.session(function(session) {
+        session || (session = {});
+        $("body div#navigation").html(_.template($("#navbar-tpl").html(), {
+          session: session
+        }));
+        if (template_id !== first_page_tpl) {
+          $("body div#header").html(_.template($("#header-tpl").html()));
+        } else {
+          $("body div#header").html("");
+        }
+        $("body div#contents").html(_.template($(template_id).html(), template_params));
+        if (template_id !== first_page_tpl) {
+          $("body div#footer").html(_.template($("#footer-tpl").html()));
+        } else {
+          $("body div#footer").html("");
+        }
+        sensordb.Utils.scroll_top();
+        return callback_func(session);
+      });
+    };
+    Router.prototype.register = function() {
+      return this.layout("#tpl-register", {}, function() {
+        $("body textarea").cleditor(sensordb.Utils.editor_config);
+        return $("#registration a.btn-primary").click(function() {
+          return $.ajax({
+            type: 'post',
+            url: '/register',
+            data: $("#registration").serialize(),
+            success: (function(res) {
+              return console.log(res);
+            }),
+            error: sensordb.show_errors
+          });
+        });
+      });
+    };
+    Router.prototype.data_page = function(username) {
+      return this.layout("#tpl-data-page", {}, function() {
+        return $("#data-table").tablesorter();
+      });
     };
     Router.prototype.analysis = function(user, name) {
       var widgets;
@@ -434,47 +544,93 @@
           }
         });
       });
-      return $("#main").html(_.template($("#tpl-analysis").html(), {
+      return this.layout("#tpl-analysis", {
         widgets: widgets
-      }));
+      });
     };
     Router.prototype.home = function() {
-      return $("#main").html(_.template($("#tpl-first-page").html(), {}));
+      return this.layout(first_page_tpl, {}, function(session) {
+        $("[rel=tooltip]").tooltip();
+        return $("a [rel=tooltip]").click(function() {
+          return $(this).tooltip('hide');
+        });
+      });
     };
     Router.prototype.create_experiment = function() {
-      $("#main").html(_.template($("#tpl-experiment-create").html(), {}));
-      $("#main textarea").cleditor(sensordb.Utils.editor_config);
-      return $(".container form").ajaxForm(function() {
-        return alert("Thank you for your comment!");
+      return this.layout("#tpl-experiment-create", {}, function() {
+        $("body textarea").cleditor(sensordb.Utils.editor_config);
+        return $(".container form").ajaxForm(function() {
+          return alert("Thank you for your comment!");
+        });
       });
     };
     Router.prototype.create_node = function() {
-      $("#main").html(_.template($("#tpl-node-create").html(), {}));
-      $("#main textarea").cleditor(sensordb.Utils.editor_config);
-      return $(".container form").ajaxForm(function() {
-        return alert("Thank you for your comment!");
+      return this.layout("#tpl-node-create", {}, function() {
+        $("body textarea").cleditor(sensordb.Utils.editor_config);
+        return $(".container form").ajaxForm(function() {
+          return alert("Thank you for your comment!");
+        });
       });
     };
     Router.prototype.create_stream = function() {
-      $("#main").html(_.template($("#tpl-stream-create").html(), {}));
-      $("#main textarea").cleditor(sensordb.Utils.editor_config);
-      return $(".container form").ajaxForm(function() {
-        return alert("Thank you for your comment!");
+      return this.layout("#tpl-stream-create", {}, function() {
+        $("body textarea").cleditor(sensordb.Utils.editor_config);
+        return $(".container form").ajaxForm(function() {
+          return alert("Thank you for your comment!");
+        });
       });
     };
-    Router.prototype.default_route = function(path) {
-      return $("#main").html(_.template($("#tpl-404").html(), {
+    Router.prototype.error404 = function(path) {
+      return this.layout("#tpl-404", {
         path: path
-      }));
+      });
     };
     return Router;
   })();
   $(function() {
-    var routes;
-    routes = new Router();
-    return Backbone.history.start({
+    window.routes = new Router();
+    Backbone.history.start({
       pushState: false,
-      root: "/sample"
+      root: "/"
+    });
+    $("body").on("click", "a#login-btn", function(e) {
+      var credentials;
+      credentials = {
+        name: $("#login-name").val(),
+        password: $("#login-password").val()
+      };
+      return $.ajax({
+        type: 'post',
+        url: '/login',
+        data: credentials,
+        success: (function(res) {
+          return window.routes.session(function(s) {
+            $("body div#navigation").html(_.template($("#navbar-tpl").html(), {
+              session: s
+            }));
+            return sensordb.show_alert(".alert-success", ["Logged in successfully"]);
+          });
+        }),
+        error: function(errors) {
+          return sensordb.show_errors(errors);
+        }
+      });
+    });
+    return $("body").on("click", "a#logout-btn", function(e) {
+      return $.ajax({
+        type: 'post',
+        url: '/logout',
+        success: function() {
+          lscache.flush();
+          return window.routes.session(function(s) {
+            console.log(s);
+            $("body div#navigation").html(_.template($("#navbar-tpl").html(), {
+              session: s
+            }));
+            return sensordb.show_alert(".alert-success", ["Logged out successfully"]);
+          });
+        }
+      });
     });
   });
 }).call(this);
