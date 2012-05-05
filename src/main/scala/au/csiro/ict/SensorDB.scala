@@ -13,6 +13,7 @@ with RestfulExperiments
 with RestfulNodes
 with RestfulStreams
 with RestfulMeasurements
+with RestfulMetadata
 with RestfulHelpers
 with Logger{
 

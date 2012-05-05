@@ -282,7 +282,8 @@ class Router extends Backbone.Router
 		'*path':  'error404'
 
 	test: ->
-		@session()
+
+		alert("C")
 
 	session: (callback_func)->
 		return if _.isUndefined(callback_func)

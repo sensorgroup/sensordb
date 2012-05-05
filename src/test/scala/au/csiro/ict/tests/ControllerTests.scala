@@ -69,11 +69,25 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       status must equal(200)
     }
 
+    get("/metadata/remove",Map("id"->new ObjectId().toString,"name"->"age")){
+      body should include("error")
+      status must equal(400)
+    }
+      get("/metadata/add",Map("id"->new ObjectId().toString,"name"->"age","value"->"30")){
+      body should include("error")
+      status must equal(400)
+    }
+      get("/metadata/retrive/"+new ObjectId().toString){
+      body should include("{}")
+      status must equal(200)
+    }
+
     session{
       get("/session"){
         body should not include("_id")
         body should not include("token")
       }
+      //
 
       delete("/nodes"){
         // Delete without providing eid nor nid
@@ -187,6 +201,32 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("_id")
         status should equal(200)
       }
+      get("/metadata/add",Map("id"->exp1.apply("_id"),"name"->"age","value"->"30<script>31</script>")){
+        status must equal(200)
+      }
+      get("/metadata/retrive/"+exp1.apply("_id")){
+        body should include("age")
+        body should not include("<script>") // script tag is removed from value automatically.
+        body should not include("31") // script tag is removed from value automatically.
+        body should include("30")
+        status must equal(200)
+      }
+
+      get("/session"){
+        body should include ("exp1")
+        body should include ("30")
+        body should include ("age")
+        body should include ("metadata")
+      }
+
+      get("/metadata/remove",Map("id"->exp1.apply("_id"),"name"->"age")){
+        status must equal(200)
+      }
+      get("/metadata/retrive/"+exp1.apply("_id")){
+        body should not include("age")
+        body should not include("\"30\"")
+        status must equal(200)
+      }
 
       post("/experiments",Map("name"->"exp1","timezone"->"1000")){
         //failed, name reused creation of experiment
@@ -196,6 +236,9 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       get("/session"){
         body should not include ("exp2")
         body should include ("exp1")
+        body should not include ("\"30\"")
+        body should not include ("age")
+        body should include ("metadata")
       }
       post("/experiments",Map("name"->"exp2","timezone"->"1000","public_access"->"false")){
         // success, exp2 created

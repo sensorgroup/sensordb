@@ -11,9 +11,11 @@ import javax.servlet.http.HttpSession
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import Cache._
-  import com.codahale.jerkson.Json._
+import com.codahale.jerkson.Json._
 import scala.{Option, None}
 import scala.Predef._
+import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.DateTime
 
 object Validators {
   val sanitize = Jsoup.clean(_:String, Whitelist.basic())
@@ -53,6 +55,17 @@ object Validators {
       validator.addError("Name is not valid")
     else if (!isInRange(v.size,3,30))
       validator.addError("Name must have 3 to 30 characters")
+    else
+      Some(v)
+  }
+
+  val METADATA_NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_]{0,29}""".r.pattern.matcher(_:String).matches()
+
+  def PatternMatch(value:Option[String],pattern:(String)=>Boolean)(implicit validator:Validator)=value.orElse(validator.addError( "Value is missing")).flatMap{v=>
+    if (!isInRange(v.size,1,30))
+      validator.addError("Value must have 1 to 30 characters")
+    else if (!pattern(v))
+      validator.addError("Value is not valid")
     else
       Some(v)
   }
@@ -154,6 +167,20 @@ object Validators {
     validator.addError("Invalid date parameter")
     None
   }
+  // formats the date to yyyy-MM-dd'T'HH:mm:ss.SSSZZ
+  val  isoTSFormatter = ISODateTimeFormat.dateTime()
+
+  def IsoTimestampParam(v:Option[String])(implicit validator:Validator):Option[DateTime]=v.flatMap(x=>
+    try {
+      Some(isoTSFormatter.parseDateTime(x))
+    } catch {
+      case err =>None
+    }
+  ).orElse{
+    validator.addError("Invalid timestamp parameter, expected input format yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+    None
+  }
+
   def TimeParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
     try {
       val ts = Utils.TimeParser.parseDateTime(x)
