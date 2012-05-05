@@ -16,14 +16,14 @@ trait RestfulMetadata {
   self:ScalatraServlet with RestfulHelpers=>
 
   get("/metadata/add"){
-    // Session,  Id, start ts, end ts,name ,value, tooltip
+    // Session,  Id, start ts, end ts,name ,value, description
     (UserSession(session),
       EntityId(params.get("id")),
       IsoTimestampParam(params.get("start-ts")),
       IsoTimestampParam(params.get("end-ts")),
       PatternMatch(params.get("name"),METADATA_NAME_REGEX),
       Description(params.get("value")),
-      Description(params.get("tooltip"))) match {
+      Description(params.get("description"))) match {
       case (Some((uid,userName)),Some(oid),startTs,endTs,Some(name),Some(value),description) =>
         val toInsert = Map("value"->value.slice(0,30),"updated_at"->System.currentTimeMillis(),"updated_by"->userName) ++ startTs.map("start-ts"->_.getMillis) ++ endTs.map("end-ts"->_.getMillis) ++ description.map("description"-> _ )
         val modify = MongoDBObject("$set"->MongoDBObject(("metadata."+name)->toInsert))

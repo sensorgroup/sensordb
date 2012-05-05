@@ -41,7 +41,9 @@ trait RestfulUsers {
   get("/session"){
     sendSession()
   }
-
+  get("/users"){
+    generate(Users.find(MongoDBObject(),MongoDBObject("picture"->"1","timezone"->"1","description"->"1","name"->"1","website"->"1")))
+  }
   post("/register") {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
     (UniqueUsername(Username(params.get("name"))),
