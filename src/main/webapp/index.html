@@ -57,7 +57,6 @@
 							<!--<li><a href="#streams/create">New Stream</a></li>-->
 							<!--<li class="divider"></li>-->
 							<li><a href="#ali/data"><i class="icon-th"></i> Data Explorer</a></li>
-							<li><a  data-toggle="modal" href="#download-modal"><i class="icon-download-alt"></i> Data Download</a></li>
 						</ul>
 					</li>
 					<!--<li class="dropdown">-->
@@ -228,8 +227,9 @@
 	<div id="first-page" >
 		<div class="vertical-band full-center">
 			<div class="center">
-				<a href="#phenomics/data" ><img rel="tooltip" title="User: Phenonet" src="i/phenomics-user.png" /></a>
-				<a href="#ali/data" ><img rel="tooltip" title="User: Ali" src="i/ali-user.png" /></a>
+				<% _.each(users,function(u){ %>
+				<a href="#data/<%=u.name%>" ><img rel="tooltip" title="User: <%=u.name%>" src="<%=u.picture%>" /></a>
+				<% }); %>
 				<h1 class="center"><img src="i/sensordb-logo.png"></h1>
 			</div>
 		</div>
@@ -430,13 +430,13 @@
 		<div class="description">
 			<div class="page-header">
 				<div class="btn-group pull-right">
-					<a class="btn"><i class="icon-download-alt"></i> Download</a>
+					<a class="btn"  data-toggle="modal" href="#download-modal"><i class="icon-download-alt"></i> Download</a>
 					<a class="btn"><i class="icon-tags"></i> Hide Metadata</a>
 
 					<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="#"><i class="icon-barcode"></i> Show/Generate Token</a></li>
-						<li><a href="#"><i class="icon-tag"></i> Add Metadata</a></li>
+						<li><a href="#" data-toggle="modal" data-target="#add-metadata-modal"><i class="icon-tag"></i> Set Metadata</a></li>
 						<li><a href="#"><i class="icon-remove"></i> Remove Metadata</a></li>
 						<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
 						<li><a href="#"><i class="icon-trash"></i> Remove</a></li>
@@ -446,8 +446,12 @@
 			</div>
 			<div class="row">
 				<div class="span9">
-					<p></p>
+					<div class="row caption">
+						<p class="center span9">Plot for <strong><span class="from_timestamp">12/2/2003</span></strong> until <strong><span class="to_timestamp">10/3/2009</span></strong><a class="reset-zoom btn pull-right">Reset Zoom</a></p>
+					</div>
+					<div class="flot" style="height:210px;width:650px;"></div>
 				</div>
+
 				<div class="span3">
 					<table class="table table-bordered" id="properties">
 						<tbody>
@@ -817,6 +821,59 @@
 
 <body>
 <div id="modals">
+	<div class="modal hide" id="add-metadata-modal">
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal">×</button>
+			<h3>Set a Metadata</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal">
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label" >Name</label>
+						<div class="controls">
+							<input class="metadata-name span4" type="text">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" >Value</label>
+						<div class="controls">
+							<input class="metadata-name span4" type="text">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" >Description</label>
+						<div class="controls">
+							<input class="metadata-name span4" type="text">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" >From</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on"><input class="checkbox" type="checkbox"/></span><input id="metadata-from-ts" class="input-xlarge" type="text">
+							</div>
+						</div>
+					</div>
+
+
+					<div class="control-group">
+						<label class="control-label" >To</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on"><input class="checkbox" type="checkbox"/></span><input id="metadata-to-ts" class="input-xlarge" type="text">
+							</div>
+						</div>
+					</div>
+
+				</fieldset>
+			</form>
+		</div>
+		<div class="modal-footer">
+			<a class="btn btn-primary">Apply Changes</a>
+			<a class="btn" data-dismiss="modal">Cancel</a>
+		</div>
+	</div>
 	<div class="modal hide" id="download-modal">
 		<div class="modal-header">
 			<button class="close" data-dismiss="modal">×</button>

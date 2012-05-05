@@ -9,6 +9,59 @@
 		if (messages.length>0)
 			$(selector).show().find("div.messages").html(messages)
 			sensordb.Utils.scroll_top()
+	class @LineChart
+		constructor: (@location,@unit,@data_provider_func) ->
+			@elem = $(location)
+			options =
+				legend:
+					position: 'nw'
+					backgroundOpacity:0.5
+					backgroundColor: null
+				series:
+					lines:
+						lineWidth: 1
+				xaxis:
+					mode: 'time'
+					localTimezone: false
+				yaxes: [{position:"left",axisLabel: unit,axisLabelUseCanvas: true}]
+				grid:
+					show: true
+					borderWidth:1
+					borderColor:"#ccc"
+				selection:{mode: "xy"}
+
+#			to_plot = _.map req_res, (rr)->
+#				shadowSize:1
+#				data: rr._res.data
+#				yaxis: (if rr.local_info.axis is 'left' then 1 else 2)
+#			place_holder = @elem.find('.flot')
+#			place_holder.unbind("plotselected").bind "plotselected", (event,ranges)=>
+#				plot = $.plot(place_holder,to_plot,($.extend(true, {}, options,
+#					xaxis:
+#						min: ranges.xaxis.from
+#						max: ranges.xaxis.to,
+#						yaxis:
+#							min: (if ranges.yaxis is undefined then 0 else ranges.yaxis.from)
+#							max: (if ranges.yaxis is undefined then 0 else ranges.yaxis.to)
+#					y2axis:
+#						min: (if ranges.y2axis is undefined then 0 else ranges.y2axis.from)
+#						max: (if ranges.y2axis is undefined then 0 else ranges.y2axis.to)
+#						axisLabel: (if right_axis_unit.length>0 then right_axis_unit[0] else undefined)
+#				)))
+#				@elem.find(".caption .reset-zoom").unbind("click").click => @plot(conf,req_res)
+#				start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0))
+#				end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0))
+#				# Verify the TimeZone and perform correct formatting of the timestamp
+#				@elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
+#				@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
+#
+#			plot = $.plot(place_holder, to_plot, options)
+#			start_date = plot.getAxes()['xaxis']['min']
+#			end_date = plot.getAxes()['xaxis']['max']
+#
+#			@elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
+#			@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
+#			@elem.find(".caption").show()
 
 	class @Utils
 		@editor_config=
@@ -31,7 +84,7 @@
 			docCSSFile:"",
 			bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
 
-		@scroll_top = -> $("body").scrollTop(0);
+		@scroll_top = -> $("body").scrollTop(0)
 		@guid= ->
 			S4 = -> (((1+Math.random())*0x10000)|0).toString(16).substring(1)
 			(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
@@ -272,17 +325,16 @@ window.rm = new sensordb.GroupedRequestManager(window.db)
 class Router extends Backbone.Router
 	routes:
 		"": "home"
-		":user/analysis/:name" : "analysis"
+		"analysis/:user/:name" : "analysis"
 		"experiments/create" : "create_experiment"
 		"nodes/create" : "create_node"
 		"streams/create" : "create_stream"
-		":user/data" : "data_page"
+		"data/:user" : "data_page"
 		"register" : "register"
 		"test":"test"
 		'*path':  'error404'
 
 	test: ->
-
 		alert("C")
 
 	session: (callback_func)->
@@ -328,7 +380,8 @@ class Router extends Backbone.Router
 
 	data_page: (username) ->
 		@layout "#tpl-data-page",{},()->
-			$("#data-table").tablesorter()
+			$("table.tablesorter").tablesorter()
+			$("")
 
 	analysis: (user,name) ->
 		widgets = db.analysis(user)[name]
@@ -343,10 +396,10 @@ class Router extends Backbone.Router
 		@layout("#tpl-analysis", {widgets})
 
 	home: ()->
-		@layout(first_page_tpl,{},(session)->
-			$("[rel=tooltip]").tooltip()
-			$("a [rel=tooltip]").click(->$(this).tooltip('hide')) # this is required for single page apps as page rewrite even is not received by tooltip
-		)
+		$.ajax type:"get", url:"/users" , dataType:"json", success:(users)=>
+			@layout first_page_tpl,{users},(session)->
+				$("[rel=tooltip]").tooltip()
+				$("a [rel=tooltip]").click(->$(this).tooltip('hide')) # this is required for single page apps as page rewrite even is not received by tooltip
 
 	create_experiment: () ->
 		@layout "#tpl-experiment-create", {},()->
@@ -388,11 +441,3 @@ $ () ->
 				console.log(s)
 				$("body div#navigation").html((_.template($("#navbar-tpl").html(),{session:s})))
 				sensordb.show_alert(".alert-success",["Logged out successfully"])
-
-
-#
-#	$("a.logout-btn").click () ->
-#
-#	$("a.login-btn").click ()->
-#
-## binding should be done at body level for login and logout
