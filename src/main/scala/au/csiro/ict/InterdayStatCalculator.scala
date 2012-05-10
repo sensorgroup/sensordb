@@ -12,9 +12,9 @@ object InterdayStatCalculator extends Logger{
     val start = System.currentTimeMillis()
     var count = 0
     stat.srandmember(InterdayStatIncomingQueueName).map{key=>
-      val Array(nid,sidKey) = key.split("@")
+      val (sid,date) = Utils.parseRowKey(key)
       stat.smove(InterdayStatIncomingQueueName,InterdayStatProcessingQueueName,key)
-      StreamStatistics.updateInterDayStatistics(nid,sidKey)
+      StreamStatistics.updateInterDayStatistics(sid,date)
       stat.srem(InterdayStatProcessingQueueName,key)
       count+=1
     }

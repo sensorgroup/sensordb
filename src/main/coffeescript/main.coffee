@@ -330,12 +330,12 @@ class Router extends Backbone.Router
 		"nodes/create" : "create_node"
 		"streams/create" : "create_stream"
 		"data/:user" : "data_page"
+		"data/:user/:experiment" : "data_page"
+		"data/:user/:experiment/:stream" : "data_page"
+		"data/:user/:experiment/:stream/:node" : "data_page"
 		"register" : "register"
 		"test":"test"
 		'*path':  'error404'
-
-	test: ->
-		alert("C")
 
 	session: (callback_func)->
 		return if _.isUndefined(callback_func)
@@ -378,10 +378,21 @@ class Router extends Backbone.Router
 			$("#registration a.btn-primary").click ->
 				$.ajax({type:'post', url:'/register', data:$("#registration").serialize(),success:((res)->console.log(res)),error:sensordb.show_errors})
 
+	parallel_requests: (requests,callback)->
+		done = _.size(requests) # Number of total requests
+		to_return = {}
+		if (done==0) then callback(to_return)
+		_.each requests, (req,name) ->
+			$.ajax(_.extend(req,{success:(data)->
+				to_return[name]=data
+				done -=1
+				callback(to_return) if(done ==0)
+			}))
+
 	data_page: (username) ->
-		@layout "#tpl-data-page",{},()->
-			$("table.tablesorter").tablesorter()
-			$("")
+		$.ajax type:"get", url:"/session" , data:{user:username},dataType:"json" , success:(profile)=>
+			@layout "#tpl-data-page",{profile},()->
+				$("table.tablesorter").tablesorter()
 
 	analysis: (user,name) ->
 		widgets = db.analysis(user)[name]

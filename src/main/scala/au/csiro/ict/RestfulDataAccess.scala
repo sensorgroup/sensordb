@@ -7,9 +7,9 @@ import au.csiro.ict.JsonGenerator.generate
 import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
 import javax.servlet.http.{HttpServletResponse}
-import me.prettyprint.cassandra.service.KeyIterator
 import scala.Some
 import java.io.BufferedWriter
+import org.joda.time.DateTime
 
 trait RestfulDataAccess {
 
@@ -89,15 +89,15 @@ trait RestfulDataAccess {
     * et => end time => 23:01:59
     */
     (EntityId(params.get("sid")),DateParam(params.get("sd")),TimeParam(params.get("st")),DateParam(params.get("ed")),TimeParam(params.get("et"))) match {
-      case (Some(sid),Some(sd),Some(st),Some(ed),Some(et)) => permissionCheck(sid) match {
-        case Some(nid)=> query(nid, sid, sd, st, ed, et)
+      case (Some(sid),Some(start_date),Some(st),Some(end_date),Some(et)) => permissionCheck(sid) match {
+        case Some(nid)=> store.get(sid.toString, start_date ,end_date,st,et).foldLeft(new DefaultChunkFormatter(new JSONWriter(response.getWriter))){(sum,item)=>
+          sum.insert(sid.toString,item._1,item._2)
+          sum
+        }.done()
         case other => haltMsg("Bad input, access denied, please verify the body of your request")
       }
       case other => haltMsg("Bad input, missing stream, please verify the body of your request")
     }
-  }
-
-  get("/data/summary/weekly"){
   }
 
   get("/data/summary/daily"){
@@ -112,17 +112,11 @@ trait RestfulDataAccess {
     (EntityIdList(params.get("sid")),DateParam(params.get("sd")),DateParam(params.get("ed"))) match {
       case (sids,Some(sd),Some(ed)) =>
         if(sids.map(permissionCheck).forall(_.isDefined)){
-          val keys:List[String] = new StorageIdGenerator(sids.map(_.toString).toSeq,sd,ed).toList
+          val keys:List[String] = new StorageStreamDayIdGenerator(sids.map(_.toString).toSeq,Utils.yyyyDDDFormat.print(sd*1000L),Utils.yyyyDDDFormat.print(ed*1000L)).toList
           generate(keys.zip(Cache.stat.mget(keys.head,keys.tail: _*).get).toMap)
         }else
           halt()
       case others => haltMsg()
     }
   }
-
-
-  def query(node_id: ObjectId, stream_id: ObjectId, start_date: String, start_time: Int, end_date: String, end_time: Int)(implicit response:HttpServletResponse): Unit ={
-    store.queryNode(node_id.toString, new StorageIdGenerator(List(stream_id.toString), start_date, end_date), Some(start_time -> end_time), new DefaultChunkFormatter(new JSONWriter(response.getWriter)))
-  }
-
 }

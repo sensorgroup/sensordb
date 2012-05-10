@@ -25,15 +25,12 @@ libraryDependencies ++= Seq(
   "javax.servlet" % "servlet-api" % "2.5" % "provided" ,
   "org.apache.commons" % "commons-math3" % "3.0",
   "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
-  "me.prettyprint" % "hector-core" % "1.0-5",
-  "me.prettyprint" % "hector" % "1.0-5",
   "joda-time" % "joda-time" % "2.1",
   "org.joda" % "joda-convert" % "1.2" % "provided",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "commons-validator"% "commons-validator" % "1.4.0",
-//  "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
   "com.codahale" %% "jerkson" % "0.5.0",
-  "org.clapper" %% "grizzled-slf4j" % "0.6.6",
+  "org.clapper" %% "grizzled-slf4j" % "0.6.9",
   "net.debasishg" %% "redisclient" % "2.4.2",
   "com.typesafe.akka" % "akka-actor" % "2.0.1",
   "com.typesafe.akka" % "akka-remote" % "2.0.1",
@@ -43,7 +40,9 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.1",
   "org.jsoup" % "jsoup" % "1.6.2",
   "org.skife.com.typesafe.config" % "typesafe-config" % "0.3.0",
-  "redis.clients" % "jedis" % "2.0.0"
+  "redis.clients" % "jedis" % "2.0.0",
+  "org.apache.hadoop" % "hadoop-core" % "1.0.2",
+  "org.apache.hbase"  % "hbase"  % "0.92.1" exclude("org.slf4j", "slf4j-log4j12")
 )
 
 resolvers ++= Seq("Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",

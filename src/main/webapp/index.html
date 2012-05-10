@@ -49,16 +49,16 @@
 					<!--</li>-->
 					<!--</ul>-->
 					<!--</li>-->
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Data</a>
-						<ul class="dropdown-menu">
-							<!--<li><a href="#experiments/create">New Experiment</a></li>-->
-							<!--<li><a href="#nodes/create">New Node</a></li>-->
-							<!--<li><a href="#streams/create">New Stream</a></li>-->
-							<!--<li class="divider"></li>-->
-							<li><a href="#ali/data"><i class="icon-th"></i> Data Explorer</a></li>
-						</ul>
-					</li>
+					<!--<li class="dropdown">-->
+						<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Data</a>-->
+						<!--<ul class="dropdown-menu">-->
+							<!--&lt;!&ndash;<li><a href="#experiments/create">New Experiment</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;<li><a href="#nodes/create">New Node</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;<li><a href="#streams/create">New Stream</a></li>&ndash;&gt;-->
+							<!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
+							<!--<li><a href="#ali/data"><i class="icon-th"></i> Data Explorer</a></li>-->
+						<!--</ul>-->
+					<!--</li>-->
 					<!--<li class="dropdown">-->
 					<!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Analysis</a>-->
 					<!--<ul class="dropdown-menu">-->
@@ -139,10 +139,10 @@
 		<div class="row">
 			<div class="span9">
 				<p class="">This work supported by <a href="http://research.ict.csiro.au/">CSIRO ICT Centre</a>, <a href="#">Plant Phenomics Center</a> and <a href="#">GRDC</a>.</p>
-				<p id="author-notice">SensorDB platform is built by <strong>Dr Ali Salehi</strong>.</p>
 				<p class="justify">
-					<strong>Terms of Service</strong>: The following terms govern all use of this website and all Content and Services available at or through the website. By using the Website you accept of all of the terms contained herein, all other operating rules, policies and procedures that may be published from time to time on the Website by CSIRO or the Phenomics project. Please read this Agreement carefully before accessing or using the Website. If you do not agree to all the terms the Agreement, you may not access the Website or use any of its Services. CSIRO Phenomics project (A) expressly disclaims the accuracy, adequacy, or completeness of any data and (B) shall not be liable for any errors, omissions or other defects in, delays or interruptions in such data, or for any actions taken in reliance thereon. Neither CSIRO nor the Phenomics project will be liable for any damages relating to your use of the information provided herein. You agree not to copy, modify, reformat, download, store, reproduce, reprocess, transmit or redistribute any data or information found herein or use any such data or information in a commercial enterprise without obtaining prior written consent. All data and information is provided "as is" for personal informational purposes only. CSIRO Phenomics project has exclusive proprietary rights in the data and information provided.
+				<strong>Terms of Service</strong>: The following terms govern all use of this website and all Content and Services available at or through the website. By using the Website you accept of all of the terms contained herein, all other operating rules, policies and procedures that may be published from time to time on the Website by CSIRO or the Phenomics project. Please read this Agreement carefully before accessing or using the Website. If you do not agree to all the terms the Agreement, you may not access the Website or use any of its Services. CSIRO Phenomics project (A) expressly disclaims the accuracy, adequacy, or completeness of any data and (B) shall not be liable for any errors, omissions or other defects in, delays or interruptions in such data, or for any actions taken in reliance thereon. Neither CSIRO nor the Phenomics project will be liable for any damages relating to your use of the information provided herein. You agree not to copy, modify, reformat, download, store, reproduce, reprocess, transmit or redistribute any data or information found herein or use any such data or information in a commercial enterprise without obtaining prior written consent. All data and information is provided "as is" for personal informational purposes only. CSIRO Phenomics project has exclusive proprietary rights in the data and information provided.
 				</p>
+				<p id="author-notice">SensorDB platform is built by <strong>Dr Ali Salehi</strong>.</p>
 				<p><h6 class=" centerize">&copy; 2012 Commonwealth Scientific and Industrial Research Organisation (CSIRO) Australia</h6></p>
 			</div>
 			<div class="span3 center pull-right">
@@ -442,7 +442,7 @@
 						<li><a href="#"><i class="icon-trash"></i> Remove</a></li>
 					</ul>
 				</div><!-- /btn-group -->
-				<h2><a>Experiment1</a> &rarr; <a>Node 1</a> &rarr; <a>Stream 1</a> </h2>
+				<h3 class="pad-bottom-10 "><a href="#data/sample1">Sample1</a> &raquo; <a href="#data/sample1/experiment1">Experiment1</a> &raquo; <a href="#data/sample1/experiment1/node1">Node 1</a> &raquo; <a href="#data/sample1/experiment1/node1/stream1">Stream 1</a> </h3>
 			</div>
 			<div class="row">
 				<div class="span9">
@@ -471,7 +471,7 @@
 			<!--<h3 class="">Metadata Explorer [Show]</h3>-->
 			<div class="row">
 				<div class="span12">
-					<table class="table table-striped no-margin">
+					<table class="table  no-margin" >
 						<thead>
 						<tr>
 							<th>Name</th>
@@ -535,9 +535,10 @@
 						</ul>
 					</div><!-- /btn-group -->
 					<div class="btn-group pull-right" data-toggle="buttons-radio">
-						<button class="btn active">24h</button>
+						<button class="btn active">Today</button>
 						<button class="btn">7d</button>
-						<button class="btn">1m</button>
+						<button class="btn">30d</button>
+						<button class="btn">1q</button>
 						<button class="btn">1y</button>
 						<button class="btn">All</button>
 					</div>

@@ -20,7 +20,7 @@ object Configuration{
   def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
 }
 
-class Queue(val host:String,val port:Int,selectIdx:Int){
+class RQueue(val host:String,val port:Int,selectIdx:Int){
   private val queue = new JedisPool(new JedisPoolConfig(), host,port)
   def call(x:(Jedis=>Unit)){
     val jedis = queue.getResource
@@ -32,7 +32,7 @@ class Queue(val host:String,val port:Int,selectIdx:Int){
 
 object Cache {
 
-  val store:SensorDataStore = new CassandraDataStore()
+  val store:Storage2 = new HbaseStorage()
 
   val CACHE_UID="uid"
   val CACHE_USER_NAME="user"
@@ -40,7 +40,7 @@ object Cache {
   val CACHE_DB = 1
   val STREAM_STAT = 3 // storing min/max/avg/count/sum/std per day per stream
   val STREAM_STAT_TIME_IDX = 4 // storing presence index per stream per day, bit index of 86400 elements (mainly zeros)
-  val queue = new Queue(Configuration("redis.queue.host").get,Configuration("redis.queue.port").get.toInt,2)
+  val queue = new RQueue(Configuration("redis.queue.host").get,Configuration("redis.queue.port").get.toInt,2)
   val cache = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
   val stat = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
   val stat_time_idx = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)

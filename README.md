@@ -8,9 +8,18 @@ To compile javascript, use _coffee -o src/main/webapp/j/ -wc src/main/coffeescri
 
 To compile CSS use *lessc main.less >main.css*
 
-If you would like to use Cassandra for storing sensor data, start it with (v1.0.8+):  *sudo ./cassandra*
+If you would like to use HBase for storing sensor data, start it with (v0.92.1):  *./start-hbase.sh*
 
-Note that before using sensordb, you need to create sensordb namespace within cassandra.
+Note that before using sensordb, you need to create sensordb table within hbase.
+
+```./bin/hbase shell
+create "data",{NAME => 'values', VERSIONS => 1}
+create "summary1min",{NAME => 'values', VERSIONS => 1}
+create "summary5min",{NAME => 'values', VERSIONS => 1}
+create "summary15min",{NAME => 'values', VERSIONS => 1}
+create "summary1h",{NAME => 'values', VERSIONS => 1}
+create "summary4h",{NAME => 'values', VERSIONS => 1}
+create "summary1day",{NAME => 'values', VERSIONS => 1}```
 
 GUI to investigate contents of cassandra, use [Cassandra-Cluster-Admin(PHP)](https://github.com/sebgiroux/Cassandra-Cluster-Admin.git)
 

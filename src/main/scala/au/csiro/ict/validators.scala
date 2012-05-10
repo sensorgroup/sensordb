@@ -59,7 +59,7 @@ object Validators {
       Some(v)
   }
 
-  val METADATA_NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_]{0,29}""".r.pattern.matcher(_:String).matches()
+  val METADATA_NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_\s]{0,29}""".r.pattern.matcher(_:String).matches()
 
   def PatternMatch(value:Option[String],pattern:(String)=>Boolean)(implicit validator:Validator)=value.orElse(validator.addError( "Value is missing")).flatMap{v=>
     if (!isInRange(v.size,1,30))
@@ -157,9 +157,9 @@ object Validators {
     None
   }
   // formats the date to yyyyD
-  def DateParam(v:Option[String])(implicit validator:Validator):Option[String]=v.flatMap(x=>
+  def DateParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
     try {
-      Some(Utils.TIMESTAMP_YYYYD_FORMAT.print(Utils.UkDateFormat.parseDateTime(x)))
+      Some((Utils.UkDateFormat.parseDateTime(x).getMillis/1000L).asInstanceOf[Int])
     } catch {
       case err =>None
     }

@@ -23,10 +23,10 @@ class InputProcessingWorker extends Actor{
       Cache.queue.call{queue=>
         while(queue.llen(queueName)>0){
           val msg=queue.lrange(queueName,0,0).head
-          val data = parse[Map[Int,Option[String]]](msg)
-          store.addNodeData(nid,Map(sid->data))
+          val data = parse[Map[Int,Option[Double]]](msg)
+          store.put(sid,data)
           data.foreach(item => StreamStatistics.updateIntraDayStatistics(sid,item._1,item._2.map(_.toDouble), (streamDayKey:String)=>
-            Cache.stat.sadd(Cache.InterdayStatIncomingQueueName,Utils.generateNidStreamDayKey(nid,streamDayKey))))
+            Cache.stat.sadd(Cache.InterdayStatIncomingQueueName,streamDayKey)))
           queue.lpop(queueName)
         }
       }

@@ -10,18 +10,18 @@ object InsertionType extends Enumeration{
   // Nop example, deleting a non existing element
 }
 
-class StatChunker(streamDayKey:String) extends ChunkFormatter{
+class StatChunker(streamId:String,date:Int) extends ChunkFormatter{
+  val streamDayKey = Utils.generateRowKey(streamId,date)
   def done() = {
     if(summaryStat.getN>0){
       stat.set(streamDayKey,generate(List(summaryStat.getMax,summaryStat.getMin,summaryStat.getN,summaryStat.getSum,summaryStat.getSumsq)))
-  }else
+    }else
       stat.del(streamDayKey)
   }
   val summaryStat = new SummaryStatistics()
-  def insert(sensor:String, newYearDay:String,secInDay:Int,value:String):Boolean ={
-    if (!value.equals("null"))
-      summaryStat.addValue(value.toDouble)
-    true
+  def insert(sensor:String, ts:Int,value:Double):StatChunker ={
+    summaryStat.addValue(value.toDouble)
+    this
   }
 }
 object StreamStatistics {
@@ -40,10 +40,13 @@ object StreamStatistics {
 
   def getStatFor(streamDayKey:String):Option[List[Double]]=stat.get(streamDayKey).map(parse[List[Double]])
 
-//  def getStatFor(streamDayKeys:String*):Map[String,List[Double]]=streamDayKeys.zip(stat.mget(streamDayKeys).get.flatMap(_.map(parse[List[Double]]))).toMap
+  //  def getStatFor(streamDayKeys:String*):Map[String,List[Double]]=streamDayKeys.zip(stat.mget(streamDayKeys).get.flatMap(_.map(parse[List[Double]]))).toMap
 
-  def updateInterDayStatistics(nid:String,sensorDayKey:String){
-    store.queryNode(nid,List(sensorDayKey).iterator,None,new StatChunker(sensorDayKey))
+  def updateInterDayStatistics(streamId:String,date:Int){
+    store.get(streamId,date,date+60*60*24).foldLeft(new StatChunker(streamId,date)){(sum,newItem)=>
+      sum.insert("",newItem._1,newItem._2)
+      sum
+    }
   }
 
   def updateIntraDayStatistics(sensorId:String, timeStamp:Int,value:Option[Double],invalidator:(String=>Unit)):Unit=

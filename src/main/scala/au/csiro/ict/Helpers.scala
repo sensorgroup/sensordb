@@ -4,7 +4,7 @@ import collection.mutable.ListBuffer
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTimeZone, DateTime}
 
-class StorageIdGenerator(prefix:Seq[String],var from:DateTime,to:DateTime) extends Iterator[String] {
+class StorageStreamDayIdGenerator(prefix:Seq[String],var from:DateTime,to:DateTime) extends Iterator[String] {
   val separator:Char=Utils.SEPARATOR
 
   override def hasNext = !buffer.isEmpty || ( !prefix.isEmpty && !from.isAfter(to))
@@ -25,6 +25,7 @@ class StorageIdGenerator(prefix:Seq[String],var from:DateTime,to:DateTime) exten
 object Utils {
   val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD")
   //  val isoDateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
+  val yyyyDDDFormat = DateTimeFormat.forPattern("yyyyDDD");
   val ukDateTimeFormat = DateTimeFormat.forPattern("dd-MM-yyyy'T'HH:mm:ss")
   val ukDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
   val UkDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
@@ -33,7 +34,11 @@ object Utils {
   val SEPARATOR = '$'
   def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
-  def generateRowKey(sensor:String, tsInSeconds:Int) = sensor+"$"+Utils.TIMESTAMP_YYYYD_FORMAT.print(tsInSeconds*1000L)
+  def generateRowKey(sensor:String, tsInSeconds:Int) = sensor+"$"+Utils.yyyyDDDFormat.print(tsInSeconds*1000L)
+  def parseRowKey(rowKey:String):(String,Int) = {
+    val Array(sid,dayInyyyyDDD)=rowKey.split("$")
+    sid -> (yyyyDDDFormat.parseDateTime(dayInyyyyDDD).getMillis/1000L).asInstanceOf[Int]
+  }
   def generateNidStreamDayKey(nid:String, streamDayKey:String) = nid+"@"+streamDayKey
 
   val TOKEN_LEN = Utils.uuid().length
