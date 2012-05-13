@@ -1,13 +1,13 @@
-//package au.csiro.ict.tests
-//
-//import au.csiro.ict.SDBMsg
-//import akka.actor.Actor
-//
-//class MockActor extends Actor{
-//  var messages = List[SDBMsg]()
-//  def receive ={
-//    case msg:SDBMsg => messages::=msg
-//    case others => throw new Exception(others.toString)
-//  }
-//  def reset() = messages = List[SDBMsg]()
-//}
+package au.csiro.ict.tests
+
+import au.csiro.ict.Utils
+import org.joda.time.{DateTimeZone, DateTime}
+
+object SDBTestHelpers{
+
+  def ukDateTimeToInt(s:String,tz:DateTimeZone):Int=(Utils.ukDateTimeFormat.withZone(tz).parseDateTime(s).getMillis/1000L).asInstanceOf[Int]
+  def time2Int(x:String) = (Utils.yyyyDDDFormat.withZone(Utils.TZ_Sydney).parseDateTime(x).getMillis/1000L).asInstanceOf[Int]
+  def time2DateTime(x:String) = new DateTime(Utils.yyyyDDDFormat.withZone(Utils.TZ_Sydney).parseDateTime(x).getMillis)
+
+
+}

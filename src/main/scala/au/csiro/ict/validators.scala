@@ -159,7 +159,7 @@ object Validators {
   // formats the date to yyyyD
   def DateParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
     try {
-      Some((Utils.UkDateFormat.parseDateTime(x).getMillis/1000L).asInstanceOf[Int])
+      Some((Utils.ukDateFormat.parseDateTime(x).getMillis/1000L).asInstanceOf[Int])
     } catch {
       case err =>None
     }

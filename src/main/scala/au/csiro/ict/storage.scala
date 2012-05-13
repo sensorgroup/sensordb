@@ -1,20 +1,29 @@
 package au.csiro.ict
 
 import java.io.PrintWriter
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeZone, DateTime}
 
-trait Storage2 {
-  def put(streamId: String, values: Map[Int, Option[Double]]):Unit
-  def get(streamId: String, from:Int,to:Int):Iterator[(Int,Double)]
-  def get(streamId: String, fromDate:Int,toDate:Int,fromSecOfDay:Int,toSecOfDay:Int):Iterator[(Int,Double)] = get(streamId,fromDate,toDate).filter{(x)=>
-    val d = new DateTime(x._1*1000L).getSecondOfDay
+/**
+ * Storage class is Timezone aware, this means:
+ * When you call set, timestamp should be in milliseconds from EPOCH in local Timezone. A separate Timezone parameter can be provided to correctly create buckets
+ * When retrieving data, timestamp should be in milliseconds from EPOCH in local Timezone.
+ */
+trait Storage {
+  def getPrefixed(prefix:String):Iterable[Array[Byte]]
+  def put(row: Array[Byte], col:Array[Byte],value:Array[Byte]):Unit
+  def get(row: Array[Byte], col:Array[Byte]):Option[Array[Byte]]
+  def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[(Array[Byte],Array[Byte])]
+  def put(streamId: String, values: Map[Int, Option[Double]],tz:DateTimeZone):Unit
+  def get(streamId: String, from:Int,to:Int,tz:DateTimeZone):Iterator[(Int,Double)]
+  def get(streamId: String, fromDate:Int,toDate:Int,fromSecOfDay:Int,toSecOfDay:Int,tz:DateTimeZone):Iterator[(Int,Double)] = get(streamId,fromDate,toDate,tz).filter{(x)=>
+    val d = new DateTime(x._1*1000L,tz).getSecondOfDay
     d >=fromSecOfDay && d < toSecOfDay
   }
-  def get(streamId: String, from:Int,to:Int,cf:ChunkFormatter){
-    get(streamId,from,to).foldLeft(cf)((sum,item)=>sum.insert("s1",item._1,item._2)).done()
+  def get(streamId: String, from:Int,to:Int,tz:DateTimeZone,cf:ChunkFormatter){
+    get(streamId,from,to,tz).foldLeft(cf)((sum,item)=>sum.insert("s1",item._1,item._2)).done()
   }
-  def get(streamId: String, from:Int,to:Int,fromSecOfDay:Int,toSecOfDay:Int,cf:ChunkFormatter){
-    get(streamId,from,to,fromSecOfDay,toSecOfDay).foldLeft(cf)((sum,item)=>sum.insert("s1",item._1,item._2)).done()
+  def get(streamId: String, from:Int,to:Int,fromSecOfDay:Int,toSecOfDay:Int,tz:DateTimeZone,cf:ChunkFormatter){
+    get(streamId,from,to,fromSecOfDay,toSecOfDay,tz).foldLeft(cf)((sum,item)=>sum.insert("s1",item._1,item._2)).done()
   }
   def drop(streamId:String)
   def close()

@@ -9,13 +9,16 @@ import au.csiro.ict.Cache._
 import javax.servlet.http.{HttpServletResponse}
 import scala.Some
 import java.io.BufferedWriter
-import org.joda.time.DateTime
+import com.typesafe.config.ConfigFactory
+import akka.actor.{Props, ActorSystem}
+import org.joda.time.{DateTimeZone, DateTime}
 
 trait RestfulDataAccess {
 
   self:ScalatraServlet with RestfulHelpers=>
 
-  val ips = InputProcessingBackend.ips
+  val workersProxy = new UpdateBrokerProxy(Cache.store)
+
   //  val ips = new InputProcessingSystemProxy // activate this line for distributed message processing
   post("/data/raw"){
     /* Inserting time series data into a group of streams by sending POST requests.
@@ -33,17 +36,13 @@ trait RestfulDataAccess {
           val allKeysMapped = Streams.find(MongoDBObject("token"->MongoDBObject("$in"->packed.keys.toArray)),MongoDBObject("_id"->1,"token"->1,"nid"->1)).map{x=>
             val token = x("token").toString
             val sid=x("_id").toString
-            val nid=x("nid").toString
-            Utils.inputQueueIdFor(nid,sid) -> packed(token)
+            sid -> packed(token)
           }.toMap
 
           if(allKeysMapped.size != packed.size)
             haltMsg("Bad request, invalid security token(s)")
-
-          allKeysMapped.foreach{item=>
-            Cache.queue.call(_.rpush(item._1,generate(item._2)))
-            ips.process(Task(item._1))
-          }
+          // TODO: update timezones based on http://joda-time.sourceforge.net/timezones.html
+          allKeysMapped.foreach { item =>  workersProxy.process(RawData(item._1,item._2,Utils.TZ_Sydney)) }
 
           generate(Map("length"->packed.values.map(_.size).sum))
         } catch {
@@ -90,7 +89,7 @@ trait RestfulDataAccess {
     */
     (EntityId(params.get("sid")),DateParam(params.get("sd")),TimeParam(params.get("st")),DateParam(params.get("ed")),TimeParam(params.get("et"))) match {
       case (Some(sid),Some(start_date),Some(st),Some(end_date),Some(et)) => permissionCheck(sid) match {
-        case Some(nid)=> store.get(sid.toString, start_date ,end_date,st,et).foldLeft(new DefaultChunkFormatter(new JSONWriter(response.getWriter))){(sum,item)=>
+        case Some(nid)=> store.get(sid.toString, start_date ,end_date,st,et,Utils.TZ_Sydney).foldLeft(new DefaultChunkFormatter(new JSONWriter(response.getWriter))){(sum,item)=>
           sum.insert(sid.toString,item._1,item._2)
           sum
         }.done()

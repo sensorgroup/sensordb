@@ -32,22 +32,22 @@ class RQueue(val host:String,val port:Int,selectIdx:Int){
 
 object Cache {
 
-  val store:Storage2 = new HbaseStorage()
+  val store:Storage = new HbaseStorage()
 
   val CACHE_UID="uid"
   val CACHE_USER_NAME="user"
   val CACHE_TIMEOUT=15*60 // in seconds
   val CACHE_DB = 1
+  val REDIS_STORE = 5
   val STREAM_STAT = 3 // storing min/max/avg/count/sum/std per day per stream
   val STREAM_STAT_TIME_IDX = 4 // storing presence index per stream per day, bit index of 86400 elements (mainly zeros)
   val queue = new RQueue(Configuration("redis.queue.host").get,Configuration("redis.queue.port").get.toInt,2)
   val cache = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
   val stat = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
-  val stat_time_idx = new RedisClient(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt)
+  val stat_time_idx = new RQueue(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt,STREAM_STAT_TIME_IDX)
   cache.select(CACHE_DB)
 
   stat.select(STREAM_STAT)
-  stat_time_idx.select(STREAM_STAT_TIME_IDX)
 
   val InterdayStatIncomingQueueName = "interday-incoming-q"
 
