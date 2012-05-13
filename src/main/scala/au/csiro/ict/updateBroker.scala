@@ -80,12 +80,12 @@ object ColumnOrientedDBKeyHelper{
  * Todo: UpdateBroker should use persistent queue, anything form of persistent would do.
  */
 
-class UpdateBroker(val workers:ActorRef) extends Actor with Logger {
+class UpdateBroker(val staticAggregator:ActorRef) extends Actor with Logger {
   def receive = {
-    case msg@RawData(sid,value,tz) => workers ! msg
-    case msg@Insert(aggLevel,sid,ts,value,previuosCalcResult) => workers !msg
-    case msg@Update(aggLevel,sid,ts,previuosCalcResult) => workers !msg
-    case Done(sid,ts)=> /** TODO: use this to keep track of active workers. **/
+    case msg@RawData(sid,value,tz) => staticAggregator ! msg
+    case msg@Insert(aggLevel,sid,ts,value,previuosCalcResult) => staticAggregator !msg
+    case msg@Update(aggLevel,sid,ts,previuosCalcResult) => staticAggregator !msg
+    case msg@Done(sid,ts)=>  /** TODO: use this to keep track of active workers. **/
   }
 }
 

@@ -28,6 +28,7 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
 
   val store = new HbaseStorage()
   val staticAggregator = system.actorOf(Props(new StaticAggregator(store)))
+  val broker = system.actorOf(Props(new UpdateBroker(staticAggregator)))
 
   test("Static Aggregated Statistics Calculation Actor; First inserted received"){
     Cache.stat_time_idx.call((x)=>x.flushDB())
@@ -149,4 +150,12 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     expectMsg(lvl10)
 
   }
+//  test("Bulk aggregation, all inserts"){
+//    store.drop("sbulk")
+//    val ts1 = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
+//    val rawData = (for(i<-0 until 100) yield (ts1.getMillis/1000L + i).asInstanceOf[Int] -> Some(i.toDouble)).toMap
+//    val expectedDone = for(i<-0 until 100) yield Done("sbulk",ts1.plusSeconds(i))
+//    broker ! RawData("sbulk",rawData,Utils.TZ_Sydney)
+//    expectMsgAllOf(expectedDone :_*) // this test doesn't work, as reference to Sender is lost in the broker during the process hence it cant reply back
+//  }
 }
