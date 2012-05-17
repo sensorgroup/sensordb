@@ -36,9 +36,13 @@ Internally, timestamps are presented in unix format (milliseconds since epoch). 
 
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/e-r-diagram.png)
 
+### Data Stream Storage Model using Column-based Storage systems
+
+![](https://github.com/alisalehi/sensordb/raw/master/documents/column-based-model.png)
+
 ### Data Stream Insertion Process diagram
 
-![](https://github.com/alisalehi/sensordb/raw/master/documents/data-flow.png)
+![](https://github.com/alisalehi/sensordb/raw/master/documents/data-flow-2.png)
 
 
 Markdown syntax http://daringfireball.net/projects/markdown/syntax

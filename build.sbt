@@ -40,9 +40,9 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.1",
   "org.jsoup" % "jsoup" % "1.6.2",
   "org.skife.com.typesafe.config" % "typesafe-config" % "0.3.0",
-  "redis.clients" % "jedis" % "2.0.0",
-  "org.apache.hadoop" % "hadoop-core" % "1.0.2",
-  "org.apache.hbase"  % "hbase"  % "0.92.1" exclude("org.slf4j", "slf4j-log4j12")
+  "redis.clients" % "jedis" % "2.1.0",
+  "org.apache.hadoop" % "hadoop-core" % "1.0.3",
+  "org.apache.hbase"  % "hbase"  % "0.92.1" exclude("org.slf4j", "slf4j-log4j12") // have to change this to 0.94.0
 )
 
 resolvers ++= Seq("Sonatype OSS Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
