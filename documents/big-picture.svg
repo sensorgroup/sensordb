@@ -29,7 +29,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.3"
      inkscape:cx="502.52165"
-     inkscape:cy="406.8326"
+     inkscape:cy="499.14029"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -80,7 +80,7 @@
          x="530.76355"
          y="-24.896484"
          id="tspan2991"
-         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff">(Cassandra Cluster)</tspan></text>
+         style="font-size:20px;text-align:center;text-anchor:middle;fill:#ffffff">(HBase Cluster)</tspan></text>
     <rect
        rx="9.8383411e-12"
        y="201.59296"
