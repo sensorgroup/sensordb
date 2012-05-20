@@ -39,10 +39,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="215.46351"
-     inkscape:cy="224.77896"
+     inkscape:cx="272.03205"
+     inkscape:cy="790.46437"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g5582"
      showgrid="false"
      showborder="true"
      inkscape:window-width="1573"
@@ -70,1800 +70,1774 @@
      id="layer1">
     <g
        id="g5582">
-      <path
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m 611.35764,516.3827 89.2782,0 0,0 0,13.5 0,0 -89.2782,0 0,0 z"
-         id="path4506"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cccccccc"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <flowRoot
-         transform="translate(-465.98336,-564.2712)"
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         id="flowRoot3753"
-         xml:space="preserve"><flowRegion
-           id="flowRegion3755"><rect
-             y="388.66736"
-             x="517.09558"
-             height="133.27205"
-             width="119.27849"
-             id="rect3757" /></flowRegion><flowPara
-           id="flowPara3759" /></flowRoot>      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         xml:space="preserve"
-         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="662.56903"
-         y="-229.41728"
-         id="text5071"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           x="662.56903"
+      <g
+         id="g3626"
+         transform="matrix(0,1,-1,0,855.02491,327.10421)">
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m 650.05984,371.08545 -0.1318,216.55135 0,0 13.5,0.018 0,0 0.1318,-216.55132 0,0 z"
+           id="path4500"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccccccc" />
+        <path
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m 634.61434,508.4941 15.3765,15.7341 0,0 -15.3765,15.027 0,0 c 0.2142,-14.6392 2.0666,-9.7099 0,-30.7611 z"
+           id="path4504"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <g
+           id="g4508"
+           transform="matrix(0,-1,-1,0,1423.3086,1148.1329)">
+          <path
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             d="m 689.84342,787.28008 -15.7341,-15.3765 0,0 -15.027,15.3765 0,0 c 14.6392,-0.2142 9.7099,-2.0666 30.7611,0 z"
+             id="path4510"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccccc"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             sodipodi:nodetypes="cccccccc"
+             inkscape:connector-curvature="0"
+             id="path4512"
+             d="m 681.24772,817.50378 0,-36.9523 0,0 -13.5,0 0,0 0,36.9523 0,0 z"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        </g>
+        <g
+           transform="matrix(0,-1,-1,0,1422.6014,1100.0496)"
+           id="g4514">
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             sodipodi:nodetypes="ccccccc"
+             inkscape:connector-curvature="0"
+             id="path4516"
+             d="m 689.84342,787.28008 -15.7341,-15.3765 0,0 -15.027,15.3765 0,0 c 14.6392,-0.2142 9.7099,-2.0666 30.7611,0 z"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             d="m 681.24772,895.28553 0,-114.73405 0,0 -13.5,0 0,0 0,114.73405 0,0 z"
+             id="path4518"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccccccc"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+        </g>
+        <g
+           id="g4750"
+           transform="translate(-526.69046,-427.80673)">
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             sodipodi:nodetypes="cccccccc"
+             inkscape:connector-curvature="0"
+             id="path4746"
+             d="m 1042.6928,997.22239 123.2193,0 0,0 0,13.50001 0,0 -123.2193,0 0,0 z"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             d="m 1159.8906,989.3338 15.3765,15.7341 0,0 -15.3765,15.027 0,0 c 0.2142,-14.6392 2.0666,-9.7099 0,-30.7611 z"
+             id="path4748"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccccc"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+        </g>
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:nodetypes="cccccccc"
+           inkscape:connector-curvature="0"
+           id="path4506"
+           d="m 611.35764,516.3827 25.63859,0 0,0 0,13.5 0,0 -25.63859,0 0,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        <flowRoot
+           xml:space="preserve"
+           id="flowRoot3753"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"
+           transform="translate(-465.98336,-564.2712)"><flowRegion
+             id="flowRegion3755"><rect
+               id="rect3757"
+               width="119.27849"
+               height="133.27205"
+               x="517.09558"
+               y="388.66736" /></flowRegion><flowPara
+             id="flowPara3759" /></flowRoot>        <text
+           sodipodi:linespacing="125%"
+           id="text5071"
            y="-229.41728"
-           id="tspan5081" /></text>
-      <flowRoot
-         transform="translate(-465.98336,-564.2712)"
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         id="flowRoot3527"
-         xml:space="preserve"><flowRegion
-           id="flowRegion3529"><rect
-             y="590.86218"
-             x="434"
-             height="137"
-             width="158.5"
-             id="rect3531" /></flowRegion><flowPara
-           id="flowPara3533" /></flowRoot>      <flowRoot
-         transform="translate(-465.98336,-564.2712)"
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         id="flowRoot3565"
-         xml:space="preserve"><flowRegion
-           id="flowRegion3567"><rect
-             y="530.36218"
-             x="779.5"
-             height="53"
-             width="141.5"
-             id="rect3569" /></flowRegion><flowPara
-           id="flowPara3571" /></flowRoot>      <rect
-         rx="5.6887838e-11"
-         y="486.93192"
-         x="148.24236"
-         height="39.520824"
-         width="137.67517"
-         id="rect3519"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3521"
-         y="513.56244"
-         x="155.96416"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           style="font-size:20px;fill:#ffffff"
-           y="513.56244"
+           x="662.56903"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             id="tspan5081"
+             y="-229.41728"
+             x="662.56903"
+             sodipodi:role="line" /></text>
+        <flowRoot
+           xml:space="preserve"
+           id="flowRoot3527"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"
+           transform="translate(-465.98336,-564.2712)"><flowRegion
+             id="flowRegion3529"><rect
+               id="rect3531"
+               width="158.5"
+               height="137"
+               x="434"
+               y="590.86218" /></flowRegion><flowPara
+             id="flowPara3533" /></flowRoot>        <flowRoot
+           xml:space="preserve"
+           id="flowRoot3565"
+           style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"
+           transform="translate(-465.98336,-564.2712)"><flowRegion
+             id="flowRegion3567"><rect
+               id="rect3569"
+               width="141.5"
+               height="53"
+               x="779.5"
+               y="530.36218" /></flowRegion><flowPara
+             id="flowPara3571" /></flowRoot>        <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect3519"
+           width="137.67517"
+           height="39.520824"
+           x="148.24236"
+           y="486.93192"
+           rx="5.6887838e-11" />
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
            x="155.96416"
-           id="tspan3523"
-           sodipodi:role="line">Update Broker</tspan></text>
-      <g
-         transform="translate(-731.11136,-218.04205)"
-         id="g4757">
+           y="513.56244"
+           id="text3521"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3523"
+             x="155.96416"
+             y="513.56244"
+             style="font-size:20px;fill:#ffffff">Update Broker</tspan></text>
+        <g
+           id="g4757"
+           transform="translate(-731.11136,-218.04205)">
+          <path
+             inkscape:connector-curvature="0"
+             id="path3529"
+             d="m 1022.5977,724.97174 25.8482,-75.61056"
+             style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+             sodipodi:nodetypes="cc" />
+          <path
+             style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+             d="m 1022.5977,725.9113 30.7979,23.28467"
+             id="path4743"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cc" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="path4745"
+             d="m 1022.5977,725.9113 23.7268,-30.29249"
+             style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="path4754"
+             d="m 1022.5977,725.9113 24.4339,71.36793"
+             style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)" />
+        </g>
         <path
-           sodipodi:nodetypes="cc"
-           style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
-           d="m 1022.5977,724.97174 25.8482,-75.61056"
-           id="path3529"
-           inkscape:connector-curvature="0" />
-        <path
-           sodipodi:nodetypes="cc"
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m 663.10546,366.90775 -404.6476,0 0,0 0,13.5 0,0 404.6476,0 0,0 z"
+           id="path4768"
            inkscape:connector-curvature="0"
-           id="path4743"
-           d="m 1022.5977,725.9113 30.7979,23.28467"
-           style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)" />
-        <path
-           style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
-           d="m 1022.5977,725.9113 23.7268,-30.29249"
-           id="path4745"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cc" />
-        <path
-           style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
-           d="m 1022.5977,725.9113 24.4339,71.36793"
-           id="path4754"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cc" />
-      </g>
-      <path
-         sodipodi:nodetypes="cccccccc"
-         inkscape:connector-curvature="0"
-         id="path4768"
-         d="m 723.91664,366.90775 -465.45878,0 0,0 0,13.5 0,0 465.45878,0 0,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <g
-         transform="matrix(1,0,0,-1,-409.01279,1259.8885)"
-         id="g4494">
+           sodipodi:nodetypes="cccccccc" />
+        <g
+           id="g4494"
+           transform="matrix(1,0,0,-1,-409.01279,1259.8885)">
+          <path
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             d="m 689.84342,787.28008 -15.7341,-15.3765 0,0 -15.027,15.3765 0,0 c 14.6392,-0.2142 9.7099,-2.0666 30.7611,0 z"
+             id="path4770"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccccc"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             sodipodi:nodetypes="cccccccc"
+             inkscape:connector-curvature="0"
+             id="path4774"
+             d="m 681.24772,817.50378 0,-36.9523 0,0 -13.5,0 0,0 0,36.9523 0,0 z"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        </g>
+        <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           rx="3.7100982e-11"
+           y="499.32242"
+           x="-106.69652"
+           height="13.5"
+           width="79.5"
+           id="rect5088"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
         <path
            inkscape:export-ydpi="90"
            inkscape:export-xdpi="90"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            sodipodi:nodetypes="ccccccc"
            inkscape:connector-curvature="0"
-           id="path4770"
-           d="m 689.84342,787.28008 -15.7341,-15.3765 0,0 -15.027,15.3765 0,0 c 14.6392,-0.2142 9.7099,-2.0666 30.7611,0 z"
+           id="path5090"
+           d="m -30.696526,491.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
            style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           d="m 681.24772,817.50378 0,-36.9523 0,0 -13.5,0 0,0 0,36.9523 0,0 z"
-           id="path4774"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cccccccc"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+        <g
+           inkscape:export-ydpi="90"
            inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <rect
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5088"
-         width="79.5"
-         height="13.5"
-         x="-106.69652"
-         y="499.32242"
-         rx="3.7100982e-11"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m -30.696526,491.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
-         id="path5090"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <g
-         id="g5092"
-         transform="translate(-440.19653,-144.53984)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-440.19653,-144.53984)"
+           id="g5092">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect5094"
+             width="70.5"
+             height="27.5"
+             x="169.5"
+             y="633.86218"
+             rx="2.9555018e-11" />
+          <text
+             xml:space="preserve"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+             x="176"
+             y="654.36218"
+             id="text5096"
+             sodipodi:linespacing="125%"><tspan
+               sodipodi:role="line"
+               id="tspan5098"
+               x="176"
+               y="654.36218"
+               style="font-size:20px;fill:#ffffff">Sensor</tspan></text>
+        </g>
         <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            rx="2.9555018e-11"
-           y="633.86218"
-           x="169.5"
+           y="491.82242"
+           x="-154.19652"
            height="27.5"
            width="70.5"
-           id="rect5094"
+           id="rect5106"
            style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
         <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            sodipodi:linespacing="125%"
-           id="text5096"
-           y="654.36218"
-           x="176"
+           id="text5108"
+           y="511.82242"
+           x="-138.69652"
            style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
            xml:space="preserve"><tspan
              style="font-size:20px;fill:#ffffff"
-             y="654.36218"
-             x="176"
-             id="tspan5098"
-             sodipodi:role="line">Sensor</tspan></text>
-      </g>
-      <rect
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5106"
-         width="70.5"
-         height="27.5"
-         x="-154.19652"
-         y="491.82242"
-         rx="2.9555018e-11"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="-138.69652"
-         y="511.82242"
-         id="text5108"
-         sodipodi:linespacing="125%"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan5110"
-           x="-138.69652"
-           y="511.82242"
-           style="font-size:20px;fill:#ffffff">REST</tspan></text>
-      <rect
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5112"
-         width="77.5"
-         height="27.5"
-         x="-151.19652"
-         y="368.82236"
-         rx="3.248956e-11"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="-145.69652"
-         y="388.32236"
-         id="text5114"
-         sodipodi:linespacing="125%"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan5116"
-           x="-145.69652"
-           y="388.32236"
-           style="font-size:20px;fill:#ffffff">UserDB</tspan></text>
-      <g
-         id="g5118"
-         transform="translate(-368.69653,-138.03984)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
+             y="511.82242"
+             x="-138.69652"
+             id="tspan5110"
+             sodipodi:role="line">REST</tspan></text>
         <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="423.5"
-           height="14.5"
-           width="16"
-           id="rect5120"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect5122"
-           width="16"
-           height="14.5"
-           x="403.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="383.5"
-           height="14.5"
-           width="16"
-           id="rect5124"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path5126"
-           d="m 364,634.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,654.86218 90.5,0"
-           id="path5128"
-           inkscape:connector-curvature="0" />
-      </g>
-      <text
-         xml:space="preserve"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="-3.1965523"
-         y="528.32245"
-         id="text5130"
-         sodipodi:linespacing="125%"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan5132"
-           x="-3.1965523"
-           y="528.32245"
-           style="font-size:12px;fill:#4d4d4d;fill-opacity:1">Raw Data Queue</tspan></text>
-      <g
-         id="g5134"
-         transform="translate(-313.19653,50.460164)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           rx="2.9555018e-11"
-           y="578.86218"
-           x="315"
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           rx="3.248956e-11"
+           y="368.82236"
+           x="-151.19652"
            height="27.5"
-           width="70.5"
-           id="rect5136"
+           width="77.5"
+           id="rect5112"
            style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
         <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            sodipodi:linespacing="125%"
-           id="text5138"
-           y="599.36218"
-           x="325.5"
+           id="text5114"
+           y="388.32236"
+           x="-145.69652"
            style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
            xml:space="preserve"><tspan
              style="font-size:20px;fill:#ffffff"
-             y="599.36218"
-             x="325.5"
-             id="tspan5140"
-             sodipodi:role="line">HDD</tspan></text>
-      </g>
-      <path
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m 47.803474,536.3222 0,81.5 0,0 -13.5,0 0,0 0,-81.5 0,0 z"
-         id="path5142"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cccccccc"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         sodipodi:nodetypes="ccccccc"
-         inkscape:connector-curvature="0"
-         id="path5144"
-         d="m 55.872324,613.884 -15.73412,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.76118,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text5146"
-         y="-52.173443"
-         x="535.25641"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"
-         transform="matrix(0,1,-1,0,0,0)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           style="font-size:12px;fill:#4d4d4d;fill-opacity:1"
-           y="-52.173443"
-           x="535.25641"
-           id="tspan5148"
-           sodipodi:role="line">Persist in AOF</tspan></text>
-      <rect
-         rx="3.7100982e-11"
-         y="105.19652"
-         x="404.82242"
-         height="13.5"
-         width="79.5"
-         id="rect5150"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         transform="matrix(0,1,-1,0,0,0)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m -96.627676,476.384 -15.734124,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.761184,0 z"
-         id="path5152"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         sodipodi:nodetypes="ccccccc"
-         inkscape:connector-curvature="0"
-         id="path5154"
-         d="m -96.627676,411.76056 -15.734124,-15.3765 0,0 -15.02706,15.3765 0,0 c 14.63927,-0.2142 9.70994,-2.0666 30.761184,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         xml:space="preserve"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="-107.69652"
-         y="427.82236"
-         id="text5156"
-         sodipodi:linespacing="125%"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan5158"
-           x="-107.69652"
-           y="427.82236"
-           style="font-size:15px;fill:#4d4d4d;fill-opacity:1">- Authenticate</tspan><tspan
-           sodipodi:role="line"
-           x="-107.69652"
-           y="446.57236"
-           id="tspan5160"
-           style="font-size:15px;fill:#4d4d4d;fill-opacity:1">- Validate</tspan><tspan
-           sodipodi:role="line"
-           x="-107.69652"
-           y="465.3223"
-           id="tspan5162"
-           style="font-size:15px;fill:#4d4d4d;fill-opacity:1">- Match Structure</tspan></text>
-      <rect
-         rx="3.7100982e-11"
-         y="498.32242"
-         x="-205.69652"
-         height="12.5"
-         width="38.5"
-         id="rect5190"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         sodipodi:nodetypes="ccccccc"
-         inkscape:connector-curvature="0"
-         id="path5192"
-         d="m -170.69653,489.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         rx="3.7100982e-11"
-         y="499.32242"
-         x="-106.69652"
-         height="13.5"
-         width="79.5"
-         id="rect5306"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:nodetypes="ccccccc"
-         inkscape:connector-curvature="0"
-         id="path5308"
-         d="m -30.696526,491.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-440.19653,-144.53984)"
-         id="g5310">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect5312"
-           width="70.5"
-           height="27.5"
-           x="169.5"
-           y="633.86218"
-           rx="2.9555018e-11" />
+             y="388.32236"
+             x="-145.69652"
+             id="tspan5116"
+             sodipodi:role="line">UserDB</tspan></text>
+        <g
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-368.69653,-138.03984)"
+           id="g5118">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect5120"
+             width="16"
+             height="14.5"
+             x="423.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="403.5"
+             height="14.5"
+             width="16"
+             id="rect5122"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect5124"
+             width="16"
+             height="14.5"
+             x="383.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,634.86218 90.5,0"
+             id="path5126"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path5128"
+             d="m 364,654.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        </g>
         <text
-           xml:space="preserve"
-           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           x="176"
-           y="654.36218"
-           id="text5314"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan5316"
-             x="176"
-             y="654.36218"
-             style="font-size:20px;fill:#ffffff">Sensor</tspan></text>
-      </g>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         rx="2.9555018e-11"
-         y="491.82242"
-         x="-154.19652"
-         height="27.5"
-         width="70.5"
-         id="rect5324"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:linespacing="125%"
-         id="text5326"
-         y="511.82242"
-         x="-138.69652"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"><tspan
-           style="font-size:20px;fill:#ffffff"
-           y="511.82242"
-           x="-138.69652"
-           id="tspan5328"
-           sodipodi:role="line">REST</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         rx="3.248956e-11"
-         y="368.82236"
-         x="-151.19652"
-         height="27.5"
-         width="77.5"
-         id="rect5330"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:linespacing="125%"
-         id="text5332"
-         y="388.32236"
-         x="-145.69652"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"><tspan
-           style="font-size:20px;fill:#ffffff"
-           y="388.32236"
-           x="-145.69652"
-           id="tspan5334"
-           sodipodi:role="line">UserDB</tspan></text>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-368.69653,-138.03984)"
-         id="g5336">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect5338"
-           width="16"
-           height="14.5"
-           x="423.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="403.5"
-           height="14.5"
-           width="16"
-           id="rect5340"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect5342"
-           width="16"
-           height="14.5"
-           x="383.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,634.86218 90.5,0"
-           id="path5344"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path5346"
-           d="m 364,654.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:linespacing="125%"
-         id="text5348"
-         y="528.32245"
-         x="-3.1965523"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"><tspan
-           style="font-size:12px;fill:#4d4d4d;fill-opacity:1"
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:linespacing="125%"
+           id="text5130"
            y="528.32245"
            x="-3.1965523"
-           id="tspan5350"
-           sodipodi:role="line">Raw Data Queue</tspan></text>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-313.19653,50.460164)"
-         id="g5352">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect5354"
-           width="70.5"
-           height="27.5"
-           x="315"
-           y="578.86218"
-           rx="2.9555018e-11" />
-        <text
-           xml:space="preserve"
-           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           x="325.5"
-           y="599.36218"
-           id="text5356"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan5358"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"><tspan
+             style="font-size:12px;fill:#4d4d4d;fill-opacity:1"
+             y="528.32245"
+             x="-3.1965523"
+             id="tspan5132"
+             sodipodi:role="line">Raw Data Queue</tspan></text>
+        <g
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-313.19653,50.460164)"
+           id="g5134">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect5136"
+             width="70.5"
+             height="27.5"
+             x="315"
+             y="578.86218"
+             rx="2.9555018e-11" />
+          <text
+             xml:space="preserve"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
              x="325.5"
              y="599.36218"
-             style="font-size:20px;fill:#ffffff">HDD</tspan></text>
-      </g>
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:nodetypes="cccccccc"
-         inkscape:connector-curvature="0"
-         id="path5360"
-         d="m 47.803474,536.3222 0,81.5 0,0 -13.5,0 0,0 0,-81.5 0,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m 55.872324,613.884 -15.73412,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.76118,0 z"
-         id="path5362"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="matrix(0,1,-1,0,0,0)"
-         xml:space="preserve"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="535.25641"
-         y="-52.173443"
-         id="text5364"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5366"
+             id="text5138"
+             sodipodi:linespacing="125%"><tspan
+               sodipodi:role="line"
+               id="tspan5140"
+               x="325.5"
+               y="599.36218"
+               style="font-size:20px;fill:#ffffff">HDD</tspan></text>
+        </g>
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:nodetypes="cccccccc"
+           inkscape:connector-curvature="0"
+           id="path5142"
+           d="m 47.803474,536.3222 0,81.5 0,0 -13.5,0 0,0 0,-81.5 0,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m 55.872324,613.884 -15.73412,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.76118,0 z"
+           id="path5144"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc" />
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="matrix(0,1,-1,0,0,0)"
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
            x="535.25641"
            y="-52.173443"
-           style="font-size:12px;fill:#4d4d4d;fill-opacity:1">Persist in AOF</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="matrix(0,1,-1,0,0,0)"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5368"
-         width="79.5"
-         height="13.5"
-         x="404.82242"
-         y="105.19652"
-         rx="3.7100982e-11" />
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:nodetypes="ccccccc"
-         inkscape:connector-curvature="0"
-         id="path5370"
-         d="m -96.627676,476.384 -15.734124,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.761184,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m -96.627676,411.76056 -15.734124,-15.3765 0,0 -15.02706,15.3765 0,0 c 14.63927,-0.2142 9.70994,-2.0666 30.761184,0 z"
-         id="path5372"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:linespacing="125%"
-         id="text5374"
-         y="427.82236"
-         x="-107.69652"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"><tspan
-           style="font-size:15px;fill:#4d4d4d;fill-opacity:1"
+           id="text5146"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5148"
+             x="535.25641"
+             y="-52.173443"
+             style="font-size:12px;fill:#4d4d4d;fill-opacity:1">Persist in AOF</tspan></text>
+        <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="matrix(0,1,-1,0,0,0)"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect5150"
+           width="79.5"
+           height="13.5"
+           x="404.82242"
+           y="105.19652"
+           rx="3.7100982e-11" />
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path5152"
+           d="m -96.627676,476.384 -15.734124,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.761184,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m -96.627676,411.76056 -15.734124,-15.3765 0,0 -15.02706,15.3765 0,0 c 14.63927,-0.2142 9.70994,-2.0666 30.761184,0 z"
+           id="path5154"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc" />
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:linespacing="125%"
+           id="text5156"
            y="427.82236"
            x="-107.69652"
-           id="tspan5376"
-           sodipodi:role="line">- Authenticate</tspan><tspan
-           style="font-size:15px;fill:#4d4d4d;fill-opacity:1"
-           id="tspan5378"
-           y="446.57236"
-           x="-107.69652"
-           sodipodi:role="line">- Validate</tspan><tspan
-           style="font-size:15px;fill:#4d4d4d;fill-opacity:1"
-           id="tspan5380"
-           y="465.3223"
-           x="-107.69652"
-           sodipodi:role="line">- Match Structure</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5394"
-         width="193.08833"
-         height="21.843145"
-         x="462.56033"
-         y="704.94733"
-         rx="8.0946513e-11" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="516.22241"
-         y="722.53802"
-         id="text5396"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5398"
-           x="516.22241"
-           y="722.53802"
-           style="font-size:20px;fill:#ffffff">DataStore</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5408"
-         width="38.5"
-         height="12.5"
-         x="-205.69652"
-         y="498.32242"
-         rx="3.7100982e-11" />
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m -170.69653,489.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
-         id="path5410"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc" />
-      <g
-         id="g5619"
-         transform="translate(-683.7352,-243.97469)">
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"><tspan
+             style="font-size:15px;fill:#4d4d4d;fill-opacity:1"
+             y="427.82236"
+             x="-107.69652"
+             id="tspan5158"
+             sodipodi:role="line">- Authenticate</tspan><tspan
+             style="font-size:15px;fill:#4d4d4d;fill-opacity:1"
+             id="tspan5160"
+             y="446.57236"
+             x="-107.69652"
+             sodipodi:role="line">- Validate</tspan><tspan
+             style="font-size:15px;fill:#4d4d4d;fill-opacity:1"
+             id="tspan5162"
+             y="465.32236"
+             x="-107.69652"
+             sodipodi:role="line">- Match Structure</tspan></text>
+        <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect5190"
+           width="38.5"
+           height="12.5"
+           x="-205.69652"
+           y="498.32242"
+           rx="3.7100982e-11" />
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m -170.69653,489.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
+           id="path5192"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc" />
         <rect
            style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect5621"
-           width="42.5"
-           height="13"
-           x="774.74579"
-           y="744.83124"
+           id="rect5306"
+           width="79.5"
+           height="13.5"
+           x="-106.69652"
+           y="499.32242"
            rx="3.7100982e-11"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            inkscape:export-xdpi="90"
            inkscape:export-ydpi="90" />
         <path
            style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           d="m 813.74578,736.70067 15.37652,15.73412 0,0 -15.37652,15.02706 0,0 c 0.21421,-14.63927 2.06661,-9.70994 0,-30.76118 z"
-           id="path5623"
+           d="m -30.696526,491.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
+           id="path5308"
            inkscape:connector-curvature="0"
            sodipodi:nodetypes="ccccccc"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            inkscape:export-xdpi="90"
            inkscape:export-ydpi="90" />
-      </g>
-      <rect
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect5792"
-         width="124.16666"
-         height="27.5"
-         x="254.38512"
-         y="628.24847"
-         rx="5.2053167e-11"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:linespacing="125%"
-         id="text5800"
-         y="647.2486"
-         x="265.3851"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"><tspan
-           style="font-size:20px;fill:#ffffff"
-           y="647.2486"
-           x="265.3851"
-           id="tspan5802"
-           sodipodi:role="line">BitVectorSet</tspan></text>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="matrix(0,-1,-0.90674813,0,772.27844,1171.7109)"
-         id="g5804">
         <g
-           id="g4718">
-          <path
-             sodipodi:nodetypes="cccccccc"
-             inkscape:connector-curvature="0"
-             id="path5806"
-             d="m 535,335.36218 0,81.5 0,0 -13.5,0 0,0 0,-81.5 0,0 z"
-             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-          <path
-             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-             d="m 543.06885,412.92392 -15.73412,15.37652 0,0 -15.02706,-15.37652 0,0 c 14.63927,0.21421 9.70994,2.06661 30.76118,0 z"
-             id="path5808"
-             inkscape:connector-curvature="0"
-             sodipodi:nodetypes="ccccccc" />
-          <path
-             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-             d="m 521.7056,335.13543 49.15124,0 0,0 0,14.88836 0,0 -49.15124,0 0,0 z"
-             id="path4716"
-             inkscape:connector-curvature="0"
-             sodipodi:nodetypes="cccccccc" />
-        </g>
-      </g>
-      <rect
-         rx="4.1412433e-11"
-         y="319.1282"
-         x="492.71274"
-         height="20.18749"
-         width="100.2229"
-         id="rect4264"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text4266"
-         y="332.42532"
-         x="495.10117"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           style="font-size:12px;fill:#ffffff"
-           y="332.42532"
-           x="495.10117"
-           id="tspan4268"
-           sodipodi:role="line">(Sid,Level,TS,VAL)</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect4270"
-         width="131.29517"
-         height="18.854183"
-         x="478.47006"
-         y="341.9014"
-         rx="5.4251593e-11" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="482.19199"
-         y="353.86526"
-         id="text4272"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan4274"
-           x="482.19199"
-           y="353.86526"
-           style="font-size:12px;fill:#ffffff">(Sid,Level,TS,Invalidate)</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect4412"
-         width="194.47664"
-         height="27.5"
-         x="425.43906"
-         y="505.01395"
-         rx="8.152852e-11" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="453.41574"
-         y="524.01398"
-         id="text4414"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan4416"
-           x="453.41574"
-           y="524.01398"
-           style="font-size:20px;fill:#ffffff">Static Summaries</tspan></text>
-      <g
-         transform="translate(-465.98336,-424.2712)"
-         id="g4466">
-        <g
-           transform="translate(-51.618795,6.363961)"
-           id="g4473">
+           id="g5310"
+           transform="translate(-440.19653,-144.53984)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
           <rect
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-             rx="1.0717906e-10"
-             y="875.23322"
-             x="935.0553"
+             rx="2.9555018e-11"
+             y="633.86218"
+             x="169.5"
              height="27.5"
-             width="255.66295"
-             id="rect4424"
+             width="70.5"
+             id="rect5312"
              style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
           <text
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
              sodipodi:linespacing="125%"
-             id="text4426"
-             y="893.52612"
-             x="949.12646"
+             id="text5314"
+             y="654.36218"
+             x="176"
              style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
              xml:space="preserve"><tspan
                style="font-size:20px;fill:#ffffff"
-               y="893.52612"
-               x="949.12646"
-               id="tspan4428"
-               sodipodi:role="line">Moving Static Summaries</tspan></text>
+               y="654.36218"
+               x="176"
+               id="tspan5316"
+               sodipodi:role="line">Sensor</tspan></text>
         </g>
+        <rect
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect5324"
+           width="70.5"
+           height="27.5"
+           x="-154.19652"
+           y="491.82242"
+           rx="2.9555018e-11"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="-138.69652"
+           y="511.82242"
+           id="text5326"
+           sodipodi:linespacing="125%"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             sodipodi:role="line"
+             id="tspan5328"
+             x="-138.69652"
+             y="511.82242"
+             style="font-size:20px;fill:#ffffff">REST</tspan></text>
+        <rect
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect5330"
+           width="77.5"
+           height="27.5"
+           x="-151.19652"
+           y="368.82236"
+           rx="3.248956e-11"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="-145.69652"
+           y="388.32236"
+           id="text5332"
+           sodipodi:linespacing="125%"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             sodipodi:role="line"
+             id="tspan5334"
+             x="-145.69652"
+             y="388.32236"
+             style="font-size:20px;fill:#ffffff">UserDB</tspan></text>
         <g
-           transform="translate(-55.618795,10.363961)"
-           id="g4478">
+           id="g5336"
+           transform="translate(-368.69653,-138.03984)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="423.5"
+             height="14.5"
+             width="16"
+             id="rect5338"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
           <rect
              style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-             id="rect4480"
-             width="255.66295"
+             id="rect5340"
+             width="16"
+             height="14.5"
+             x="403.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="383.5"
+             height="14.5"
+             width="16"
+             id="rect5342"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path5344"
+             d="m 364,634.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,654.86218 90.5,0"
+             id="path5346"
+             inkscape:connector-curvature="0" />
+        </g>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="-3.1965523"
+           y="528.32245"
+           id="text5348"
+           sodipodi:linespacing="125%"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             sodipodi:role="line"
+             id="tspan5350"
+             x="-3.1965523"
+             y="528.32245"
+             style="font-size:12px;fill:#4d4d4d;fill-opacity:1">Raw Data Queue</tspan></text>
+        <g
+           id="g5352"
+           transform="translate(-313.19653,50.460164)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="2.9555018e-11"
+             y="578.86218"
+             x="315"
              height="27.5"
-             x="935.0553"
-             y="875.23322"
-             rx="1.0717906e-10"
+             width="70.5"
+             id="rect5354"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <text
+             sodipodi:linespacing="125%"
+             id="text5356"
+             y="599.36218"
+             x="325.5"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+             xml:space="preserve"><tspan
+               style="font-size:20px;fill:#ffffff"
+               y="599.36218"
+               x="325.5"
+               id="tspan5358"
+               sodipodi:role="line">HDD</tspan></text>
+        </g>
+        <path
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m 47.803474,536.3222 0,81.5 0,0 -13.5,0 0,0 0,-81.5 0,0 z"
+           id="path5360"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccccccc"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <path
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path5362"
+           d="m 55.872324,613.884 -15.73412,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.76118,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text5364"
+           y="-52.173443"
+           x="535.25641"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           transform="matrix(0,1,-1,0,0,0)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:12px;fill:#4d4d4d;fill-opacity:1"
+             y="-52.173443"
+             x="535.25641"
+             id="tspan5366"
+             sodipodi:role="line">Persist in AOF</tspan></text>
+        <rect
+           rx="3.7100982e-11"
+           y="105.19652"
+           x="404.82242"
+           height="13.5"
+           width="79.5"
+           id="rect5368"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           transform="matrix(0,1,-1,0,0,0)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <path
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m -96.627676,476.384 -15.734124,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63927,0.2142 9.70994,2.0666 30.761184,0 z"
+           id="path5370"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <path
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path5372"
+           d="m -96.627676,411.76056 -15.734124,-15.3765 0,0 -15.02706,15.3765 0,0 c 14.63927,-0.2142 9.70994,-2.0666 30.761184,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="-107.69652"
+           y="427.82236"
+           id="text5374"
+           sodipodi:linespacing="125%"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             sodipodi:role="line"
+             id="tspan5376"
+             x="-107.69652"
+             y="427.82236"
+             style="font-size:15px;fill:#4d4d4d;fill-opacity:1">- Authenticate</tspan><tspan
+             sodipodi:role="line"
+             x="-107.69652"
+             y="446.57236"
+             id="tspan5378"
+             style="font-size:15px;fill:#4d4d4d;fill-opacity:1">- Validate</tspan><tspan
+             sodipodi:role="line"
+             x="-107.69652"
+             y="465.32236"
+             id="tspan5380"
+             style="font-size:15px;fill:#4d4d4d;fill-opacity:1">- Match Structure</tspan></text>
+        <rect
+           rx="8.0946513e-11"
+           y="704.94733"
+           x="462.56033"
+           height="21.843145"
+           width="193.08833"
+           id="rect5394"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text5396"
+           y="722.53802"
+           x="516.22241"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:20px;fill:#ffffff"
+             y="722.53802"
+             x="516.22241"
+             id="tspan5398"
+             sodipodi:role="line">DataStore</tspan></text>
+        <rect
+           rx="3.7100982e-11"
+           y="498.32242"
+           x="-205.69652"
+           height="12.5"
+           width="38.5"
+           id="rect5408"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <path
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path5410"
+           d="m -170.69653,489.6917 15.37652,15.7341 0,0 -15.37652,15.027 0,0 c 0.21421,-14.6392 2.06661,-9.7099 0,-30.7611 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <g
+           transform="translate(-683.7352,-243.97469)"
+           id="g5619">
+          <rect
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             rx="3.7100982e-11"
+             y="744.83124"
+             x="774.74579"
+             height="13"
+             width="42.5"
+             id="rect5621"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             sodipodi:nodetypes="ccccccc"
+             inkscape:connector-curvature="0"
+             id="path5623"
+             d="m 813.74578,736.70067 15.37652,15.73412 0,0 -15.37652,15.02706 0,0 c 0.21421,-14.63927 2.06661,-9.70994 0,-30.76118 z"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        </g>
+        <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           rx="5.2053167e-11"
+           y="628.24847"
+           x="254.38512"
+           height="27.5"
+           width="124.16666"
+           id="rect5792"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        <text
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="265.3851"
+           y="647.2486"
+           id="text5800"
+           sodipodi:linespacing="125%"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             sodipodi:role="line"
+             id="tspan5802"
+             x="265.3851"
+             y="647.2486"
+             style="font-size:20px;fill:#ffffff">BitVectorSet</tspan></text>
+        <g
+           id="g5804"
+           transform="matrix(0,-1,-0.90674813,0,772.27844,1171.7109)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <g
+             id="g4718">
+            <path
+               style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+               d="m 535,335.36218 0,81.5 0,0 -13.5,0 0,0 0,-81.5 0,0 z"
+               id="path5806"
+               inkscape:connector-curvature="0"
+               sodipodi:nodetypes="cccccccc" />
+            <path
+               sodipodi:nodetypes="ccccccc"
+               inkscape:connector-curvature="0"
+               id="path5808"
+               d="m 543.06885,412.92392 -15.73412,15.37652 0,0 -15.02706,-15.37652 0,0 c 14.63927,0.21421 9.70994,2.06661 30.76118,0 z"
+               style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+            <path
+               sodipodi:nodetypes="cccccccc"
+               inkscape:connector-curvature="0"
+               id="path4716"
+               d="m 521.7056,335.13543 49.15124,0 0,0 0,14.88836 0,0 -49.15124,0 0,0 z"
+               style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          </g>
+        </g>
+        <rect
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect4264"
+           width="100.2229"
+           height="20.18749"
+           x="399.37463"
+           y="316.29977"
+           rx="4.1412433e-11" />
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="401.76306"
+           y="329.59689"
+           id="text4266"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan4268"
+             x="401.76306"
+             y="329.59689"
+             style="font-size:12px;fill:#ffffff">(Sid,Level,TS,VAL)</tspan></text>
+        <rect
+           rx="5.4251593e-11"
+           y="339.07297"
+           x="385.13196"
+           height="18.854183"
+           width="131.29517"
+           id="rect4270"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text4272"
+           y="351.03683"
+           x="388.85388"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:12px;fill:#ffffff"
+             y="351.03683"
+             x="388.85388"
+             id="tspan4274"
+             sodipodi:role="line">(Sid,Level,TS,Invalidate)</tspan></text>
+        <rect
+           rx="8.152852e-11"
+           y="505.01395"
+           x="425.43906"
+           height="27.5"
+           width="194.47664"
+           id="rect4412"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           sodipodi:linespacing="125%"
+           id="text4414"
+           y="524.01398"
+           x="453.41574"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:20px;fill:#ffffff"
+             y="524.01398"
+             x="453.41574"
+             id="tspan4416"
+             sodipodi:role="line">Static Summaries</tspan></text>
+        <g
+           id="g4466"
+           transform="translate(-465.98336,-424.2712)">
+          <g
+             id="g4473"
+             transform="matrix(0.74001694,0,0,1,191.47974,6.363961)">
+            <rect
+               style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+               id="rect4424"
+               width="255.66295"
+               height="27.5"
+               x="935.0553"
+               y="875.23322"
+               rx="1.0717906e-10"
+               inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+               inkscape:export-xdpi="90"
+               inkscape:export-ydpi="90" />
+          </g>
+          <g
+             id="g4478"
+             transform="translate(-55.618795,10.363961)">
+            <rect
+               inkscape:export-ydpi="90"
+               inkscape:export-xdpi="90"
+               inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+               rx="7.8425016e-11"
+               y="875.23322"
+               x="935.0553"
+               height="27.5"
+               width="187.07359"
+               id="rect4480"
+               style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          </g>
+          <g
+             transform="translate(-59.618795,14.363961)"
+             id="g4486">
+            <rect
+               style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+               id="rect4488"
+               width="184.24516"
+               height="27.5"
+               x="935.0553"
+               y="875.23322"
+               rx="7.7239284e-11"
+               inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+               inkscape:export-xdpi="90"
+               inkscape:export-ydpi="90" />
+            <text
+               xml:space="preserve"
+               style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+               x="949.12646"
+               y="893.52612"
+               id="text4490"
+               sodipodi:linespacing="125%"
+               inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+               inkscape:export-xdpi="90"
+               inkscape:export-ydpi="90"><tspan
+                 sodipodi:role="line"
+                 id="tspan4492"
+                 x="949.12646"
+                 y="893.52612"
+                 style="font-size:20px;fill:#ffffff">Moving Summaries</tspan></text>
+          </g>
+        </g>
+        <g
+           id="g4446"
+           transform="matrix(0,-1,1,0,-451.13271,1494.6972)">
+          <rect
+             transform="matrix(0,1,-1,0,0,0)"
+             rx="6.9671192e-11"
+             y="-1083.9811"
+             x="876.69312"
+             height="27.5"
+             width="166.19238"
+             id="rect4448"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
              inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
              inkscape:export-xdpi="90"
              inkscape:export-ydpi="90" />
           <text
-             xml:space="preserve"
-             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-             x="949.12646"
-             y="893.52612"
-             id="text4482"
+             transform="matrix(0,1,-1,0,0,0)"
              sodipodi:linespacing="125%"
+             id="text4450"
+             y="-1062.9811"
+             x="883.19312"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+             xml:space="preserve"
              inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
              inkscape:export-xdpi="90"
              inkscape:export-ydpi="90"><tspan
-               sodipodi:role="line"
-               id="tspan4484"
-               x="949.12646"
-               y="893.52612"
-               style="font-size:20px;fill:#ffffff">Moving Static Summaries</tspan></text>
-        </g>
-        <g
-           id="g4486"
-           transform="translate(-59.618795,14.363961)">
+               style="font-size:20px;fill:#ffffff"
+               y="-1062.9811"
+               x="883.19312"
+               id="tspan4452"
+               sodipodi:role="line">Short Term Cache</tspan></text>
           <rect
              inkscape:export-ydpi="90"
              inkscape:export-xdpi="90"
              inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-             rx="1.0717906e-10"
-             y="875.23322"
-             x="935.0553"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4454"
+             width="166.19238"
              height="27.5"
-             width="255.66295"
-             id="rect4488"
-             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+             x="870.69312"
+             y="-1077.9811"
+             rx="6.9671192e-11"
+             transform="matrix(0,1,-1,0,0,0)" />
           <text
              inkscape:export-ydpi="90"
              inkscape:export-xdpi="90"
              inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-             sodipodi:linespacing="125%"
-             id="text4490"
-             y="893.52612"
-             x="949.12646"
+             xml:space="preserve"
              style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-             xml:space="preserve"><tspan
-               style="font-size:20px;fill:#ffffff"
-               y="893.52612"
-               x="949.12646"
-               id="tspan4492"
-               sodipodi:role="line">Moving Static Summaries</tspan></text>
-        </g>
-      </g>
-      <g
-         transform="matrix(0,-1,1,0,-451.13271,1494.6972)"
-         id="g4446">
-        <rect
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4448"
-           width="166.19238"
-           height="27.5"
-           x="876.69312"
-           y="-1083.9811"
-           rx="6.9671192e-11"
-           transform="matrix(0,1,-1,0,0,0)" />
-        <text
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           xml:space="preserve"
-           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           x="883.19312"
-           y="-1062.9811"
-           id="text4450"
-           sodipodi:linespacing="125%"
-           transform="matrix(0,1,-1,0,0,0)"><tspan
-             sodipodi:role="line"
-             id="tspan4452"
-             x="883.19312"
-             y="-1062.9811"
-             style="font-size:20px;fill:#ffffff">Short Term Cache</tspan></text>
-        <rect
-           transform="matrix(0,1,-1,0,0,0)"
-           rx="6.9671192e-11"
-           y="-1077.9811"
-           x="870.69312"
-           height="27.5"
-           width="166.19238"
-           id="rect4454"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-        <text
-           transform="matrix(0,1,-1,0,0,0)"
-           sodipodi:linespacing="125%"
-           id="text4456"
-           y="-1056.9811"
-           x="877.19312"
-           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           xml:space="preserve"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90"><tspan
-             style="font-size:20px;fill:#ffffff"
-             y="-1056.9811"
              x="877.19312"
-             id="tspan4458"
-             sodipodi:role="line">Short Term Cache</tspan></text>
-        <rect
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4460"
-           width="166.19238"
-           height="27.5"
-           x="864.69312"
-           y="-1071.9811"
-           rx="6.9671192e-11"
-           transform="matrix(0,1,-1,0,0,0)" />
-        <text
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           xml:space="preserve"
-           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           x="871.19312"
-           y="-1050.9811"
-           id="text4462"
-           sodipodi:linespacing="125%"
-           transform="matrix(0,1,-1,0,0,0)"><tspan
-             sodipodi:role="line"
-             id="tspan4464"
-             x="871.19312"
+             y="-1056.9811"
+             id="text4456"
+             sodipodi:linespacing="125%"
+             transform="matrix(0,1,-1,0,0,0)"><tspan
+               sodipodi:role="line"
+               id="tspan4458"
+               x="877.19312"
+               y="-1056.9811"
+               style="font-size:20px;fill:#ffffff">Short Term Cache</tspan></text>
+          <rect
+             transform="matrix(0,1,-1,0,0,0)"
+             rx="6.9671192e-11"
+             y="-1071.9811"
+             x="864.69312"
+             height="27.5"
+             width="166.19238"
+             id="rect4460"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+          <text
+             transform="matrix(0,1,-1,0,0,0)"
+             sodipodi:linespacing="125%"
+             id="text4462"
              y="-1050.9811"
-             style="font-size:20px;fill:#ffffff">Short Term Cache</tspan></text>
-      </g>
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m 258.6206,375.32809 -0.13182,85.04031 0,0 13.5,0.01 0,0 0.13182,-85.04031 0,0 z"
-         id="path4498"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cccccccc" />
-      <path
-         sodipodi:nodetypes="cccccccc"
-         inkscape:connector-curvature="0"
-         id="path4500"
-         d="m 710.05984,371.08545 -0.1318,216.55135 0,0 13.5,0.018 0,0 0.1318,-216.55132 0,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:nodetypes="ccccccc"
-         inkscape:connector-curvature="0"
-         id="path4504"
-         d="m 694.61434,508.4941 15.3765,15.7341 0,0 -15.3765,15.027 0,0 c 0.2142,-14.6392 2.0666,-9.7099 0,-30.7611 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      <g
-         transform="matrix(0,-1,-1,0,1483.3086,1148.1329)"
-         id="g4508">
+             x="871.19312"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+             xml:space="preserve"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90"><tspan
+               style="font-size:20px;fill:#ffffff"
+               y="-1050.9811"
+               x="871.19312"
+               id="tspan4464"
+               sodipodi:role="line">Short Term Cache</tspan></text>
+        </g>
         <path
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:connector-curvature="0"
-           id="path4510"
-           d="m 689.84342,787.28008 -15.7341,-15.3765 0,0 -15.027,15.3765 0,0 c 14.6392,-0.2142 9.7099,-2.0666 30.7611,0 z"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           d="m 681.24772,817.50378 0,-36.9523 0,0 -13.5,0 0,0 0,36.9523 0,0 z"
-           id="path4512"
-           inkscape:connector-curvature="0"
            sodipodi:nodetypes="cccccccc"
+           inkscape:connector-curvature="0"
+           id="path4498"
+           d="m 258.6206,375.32809 -0.13182,85.04031 0,0 13.5,0.01 0,0 0.13182,-85.04031 0,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            inkscape:export-xdpi="90"
            inkscape:export-ydpi="90" />
-      </g>
-      <g
-         id="g4514"
-         transform="matrix(0,-1,-1,0,1482.6014,1100.0496)">
-        <path
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           d="m 689.84342,787.28008 -15.7341,-15.3765 0,0 -15.027,15.3765 0,0 c 14.6392,-0.2142 9.7099,-2.0666 30.7611,0 z"
-           id="path4516"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-        <path
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           sodipodi:nodetypes="cccccccc"
-           inkscape:connector-curvature="0"
-           id="path4518"
-           d="m 681.24772,895.28553 0,-114.73405 0,0 -13.5,0 0,0 0,114.73405 0,0 z"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      </g>
-      <g
-         transform="matrix(0,-1,1,0,-441.23322,1632.8149)"
-         id="g4580">
-        <rect
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4582"
-           width="157"
-           height="27.5"
-           x="861.84387"
-           y="-1071.2532"
-           rx="6.581756e-11"
-           transform="matrix(0,1,-1,0,0,0)" />
-        <text
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           xml:space="preserve"
-           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           x="868.34387"
-           y="-1052.2532"
-           id="text4584"
-           sodipodi:linespacing="125%"
-           transform="matrix(0,1,-1,0,0,0)"><tspan
-             sodipodi:role="line"
-             id="tspan4586"
+        <g
+           id="g4580"
+           transform="matrix(0,-1,1,0,-441.23322,1632.8149)">
+          <rect
+             transform="matrix(0,1,-1,0,0,0)"
+             rx="6.581756e-11"
+             y="-1071.2532"
+             x="861.84387"
+             height="27.5"
+             width="157"
+             id="rect4582"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+          <text
+             transform="matrix(0,1,-1,0,0,0)"
+             sodipodi:linespacing="125%"
+             id="text4584"
+             y="-1052.2532"
+             x="868.34387"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+             xml:space="preserve"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90"><tspan
+               style="font-size:20px;fill:#ffffff"
+               y="-1052.2532"
+               x="868.34387"
+               id="tspan4586"
+               sodipodi:role="line">Static Summaries</tspan></text>
+        </g>
+        <g
+           transform="matrix(0,-1,1,0,-446.18296,1636.7144)"
+           id="g4588">
+          <rect
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4590"
+             width="157"
+             height="27.5"
+             x="861.84387"
+             y="-1071.2532"
+             rx="6.581756e-11"
+             transform="matrix(0,1,-1,0,0,0)" />
+          <text
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             xml:space="preserve"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
              x="868.34387"
              y="-1052.2532"
-             style="font-size:20px;fill:#ffffff">Static Summaries</tspan></text>
-      </g>
-      <g
-         id="g4588"
-         transform="matrix(0,-1,1,0,-446.18296,1636.7144)">
+             id="text4592"
+             sodipodi:linespacing="125%"
+             transform="matrix(0,1,-1,0,0,0)"><tspan
+               sodipodi:role="line"
+               id="tspan4594"
+               x="868.34387"
+               y="-1052.2532"
+               style="font-size:20px;fill:#ffffff">Static Summaries</tspan></text>
+        </g>
+        <g
+           id="g4596"
+           transform="matrix(0,-1,1,0,-601.86778,1639.9068)">
+          <rect
+             transform="matrix(0,1,-1,0,0,0)"
+             rx="6.581756e-11"
+             y="-1070.546"
+             x="1012.4576"
+             height="27.5"
+             width="157"
+             id="rect4598"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
+          <text
+             transform="matrix(0,1,-1,0,0,0)"
+             sodipodi:linespacing="125%"
+             id="text4600"
+             y="-1051.546"
+             x="1022.9576"
+             style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+             xml:space="preserve"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90"><tspan
+               style="font-size:20px;fill:#ffffff"
+               y="-1051.546"
+               x="1022.9576"
+               id="tspan4602"
+               sodipodi:role="line">Store Raw Data</tspan></text>
+        </g>
+        <g
+           id="g4604"
+           transform="translate(-46.255836,-210.87184)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="423.5"
+             height="14.5"
+             width="16"
+             id="rect4606"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4608"
+             width="16"
+             height="14.5"
+             x="403.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="383.5"
+             height="14.5"
+             width="16"
+             id="rect4610"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4612"
+             d="m 364,634.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,654.86218 90.5,0"
+             id="path4614"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-46.255836,-210.87184)"
+           id="g4616">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4618"
+             width="16"
+             height="14.5"
+             x="423.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="403.5"
+             height="14.5"
+             width="16"
+             id="rect4620"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4622"
+             width="16"
+             height="14.5"
+             x="383.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,634.86218 90.5,0"
+             id="path4624"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4626"
+             d="m 364,654.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        </g>
+        <g
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-50.255836,-166.87184)"
+           id="g4628">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4630"
+             width="16"
+             height="14.5"
+             x="423.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="403.5"
+             height="14.5"
+             width="16"
+             id="rect4632"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4634"
+             width="16"
+             height="14.5"
+             x="383.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,634.86218 90.5,0"
+             id="path4636"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4638"
+             d="m 364,654.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        </g>
+        <g
+           id="g4640"
+           transform="translate(-50.255836,-166.87184)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="423.5"
+             height="14.5"
+             width="16"
+             id="rect4642"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4644"
+             width="16"
+             height="14.5"
+             x="403.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="383.5"
+             height="14.5"
+             width="16"
+             id="rect4646"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4648"
+             d="m 364,634.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,654.86218 90.5,0"
+             id="path4650"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="g4652"
+           transform="translate(-48.255836,-116.87184)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="423.5"
+             height="14.5"
+             width="16"
+             id="rect4654"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4656"
+             width="16"
+             height="14.5"
+             x="403.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="383.5"
+             height="14.5"
+             width="16"
+             id="rect4658"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4660"
+             d="m 364,634.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,654.86218 90.5,0"
+             id="path4662"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-48.255836,-116.87184)"
+           id="g4664">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4666"
+             width="16"
+             height="14.5"
+             x="423.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="403.5"
+             height="14.5"
+             width="16"
+             id="rect4668"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4670"
+             width="16"
+             height="14.5"
+             x="383.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,634.86218 90.5,0"
+             id="path4672"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4674"
+             d="m 364,654.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        </g>
+        <g
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           transform="translate(-48.255836,-61.717506)"
+           id="g4676">
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4678"
+             width="16"
+             height="14.5"
+             x="423.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="403.5"
+             height="14.5"
+             width="16"
+             id="rect4680"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4682"
+             width="16"
+             height="14.5"
+             x="383.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,634.86218 90.5,0"
+             id="path4684"
+             inkscape:connector-curvature="0" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4686"
+             d="m 364,654.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+        </g>
+        <g
+           id="g4688"
+           transform="translate(-48.255836,-61.717506)"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="423.5"
+             height="14.5"
+             width="16"
+             id="rect4690"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <rect
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             id="rect4692"
+             width="16"
+             height="14.5"
+             x="403.5"
+             y="637.86218"
+             rx="2.9555018e-11" />
+          <rect
+             rx="2.9555018e-11"
+             y="637.86218"
+             x="383.5"
+             height="14.5"
+             width="16"
+             id="rect4694"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4696"
+             d="m 364,634.86218 90.5,0"
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+             d="m 364,654.86218 90.5,0"
+             id="path4698"
+             inkscape:connector-curvature="0" />
+        </g>
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           d="m 510.47922,601.5977 0,89.9853 0,0 -13.50003,0 0,0 0,-89.9853 0,0 z"
+           id="path4700"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccccccc" />
+        <path
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:connector-curvature="0"
+           id="path4702"
+           d="m 518.54802,687.6447 -15.7341,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63926,0.2142 9.70994,2.0666 30.76116,0 z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:linespacing="125%"
+           id="text4704"
+           y="-517.67773"
+           x="603.60284"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           transform="matrix(0,1,-1,0,0,0)"><tspan
+             style="font-size:12px;fill:#4d4d4d;fill-opacity:1"
+             y="-517.67773"
+             x="603.60284"
+             id="tspan4706"
+             sodipodi:role="line">Store Raw Data</tspan></text>
         <rect
-           transform="matrix(0,1,-1,0,0,0)"
-           rx="6.581756e-11"
-           y="-1071.2532"
-           x="861.84387"
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+           id="rect4733"
+           width="194.47664"
            height="27.5"
-           width="157"
-           id="rect4590"
+           x="419.43906"
+           y="511.01395"
+           rx="8.152852e-11" />
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           xml:space="preserve"
+           style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           x="447.41574"
+           y="530.01398"
+           id="text4735"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan4737"
+             x="447.41574"
+             y="530.01398"
+             style="font-size:20px;fill:#ffffff">Static Summaries</tspan></text>
+        <rect
+           rx="8.152852e-11"
+           y="517.01398"
+           x="413.43906"
+           height="27.5"
+           width="194.47664"
+           id="rect4739"
            style="fill:#4d4d4d;fill-opacity:1;stroke:none"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            inkscape:export-xdpi="90"
            inkscape:export-ydpi="90" />
         <text
-           transform="matrix(0,1,-1,0,0,0)"
            sodipodi:linespacing="125%"
-           id="text4592"
-           y="-1052.2532"
-           x="868.34387"
+           id="text4741"
+           y="536.01398"
+           x="441.41574"
            style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
            xml:space="preserve"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            inkscape:export-xdpi="90"
            inkscape:export-ydpi="90"><tspan
              style="font-size:20px;fill:#ffffff"
-             y="-1052.2532"
-             x="868.34387"
-             id="tspan4594"
+             y="536.01398"
+             x="441.41574"
+             id="tspan4743"
              sodipodi:role="line">Static Summaries</tspan></text>
-      </g>
-      <g
-         transform="matrix(0,-1,1,0,-601.86778,1639.9068)"
-         id="g4596">
+        <text
+           inkscape:export-ydpi="90"
+           inkscape:export-xdpi="90"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           sodipodi:linespacing="125%"
+           id="text4756"
+           y="-315.14743"
+           x="505.95096"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
+           xml:space="preserve"
+           transform="matrix(0,1,-1,0,0,0)"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle;fill:#4d4d4d;fill-opacity:1"
+             y="-315.14743"
+             x="505.95096"
+             id="tspan4758"
+             sodipodi:role="line">Spawn</tspan><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle;fill:#4d4d4d;fill-opacity:1"
+             y="-300.14743"
+             x="505.95096"
+             sodipodi:role="line"
+             id="tspan4760">Workwer</tspan></text>
         <rect
            inkscape:export-ydpi="90"
            inkscape:export-xdpi="90"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4598"
-           width="157"
-           height="27.5"
-           x="1012.4576"
-           y="-1070.546"
-           rx="6.581756e-11"
-           transform="matrix(0,1,-1,0,0,0)" />
+           id="rect5536"
+           width="107.5284"
+           height="83.361435"
+           x="140.82677"
+           y="297.65384"
+           rx="4.5078073e-11" />
         <text
            inkscape:export-ydpi="90"
            inkscape:export-xdpi="90"
            inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
            xml:space="preserve"
            style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-           x="1022.9576"
-           y="-1051.546"
-           id="text4600"
-           sodipodi:linespacing="125%"
-           transform="matrix(0,1,-1,0,0,0)"><tspan
-             sodipodi:role="line"
-             id="tspan4602"
-             x="1022.9576"
-             y="-1051.546"
-             style="font-size:20px;fill:#ffffff">Store Raw Data</tspan></text>
-      </g>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-46.255836,-210.87184)"
-         id="g4604">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4606"
-           width="16"
-           height="14.5"
-           x="423.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="403.5"
-           height="14.5"
-           width="16"
-           id="rect4608"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4610"
-           width="16"
-           height="14.5"
-           x="383.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,634.86218 90.5,0"
-           id="path4612"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4614"
-           d="m 364,654.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-      <g
-         id="g4616"
-         transform="translate(-46.255836,-210.87184)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="423.5"
-           height="14.5"
-           width="16"
-           id="rect4618"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4620"
-           width="16"
-           height="14.5"
-           x="403.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="383.5"
-           height="14.5"
-           width="16"
-           id="rect4622"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4624"
-           d="m 364,634.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,654.86218 90.5,0"
-           id="path4626"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g4628"
-         transform="translate(-50.255836,-166.87184)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="423.5"
-           height="14.5"
-           width="16"
-           id="rect4630"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4632"
-           width="16"
-           height="14.5"
-           x="403.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="383.5"
-           height="14.5"
-           width="16"
-           id="rect4634"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4636"
-           d="m 364,634.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,654.86218 90.5,0"
-           id="path4638"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-50.255836,-166.87184)"
-         id="g4640">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4642"
-           width="16"
-           height="14.5"
-           x="423.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="403.5"
-           height="14.5"
-           width="16"
-           id="rect4644"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4646"
-           width="16"
-           height="14.5"
-           x="383.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,634.86218 90.5,0"
-           id="path4648"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4650"
-           d="m 364,654.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-48.255836,-116.87184)"
-         id="g4652">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4654"
-           width="16"
-           height="14.5"
-           x="423.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="403.5"
-           height="14.5"
-           width="16"
-           id="rect4656"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4658"
-           width="16"
-           height="14.5"
-           x="383.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,634.86218 90.5,0"
-           id="path4660"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4662"
-           d="m 364,654.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-      <g
-         id="g4664"
-         transform="translate(-48.255836,-116.87184)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="423.5"
-           height="14.5"
-           width="16"
-           id="rect4666"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4668"
-           width="16"
-           height="14.5"
-           x="403.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="383.5"
-           height="14.5"
-           width="16"
-           id="rect4670"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4672"
-           d="m 364,634.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,654.86218 90.5,0"
-           id="path4674"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g4676"
-         transform="translate(-48.255836,-61.717506)"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="423.5"
-           height="14.5"
-           width="16"
-           id="rect4678"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4680"
-           width="16"
-           height="14.5"
-           x="403.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="383.5"
-           height="14.5"
-           width="16"
-           id="rect4682"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4684"
-           d="m 364,634.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,654.86218 90.5,0"
-           id="path4686"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         transform="translate(-48.255836,-61.717506)"
-         id="g4688">
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4690"
-           width="16"
-           height="14.5"
-           x="423.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <rect
-           rx="2.9555018e-11"
-           y="637.86218"
-           x="403.5"
-           height="14.5"
-           width="16"
-           id="rect4692"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-        <rect
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           id="rect4694"
-           width="16"
-           height="14.5"
-           x="383.5"
-           y="637.86218"
-           rx="2.9555018e-11" />
-        <path
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="m 364,634.86218 90.5,0"
-           id="path4696"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4698"
-           d="m 364,654.86218 90.5,0"
-           style="fill:none;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-      <path
-         sodipodi:nodetypes="cccccccc"
-         inkscape:connector-curvature="0"
-         id="path4700"
-         d="m 510.47922,601.5977 0,89.9853 0,0 -13.50003,0 0,0 0,-89.9853 0,0 z"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <path
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         d="m 518.54802,687.6447 -15.7341,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63926,0.2142 9.70994,2.0666 30.76116,0 z"
-         id="path4702"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         transform="matrix(0,1,-1,0,0,0)"
-         xml:space="preserve"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="603.60284"
-         y="-517.67773"
-         id="text4704"
-         sodipodi:linespacing="125%"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan4706"
-           x="603.60284"
-           y="-517.67773"
-           style="font-size:12px;fill:#4d4d4d;fill-opacity:1">Store Raw Data</tspan></text>
-      <rect
-         rx="8.152852e-11"
-         y="511.01395"
-         x="419.43906"
-         height="27.5"
-         width="194.47664"
-         id="rect4733"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text4735"
-         y="530.01398"
-         x="447.41574"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           style="font-size:20px;fill:#ffffff"
-           y="530.01398"
-           x="447.41574"
-           id="tspan4737"
-           sodipodi:role="line">Static Summaries</tspan></text>
-      <rect
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         id="rect4739"
-         width="194.47664"
-         height="27.5"
-         x="413.43906"
-         y="517.01398"
-         rx="8.152852e-11" />
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         xml:space="preserve"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="441.41574"
-         y="536.01398"
-         id="text4741"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan4743"
-           x="441.41574"
-           y="536.01398"
-           style="font-size:20px;fill:#ffffff">Static Summaries</tspan></text>
-      <g
-         transform="translate(-466.69046,-427.80673)"
-         id="g4750">
-        <path
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           d="m 1042.6928,997.22239 123.2193,0 0,0 0,13.50001 0,0 -123.2193,0 0,0 z"
-           id="path4746"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="cccccccc"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-        <path
-           inkscape:export-ydpi="90"
-           inkscape:export-xdpi="90"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:connector-curvature="0"
-           id="path4748"
-           d="m 1159.8906,989.3338 15.3765,15.7341 0,0 -15.3765,15.027 0,0 c 0.2142,-14.6392 2.0666,-9.7099 0,-30.7611 z"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
-      </g>
-      <text
-         transform="matrix(0,1,-1,0,0,0)"
-         xml:space="preserve"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         x="505.95096"
-         y="-315.14743"
-         id="text4756"
-         sodipodi:linespacing="125%"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           sodipodi:role="line"
-           id="tspan4758"
-           x="505.95096"
-           y="-315.14743"
-           style="font-size:12px;text-align:center;text-anchor:middle;fill:#4d4d4d;fill-opacity:1">Spawn</tspan><tspan
-           id="tspan4760"
-           sodipodi:role="line"
-           x="505.95096"
-           y="-300.14743"
-           style="font-size:12px;text-align:center;text-anchor:middle;fill:#4d4d4d;fill-opacity:1">Workwer</tspan></text>
-      <rect
-         rx="4.5078073e-11"
-         y="297.65384"
-         x="140.82677"
-         height="83.361435"
-         width="107.5284"
-         id="rect5536"
-         style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text5538"
-         y="318.07291"
-         x="154.18376"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90"><tspan
-           style="font-size:20px;fill:#ffffff"
+           x="154.18376"
            y="318.07291"
-           x="154.18376"
-           id="tspan5540"
-           sodipodi:role="line">Resource </tspan><tspan
-           id="tspan5550"
-           style="font-size:20px;fill:#ffffff"
-           y="343.07291"
-           x="154.18376"
-           sodipodi:role="line">Allocation</tspan><tspan
-           id="tspan5552"
-           style="font-size:20px;fill:#ffffff"
-           y="368.07291"
-           x="154.18376"
-           sodipodi:role="line">Strategy</tspan></text>
-      <g
-         transform="matrix(1,0,0,-1,-440.52751,1293.3124)"
-         id="g5554">
-        <path
-           sodipodi:nodetypes="cccccccc"
-           inkscape:connector-curvature="0"
-           id="path5542"
-           d="m 645.53661,810.20133 0,89.9853 0,0 -13.50003,0 0,0 0,-89.9853 0,0 z"
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-        <path
-           style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-           d="m 653.60541,896.24833 -15.7341,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63926,0.2142 9.70994,2.0666 30.76116,0 z"
-           id="path5544"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <text
-         inkscape:export-ydpi="90"
-         inkscape:export-xdpi="90"
-         inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
-         sodipodi:linespacing="125%"
-         id="text5546"
-         y="-207.96495"
-         x="414.09824"
-         style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
-         xml:space="preserve"
-         transform="matrix(0,1,-1,0,0,0)"><tspan
-           style="font-size:12px;fill:#4d4d4d;fill-opacity:1"
-           y="-207.96495"
+           id="text5538"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5540"
+             x="154.18376"
+             y="318.07291"
+             style="font-size:20px;fill:#ffffff">Resource </tspan><tspan
+             sodipodi:role="line"
+             x="154.18376"
+             y="343.07291"
+             style="font-size:20px;fill:#ffffff"
+             id="tspan5550">Allocation</tspan><tspan
+             sodipodi:role="line"
+             x="154.18376"
+             y="368.07291"
+             style="font-size:20px;fill:#ffffff"
+             id="tspan5552">Strategy</tspan></text>
+        <g
+           id="g5554"
+           transform="matrix(1,0,0,-1,-440.52751,1293.3124)">
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+             d="m 645.53661,810.20133 0,89.9853 0,0 -13.50003,0 0,0 0,-89.9853 0,0 z"
+             id="path5542"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccccccc" />
+          <path
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+             sodipodi:nodetypes="ccccccc"
+             inkscape:connector-curvature="0"
+             id="path5544"
+             d="m 653.60541,896.24833 -15.7341,15.3765 0,0 -15.02706,-15.3765 0,0 c 14.63926,0.2142 9.70994,2.0666 30.76116,0 z"
+             style="fill:#4d4d4d;fill-opacity:1;stroke:none" />
+        </g>
+        <text
+           transform="matrix(0,1,-1,0,0,0)"
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Optima;-inkscape-font-specification:Optima"
            x="414.09824"
-           id="tspan5548"
-           sodipodi:role="line">Task Planner</tspan></text>
+           y="-207.96495"
+           id="text5546"
+           sodipodi:linespacing="125%"
+           inkscape:export-filename="/Users/ali/IdeaProjects/sensordb/documents/data-flow-2.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             sodipodi:role="line"
+             id="tspan5548"
+             x="414.09824"
+             y="-207.96495"
+             style="font-size:12px;fill:#4d4d4d;fill-opacity:1">Task Planner</tspan></text>
+      </g>
     </g>
   </g>
 </svg>

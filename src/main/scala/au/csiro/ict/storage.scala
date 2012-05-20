@@ -1,7 +1,7 @@
 package au.csiro.ict
 
 import java.io.PrintWriter
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.DateTimeZone
 
 /**
  * Storage class is Timezone aware, this means:
@@ -10,21 +10,14 @@ import org.joda.time.{DateTimeZone, DateTime}
  */
 trait Storage {
   def getPrefixed(prefix:String):Iterable[Array[Byte]]
+
+  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],tz:DateTimeZone,level:AggregationLevel,chunker:ChunkFormatter):Unit
+  def get(row:Array[Byte],column:Array[Byte]):Option[Array[Byte]]
+  def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[Array[Byte]]
+
   def put(row: Array[Byte], col:Array[Byte],value:Array[Byte]):Unit
-  def get(row: Array[Byte], col:Array[Byte]):Option[Array[Byte]]
-  def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[(Array[Byte],Array[Byte])]
   def put(streamId: String, values: Map[Int, Option[Double]],tz:DateTimeZone):Unit
-  def get(streamId: String, from:Int,to:Int,tz:DateTimeZone):Iterator[(Int,Double)]
-  def get(streamId: String, fromDate:Int,toDate:Int,fromSecOfDay:Int,toSecOfDay:Int,tz:DateTimeZone):Iterator[(Int,Double)] = get(streamId,fromDate,toDate,tz).filter{(x)=>
-    val d = new DateTime(x._1*1000L,tz).getSecondOfDay
-    d >=fromSecOfDay && d < toSecOfDay
-  }
-  def get(streamId: String, from:Int,to:Int,tz:DateTimeZone,cf:ChunkFormatter){
-    get(streamId,from,to,tz).foldLeft(cf)((sum,item)=>sum.insert("s1",item._1,item._2)).done()
-  }
-  def get(streamId: String, from:Int,to:Int,fromSecOfDay:Int,toSecOfDay:Int,tz:DateTimeZone,cf:ChunkFormatter){
-    get(streamId,from,to,fromSecOfDay,toSecOfDay,tz).foldLeft(cf)((sum,item)=>sum.insert("s1",item._1,item._2)).done()
-  }
+
   def drop(streamId:String)
   def close()
 }
@@ -33,6 +26,7 @@ trait Storage {
 trait ChunkFormatter{
   def done()
   def insert(sensor:String, ts:Int, value:Double):ChunkFormatter
+  def insert(sensor:String, ts:Int, min:Double,max:Double,count:Double,sum:Double,sumSq:Double):ChunkFormatter
 }
 
 trait ChunkWriter {
@@ -42,6 +36,10 @@ trait ChunkWriter {
   }
   var isOpenValue = false
 
+  def insert(sensor:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double){
+    if (isClosed()|| !isOpened()) throw new RuntimeException("Bad state exception.")
+    insertData(sensor,ts,min,max,count,sum,sumSq)
+  }
   def insert(sensor:String, ts:Int,value:Double){
     if (isClosed()|| !isOpened()) throw new RuntimeException("Bad state exception.")
     insertData(sensor,ts,value)
@@ -54,6 +52,7 @@ trait ChunkWriter {
   protected def openWriter()
   protected def closeWriter()
   protected def insertData(sensor:String, ts:Int,value:Double)
+  protected def insertData(sensor:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)
   var isClosedValue = false
   def isClosed() = isClosedValue
   def isOpened() = isOpenValue
@@ -62,7 +61,9 @@ trait ChunkWriter {
 class InMemWriter extends ChunkWriter{
   def openWriter() = {}
   var to_return = List[(String,Int,Double)]()
+  var to_return_stat = List[(String,Int,Double,Double,Double,Double,Double)]()
   def insertData(sensor:String, ts:Int,value:Double)= to_return::=(sensor,ts,value)
+  def insertData(sensor:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= to_return_stat::=(sensor,ts,min,max,count,sum,sumSq)
   def closeWriter() = {}
   /*
   The return result is verse order of put calls.
@@ -73,6 +74,14 @@ class InMemWriter extends ChunkWriter{
 class JSONWriter(val output:PrintWriter) extends ChunkWriter{
   def openWriter() =output.print("{")
   var started = false;
+  def insertData(sid:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
+    if (started){
+      output.print(",")
+      started=true
+    }
+    output.print(List(sid,ts,min,max,count,sum,sumSq).mkString("[",",","]"))
+  }
+
   def insertData(sensor:String, ts:Int,value:Double)= {
     if (started){
       output.print(",")
@@ -86,12 +95,19 @@ class JSONWriter(val output:PrintWriter) extends ChunkWriter{
 
 class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
   writer.open()
-  var count = 0
+  var item_count = 0
   def insert(sensor:String, ts:Int,value:Double):DefaultChunkFormatter={
-    count+=1
+    item_count+=1
     writer.insert(sensor,ts,value)
     this
   }
+
+  def insert(sensor: String, ts: Int, min: Double, max: Double, count: Double, sum: Double, sumSq: Double):DefaultChunkFormatter = {
+    item_count+=1
+    writer.insert(sensor,ts,min,max,count,sum,sumSq)
+    this
+  }
+
   def done() = writer.close()
 }
 

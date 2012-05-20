@@ -12,52 +12,51 @@ import au.csiro.ict._
 class AggregationTest extends ScalatraSuite with FunSuite with BeforeAndAfterAll {
 
   test("Check if child cells are generated correctly") {
-    import au.csiro.ict.ColumnOrientedDBKeyHelper._
     val ts1 = new DateTime(2010,2,6,12,43,54,123,Utils.TZ_Sydney)
-    childCellsOf("s1",ts1,AggLevel.OneMin).length must equal(60)
-    childCellsOf("s1",ts1,AggLevel.OneMin).map(Bytes.toInt) must contain(Bytes.toInt(cellKeyOf(ts1,AggLevel.RAW)))
+    OneMinuteLevel.getChildCells(ts1).length must equal(60)
+    OneMinuteLevel.getChildCells(ts1) must contain(RawLevel.getCellKeyFor(ts1))
     for (i<-12*60*60+43*60 until 12*60*60+44*60 )
-      childCellsOf("s1",ts1,AggLevel.OneMin).map(Bytes.toInt) must contain(i)
+      OneMinuteLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.FiveMin).length must equal(5)
-    childCellsOf("s1",ts1,AggLevel.FiveMin).map(Bytes.toInt) must contain(Bytes.toInt(cellKeyOf(ts1,AggLevel.OneMin)))
+    FiveMinuteLevel.getChildCells(ts1).length must equal(5)
+    FiveMinuteLevel.getChildCells(ts1) must contain(OneMinuteLevel.getCellKeyFor(ts1))
     for (i<-12*60+40 until 12*60+45 )
-      childCellsOf("s1",ts1,AggLevel.FiveMin).map(Bytes.toInt) must contain(i)
+      FiveMinuteLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.FifteenMin).length must equal(3)
-    childCellsOf("s1",ts1,AggLevel.FifteenMin).map(Bytes.toInt) must contain(Bytes.toInt(cellKeyOf(ts1,AggLevel.FiveMin)))
+    FifteenMinuteLevel.getChildCells(ts1).length must equal(3)
+    FifteenMinuteLevel.getChildCells(ts1) must contain(FiveMinuteLevel.getCellKeyFor(ts1))
     for (i<-12*60+30 until 13*45 by 5 )
-      childCellsOf("s1",ts1,AggLevel.FifteenMin).map(Bytes.toInt) must contain(i)
+      FifteenMinuteLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.OneHour).length must equal(4)
-    childCellsOf("s1",ts1,AggLevel.OneHour).map(Bytes.toInt) must contain(Bytes.toInt(cellKeyOf(ts1,AggLevel.FifteenMin)))
+    OneHourLevel.getChildCells(ts1).length must equal(4)
+    OneHourLevel.getChildCells(ts1) must contain(FifteenMinuteLevel.getCellKeyFor(ts1))
     for (i<-12*60 until 13*60 by 15)
-      childCellsOf("s1",ts1,AggLevel.OneHour).map(Bytes.toInt) must contain(i/15)
+      OneHourLevel.getChildCells(ts1) must contain(i/15)
 
-    childCellsOf("s1",ts1,AggLevel.ThreeHour).length must equal(3)
-    childCellsOf("s1",ts1,AggLevel.ThreeHour).map(Bytes.toString) must contain(Bytes.toString(cellKeyOf(ts1,AggLevel.OneHour)))
+    ThreeHourLevel.getChildCells(ts1).length must equal(3)
+    ThreeHourLevel.getChildCells(ts1)  must contain(OneHourLevel.getCellKeyFor(ts1))
     for (i<-12 until 15)
-      childCellsOf("s1",ts1,AggLevel.ThreeHour).map(Bytes.toInt) must contain(i)
+      ThreeHourLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.SixHour).length must equal(2)
-    childCellsOf("s1",ts1,AggLevel.SixHour).map(Bytes.toString) must contain(Bytes.toString(cellKeyOf(ts1,AggLevel.ThreeHour)))
-    for (i<-List(ts1.getDayOfYear+"-4",ts1.getDayOfYear+"-5"))
-      childCellsOf("s1",ts1,AggLevel.SixHour).map(Bytes.toString) must contain(i)
+    SixHourLevel.getChildCells(ts1).length must equal(2)
+    SixHourLevel.getChildCells(ts1) must contain(ThreeHourLevel.getCellKeyFor(ts1))
+    for (i<- ((ts1.getDayOfYear-1)*24+12)/3 until ((ts1.getDayOfYear-1)*24+18)/3)
+      SixHourLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.OneDay).length must equal(4)
-    childCellsOf("s1",ts1,AggLevel.OneDay).map(Bytes.toString) must contain(Bytes.toString(cellKeyOf(ts1,AggLevel.SixHour)))
-    for (i<-List(ts1.getDayOfYear+"-0",ts1.getDayOfYear+"-1"))
-      childCellsOf("s1",ts1,AggLevel.OneDay).map(Bytes.toString) must contain(i)
+    OneDayLevel.getChildCells(ts1).length must equal(4)
+    OneDayLevel.getChildCells(ts1) must contain(SixHourLevel.getCellKeyFor(ts1))
+    for (i<-((ts1.getDayOfYear-1)*24)/6 until ((ts1.getDayOfYear-1)*24)/6)
+      OneDayLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.OneMonth).length must equal(28)
-    childCellsOf("s1",ts1,AggLevel.OneMonth).map(Bytes.toInt) must contain(Bytes.toInt(cellKeyOf(ts1,AggLevel.OneDay)))
+    OneMonthLevel.getChildCells(ts1).length must equal(28)
+    OneMonthLevel.getChildCells(ts1) must contain(OneDayLevel.getCellKeyFor(ts1))
     for (i<-32 until 50)
-      childCellsOf("s1",ts1,AggLevel.OneMonth).map(Bytes.toInt) must contain(i)
+      OneMonthLevel.getChildCells(ts1) must contain(i)
 
-    childCellsOf("s1",ts1,AggLevel.OneYear).length must equal(12)
-    childCellsOf("s1",ts1,AggLevel.OneYear).map(Bytes.toInt) must contain(Bytes.toInt(cellKeyOf(ts1,AggLevel.OneMonth)))
+    OneYearLevel.getChildCells(ts1).length must equal(12)
+    OneYearLevel.getChildCells(ts1) must contain(OneMonthLevel.getCellKeyFor(ts1))
     for (i<-1 until 12)
-      childCellsOf("s1",ts1,AggLevel.OneYear).map(Bytes.toInt) must contain(i)
+      OneYearLevel.getChildCells(ts1) must contain(i)
   }
 
 }

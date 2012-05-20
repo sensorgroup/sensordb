@@ -4,9 +4,7 @@ import org.scalatra.ScalatraServlet
 import au.csiro.ict.JsonGenerator._
 import au.csiro.ict.Cache._
 import au.csiro.ict.Validators._
-import org.scalatra.ScalatraKernel._
 import com.mongodb.casbah.commons.MongoDBObject
-import com.mongodb.DBObject
 
 /**
  * Metadata key is limited to 30 characters, minimum 1, no space in the middle

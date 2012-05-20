@@ -3,12 +3,10 @@ package au.csiro.ict
 import org.mindrot.jbcrypt.BCrypt
 import org.bson.types.ObjectId
 import javax.servlet.http.HttpSession
-import com.mongodb.DBObject
 import org.scalatra.ScalatraServlet
 import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
 import com.mongodb.casbah.Imports._
-import scala.collection.JavaConversions._
 import au.csiro.ict.JsonGenerator.generate
 
 trait RestfulUsers {

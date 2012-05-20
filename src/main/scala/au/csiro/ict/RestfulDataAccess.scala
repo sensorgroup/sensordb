@@ -6,12 +6,8 @@ import com.codahale.jerkson.Json._
 import au.csiro.ict.JsonGenerator.generate
 import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
-import javax.servlet.http.{HttpServletResponse}
 import scala.Some
-import java.io.BufferedWriter
-import com.typesafe.config.ConfigFactory
-import akka.actor.{Props, ActorSystem}
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.DateTimeZone
 
 trait RestfulDataAccess {
 
@@ -20,7 +16,7 @@ trait RestfulDataAccess {
   val workersProxy = new UpdateBrokerProxy(Cache.store)
 
   //  val ips = new InputProcessingSystemProxy // activate this line for distributed message processing
-  post("/data/raw"){
+  post("/data"){
     /* Inserting time series data into a group of streams by sending POST requests.
     * Required parameters:
     * data: a string value with in the following format of {token:{ts,value},token:{ts,value}} where,
@@ -42,7 +38,9 @@ trait RestfulDataAccess {
           if(allKeysMapped.size != packed.size)
             haltMsg("Bad request, invalid security token(s)")
           // TODO: update timezones based on http://joda-time.sourceforge.net/timezones.html
-          allKeysMapped.foreach { item =>  workersProxy.process(RawData(item._1,item._2,Utils.TZ_Sydney)) }
+          allKeysMapped.foreach { item =>
+            workersProxy.process(RawData(item._1,item._2,Utils.TZ_Sydney))
+          }
 
           generate(Map("length"->packed.values.map(_.size).sum))
         } catch {
@@ -56,17 +54,17 @@ trait RestfulDataAccess {
   /**
    * if the current user doesn't have enough rights to access sid, the method returns None otherwise returns ObjectId of a parent Node ID
    * @param sid to check user permission on
-   * @return NodeId only if user has enough permissions to access this stream
+   * @return SID, NodeId and Experiment's TZ only if user has enough permissions to access this stream
    */
-  def permissionCheck(sid:ObjectId):Option[ObjectId]={
+  def permissionCheck(sid:ObjectId):Option[(ObjectId,ObjectId,DateTimeZone)]={
     NidUidFromSid(sid) match {
       case Some(s:DBObject) =>
         val nid:ObjectId = s.getAs[ObjectId]("nid").get
         Nodes.findOne(MongoDBObject("_id"->nid),MongoDBObject("eid"->1)) match {
-          case Some(n:DBObject)=> Experiments.findOne(MongoDBObject("_id"->n.getAs[ObjectId]("eid").get),MongoDBObject(ACCESS_RESTRICTION_FIELD->1)) match {
+          case Some(n:DBObject)=> Experiments.findOne(MongoDBObject("_id"->n.getAs[ObjectId]("eid").get),MongoDBObject(ACCESS_RESTRICTION_FIELD->1,"timezone"->1)) match {
             case Some(e:DBObject)=> e.getAs[String](ACCESS_RESTRICTION_FIELD) match {
-              case Some(EXPERIMENT_ACCESS_PUBLIC) => Some(nid)
-              case Some(EXPERIMENT_ACCESS_PRIVATE) if UserSession(session).filter(_._1 ==  s.getAs[ObjectId]("uid")).isDefined => Some(nid)
+              case Some(EXPERIMENT_ACCESS_PUBLIC) => Some((sid,nid,Utils.TZ_Sydney))
+              case Some(EXPERIMENT_ACCESS_PRIVATE) if UserSession(session).filter(_._1 ==  s.getAs[ObjectId]("uid")).isDefined => Some((sid,nid,Utils.TZ_Sydney))
               case others =>
                 haltMsg("Access Denied")
             }
@@ -78,44 +76,35 @@ trait RestfulDataAccess {
     }
   }
 
-  get("/data/raw"){
+  get("/data"){
     /* querying raw data from a stream by sending GET requests to /data url.
     * Required parameters are
     * sid => sensor id as String convertable to ObjectId on MongoDB
     * sd => start date => UK format => 30-01-2012
     * ed => end date => uk format
-    * st => start time => 22:03:00
-    * et => end time => 23:01:59
+    * st (optional) => start time index => For example for raw, you use seconds, 0 until 86399
+    * et (optional) => end time => similar format to ST
+    * level (optional, default is raw)=> Level is text and can be raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
     */
-    (EntityId(params.get("sid")),DateParam(params.get("sd")),TimeParam(params.get("st")),DateParam(params.get("ed")),TimeParam(params.get("et"))) match {
-      case (Some(sid),Some(start_date),Some(st),Some(end_date),Some(et)) => permissionCheck(sid) match {
-        case Some(nid)=> store.get(sid.toString, start_date ,end_date,st,et,Utils.TZ_Sydney).foldLeft(new DefaultChunkFormatter(new JSONWriter(response.getWriter))){(sum,item)=>
-          sum.insert(sid.toString,item._1,item._2)
-          sum
-        }.done()
-        case other => haltMsg("Bad input, access denied, please verify the body of your request")
-      }
-      case other => haltMsg("Bad input, missing stream, please verify the body of your request")
-    }
-  }
-
-  get("/data/summary/daily"){
-    /**
-     * TODO: Better output, needs to be streaming, can overload it by providing large range
-     * Querying summary information (a.k.a statistical information) for a set of stream ids
-     * Parameter:
-     * sid=[List of stream ids]
-     * sd= start date, UK format , 30-01-2012
-     * ed= end date, UK format
-     */
-    (EntityIdList(params.get("sid")),DateParam(params.get("sd")),DateParam(params.get("ed"))) match {
-      case (sids,Some(sd),Some(ed)) =>
-        if(sids.map(permissionCheck).forall(_.isDefined)){
-          val keys:List[String] = new StorageStreamDayIdGenerator(sids.map(_.toString).toSeq,Utils.yyyyDDDFormat.print(sd*1000L),Utils.yyyyDDDFormat.print(ed*1000L)).toList
-          generate(keys.zip(Cache.stat.mget(keys.head,keys.tail: _*).get).toMap)
+    (AggregationLevelParam(params.get("level")),EntityIdList(params.get("sid")),DateParam(params.get("sd")),DateParam(params.get("ed"))) match {
+      case (levelOption,sids,Some(start_date),Some(end_date)) if !sids.isEmpty=>
+        val level = levelOption.getOrElse(RawLevel)
+        val cols = (CellKeyParam(IntParam(params.get("st")),level),CellKeyParam(IntParam(params.get("et")),level)) match {
+          case (Some(fromColIdx:Int),Some(toColIdx:Int)) => Some((fromColIdx,toColIdx))
+          case others => None
+        }
+        var timezones: Set[Option[(ObjectId,ObjectId, DateTimeZone)]] = sids.map(permissionCheck)
+        if(timezones.forall(_.isDefined)){
+          val chunker = new DefaultChunkFormatter(new JSONWriter(response.getWriter))
+          timezones.groupBy(_.get._3).foreach{(reqs)=>
+            store.get(reqs._2.map(_.get._1.toString),start_date,end_date,cols,reqs._1,level,chunker)
+          }
+          chunker.done()
         }else
-          halt()
-      case others => haltMsg()
+          haltMsg("Permission denied")
+
+      case others => haltMsg("Bad input, missing stream, please verify the body of your request")
     }
   }
 }
+

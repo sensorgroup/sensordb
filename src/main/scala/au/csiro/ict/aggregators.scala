@@ -4,12 +4,174 @@ import akka.actor.Actor
 import org.apache.hadoop.hbase.util.Bytes
 import com.codahale.jerkson.Json._
 import org.apache.commons.math.stat.descriptive.SummaryStatistics
-import org.joda.time.DateTime
+import org.joda.time._
 
-object AggLevel extends Enumeration{
-  type AggLevel = Value
+object AggregationLevel {
+  val Levels:Map[String,AggregationLevel] = List(RawLevel,OneMinuteLevel,FiveMinuteLevel,FifteenMinuteLevel,OneHourLevel,ThreeHourLevel,SixHourLevel,OneDayLevel,OneMonthLevel,OneYearLevel).map(x=>x.id->x).toMap
+  def apply(levelNameInString:String) = Levels.get(levelNameInString)
+}
+abstract class AggregationLevel {
+  val colKeyRange:Range
+  def validColumnKey(s:Int):Boolean=colKeyRange.contains(s.toInt)
+  def createPeriod(fromInclusive:DateTime,toInclusive:DateTime):Iterator[DateTime] = new Iterator[DateTime]{
+    var temp = fromInclusive
+    def hasNext = !temp.isAfter(toInclusive)
 
-  val RAW,OneMin,FiveMin,FifteenMin,OneHour,ThreeHour,SixHour,OneDay,OneMonth,OneYear = Value
+    def next() = {
+      val toReturn = temp;
+      temp = temp.plus(rowIncrement)
+      toReturn
+    }
+  }
+  def getChildCells(ts:DateTime):Range
+  def getChildCellsAsBytes(ts:DateTime):Seq[Array[Byte]]=getChildCells(ts).map(Bytes.toBytes)
+  def rowKey(sid:String,ts:DateTime):String
+  def rowKeyAsBytes(sid:String,ts:DateTime)=Bytes.toBytes(rowKey(sid,ts))
+  def rowColKey(sid:String,ts:DateTime) = Bytes.toBytes(rowKey(sid,ts))->Bytes.toBytes(getCellKeyFor(ts))
+  val id:String
+  val rowIncrement:ReadablePeriod
+  def nextRowTimeStamp(ts:DateTime):DateTime = ts.plus(rowIncrement)
+  def getCourserLevel():Option[AggregationLevel]
+  def getFinerLevel():Option[AggregationLevel]
+  def getCellKeyFor(ts:DateTime):Int
+  def getCellKeyForAsByte(ts:DateTime):Array[Byte] = Bytes.toBytes(getCellKeyFor(ts))
+  def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int):Int
+
+}
+
+
+object OneYearLevel extends AggregationLevel{
+  val colKeyRange = 2000 until 2020
+  val id="1-year"
+  val rowIncrement = new Period().withYears(1)
+  override def rowKey(sid:String,ts:DateTime)= sid +"_"+ "yearly"
+  override def getCellKeyFor(ts:DateTime) = ts.getYear
+  override def getChildCells(ts:DateTime) = 0 until 12
+  def getCourserLevel() = None
+  def getFinerLevel() = Some(OneMonthLevel)
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) = (ts.withYear(columnIdx).withMonthOfYear(1).withDayOfYear(1).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+
+
+}
+object OneMonthLevel extends AggregationLevel{
+  val colKeyRange = 0 until 12
+  val id = "1-month"
+  val rowIncrement = new Period().withYears(1)
+  override def rowKey(sid:String,ts:DateTime)= sid +"_"+ "mon"+Utils.yyyyFormat.print(ts)
+  override def getCellKeyFor(ts:DateTime) = ts.getMonthOfYear
+  override def getChildCells(ts:DateTime) = (ts.withDayOfMonth(1).getDayOfYear until ts.plusMonths(1).withDayOfMonth(1).getDayOfYear)
+  def getCourserLevel() = Some(OneYearLevel)
+  def getFinerLevel() = Some(OneDayLevel)
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) = (ts.withMonthOfYear(columnIdx).withDayOfMonth(1).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+
+}
+
+object OneDayLevel extends AggregationLevel{
+  val colKeyRange = 0 until 366 // leap years
+  val id = "1-day"
+  val rowIncrement = new Period().withYears(1)
+  override def rowKey(sid:String,ts:DateTime)= sid +"_"+ "daily"+Utils.yyyyFormat.print(ts)
+  override def getCellKeyFor(ts:DateTime) = ts.getDayOfYear
+  override def getChildCells(ts:DateTime) = (ts.getDayOfYear-1)*24/6 until (ts.getDayOfYear*24)/6
+  def getCourserLevel() = Some(OneMonthLevel)
+  def getFinerLevel() = Some(SixHourLevel)
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) = (ts.withDayOfYear(columnIdx).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+
+}
+object SixHourLevel extends AggregationLevel{
+  val colKeyRange = 0 until 366*4
+  val id = "6-hour"
+  val rowIncrement = new Period().withYears(1)
+  override def rowKey(sid:String,ts:DateTime)= sid +"_"+ "6hly"+Utils.yyyyFormat.print(ts)
+  override def getCellKeyFor(ts:DateTime) = ((ts.getDayOfYear-1)*24+ ts.getHourOfDay) / 6
+  override def getChildCells(ts:DateTime) = ((ts.getDayOfYear-1)*24 + ts.getHourOfDay)/3 until ((ts.getDayOfYear-1)*24 + ts.getHourOfDay+6)/3
+  def getCourserLevel() = Some(OneDayLevel)
+  def getFinerLevel() = Some(ThreeHourLevel)
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) = tsInInt + columnIdx*6*60*60
+}
+object ThreeHourLevel extends AggregationLevel{
+  val colKeyRange = 0 until 366*8
+  val id = "3-hour"
+  val rowIncrement = new Period().withYears(1)
+  override def rowKey(sid:String,ts:DateTime)=  sid +"_"+ "3hly"+Utils.yyyyFormat.print(ts)
+  override def getCellKeyFor(ts:DateTime) =  ((ts.getDayOfYear-1)*24+ ts.getHourOfDay) / 3
+  override def getChildCells(ts:DateTime) = (ts.getHourOfDay-ts.getHourOfDay%3) until (ts.getHourOfDay-ts.getHourOfDay%3+3)
+  def getCourserLevel() = Some(SixHourLevel)
+  def getFinerLevel() = Some(OneHourLevel)
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) =tsInInt + columnIdx*3*60*60
+
+}
+object OneHourLevel extends AggregationLevel{
+  val colKeyRange = 0 until  24
+  val id = "1-hour"
+  override def rowKey(sid:String,ts:DateTime)=sid +"_"+ "1h"+Utils.yyyyDDDFormat.print(ts)
+  val rowIncrement = new Period().withDays(1)
+  override def getCellKeyFor(ts:DateTime)=ts.getHourOfDay
+  override def getChildCells(ts:DateTime)= ts.getHourOfDay*60/15 until (ts.getHourOfDay+1)*60/15
+  def getCourserLevel() = Some(ThreeHourLevel)
+  def getFinerLevel() = Some(FifteenMinuteLevel)
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) =tsInInt + columnIdx*1*60*60
+}
+object FifteenMinuteLevel extends AggregationLevel{
+  val colKeyRange = 0 until 60 by 15
+  val id = "15-minute"
+  override def rowKey(sid:String,ts:DateTime)=sid +"_"+ "15m"+Utils.yyyyDDDFormat.print(ts)
+  val rowIncrement = new Period().withDays(1)
+  override def getCellKeyFor(ts:DateTime)=ts.getMinuteOfDay / 15
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) =tsInInt + columnIdx*15*60
+  def getCourserLevel() = Some(OneHourLevel)
+  def getFinerLevel() = Some(FiveMinuteLevel)
+  def getChildCells(ts:DateTime)=(ts.getMinuteOfDay-ts.getMinuteOfDay%15)/5 until (ts.getMinuteOfDay-ts.getMinuteOfDay%15+15)/5
+}
+
+object FiveMinuteLevel extends AggregationLevel{
+  val colKeyRange = 0 until 60 by 5
+  val id = "5-minute"
+  override def rowKey(sid:String,ts:DateTime)=sid +"_"+ "5m"+Utils.yyyyDDDFormat.print(ts)
+  val rowIncrement = new Period().withDays(1)
+  override def getCellKeyFor(ts:DateTime)=ts.getMinuteOfDay / 5
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) =tsInInt + columnIdx*5*60
+  def getCourserLevel() = Some(FifteenMinuteLevel)
+  def getFinerLevel() = Some(OneMinuteLevel)
+  def getChildCells(ts:DateTime) = (ts.getMinuteOfDay-ts.getMinuteOfDay%5) until (ts.getMinuteOfDay-ts.getMinuteOfDay%5+5)
+}
+object OneMinuteLevel extends AggregationLevel{
+  val colKeyRange = 0 until 60
+  val id = "1-minute"
+  override def rowKey(sid:String,ts:DateTime):String=sid +"_"+ "1m"+Utils.yyyyDDDFormat.print(ts)
+  val rowIncrement = new Period().withDays(1)
+  override def getCellKeyFor(ts:DateTime)=ts.getMinuteOfDay
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) = tsInInt + columnIdx*60
+  def getCourserLevel() = Some(FiveMinuteLevel)
+  def getFinerLevel() = Some(RawLevel)
+  def getChildCells(ts:DateTime) = ts.getMinuteOfDay*60 until (ts.getMinuteOfDay+1)*60
+}
+object RawLevel extends AggregationLevel{
+  val colKeyRange = 0 until 86400
+  val id = "raw"
+  override def rowKey(sid:String,ts:DateTime):String=sid +"_"+Utils.yyyyDDDFormat.print(ts)
+  val rowIncrement = new Period().withDays(1)
+  override def getCellKeyFor(ts:DateTime)=ts.getSecondOfDay
+  override def colIndexToTimestamp(ts:DateTime,tsInInt:Int,columnIdx:Int) = tsInInt + columnIdx
+  def getCourserLevel() = Some(OneMinuteLevel)
+  def getFinerLevel() = None
+  def getChildCells(ts:DateTime) = 0 until 0
+}
+
+class StreamIdIterator(sids:Set[String],from:DateTime,to:DateTime,level:AggregationLevel) extends Iterator[(Array[Byte],DateTime,String)] {
+  override def hasNext = !sids.isEmpty && (periodIter.hasNext || sidIter.hasNext)
+  var sidIter = sids.iterator
+  var periodIter = level.createPeriod(from,to)
+  var sid:String = null
+  override def next():(Array[Byte],DateTime,String) =
+    if (periodIter.hasNext &&sid !=null){
+      val ts = periodIter.next()
+      (level.rowKeyAsBytes(sid,ts),ts,sid)
+    } else {
+      periodIter= level.createPeriod(from,to)
+      sid = sidIter.next()
+      next()
+    }
 }
 
 object StatAggHelpers{
@@ -23,59 +185,60 @@ object StatAggHelpers{
   }
 }
 class StaticAggregator(val store:Storage) extends Actor{
-  import AggLevel._
-  import ColumnOrientedDBKeyHelper._
   import StatAggHelpers._
 
   def receive = {
-    case Insert(aggLevel,sid,ts,value,_)=>
-      val row = rowOf(sid,ts,aggLevel)
-      val List(min,max,count,sum,sumSq) = store.get(Bytes.toBytes(row._1),row._2).map((x:Array[Byte])=>parse[List[Double]](Bytes.toString(x))).getOrElse(INITIAL_STAT)
+    case Insert(lvl,sid,ts,value,_)=>
+      val aggLevel = AggregationLevel(lvl).get
+      val row = aggLevel.rowColKey(sid,ts)
+      val List(min,max,count,sum,sumSq) = store.get(row._1,row._2).map((x:Array[Byte])=>parse[List[Double]](Bytes.toString(x))).getOrElse(INITIAL_STAT)
       var stats: List[Double] = updateStats(value, min, max, count, sum, sumSq)
-      store.put(Bytes.toBytes(row._1),row._2,Bytes.toBytes(generate(stats)))
-      if (aggLevel.id+1 < AggLevel.maxId)
-        sender ! Insert(AggLevel(aggLevel.id+1),sid,ts,value,Some(StatResult(sid,ts,aggLevel,stats)))
+      store.put(row._1,row._2,Bytes.toBytes(generate(stats)))
+      if (aggLevel.getCourserLevel().isDefined)
+        sender ! Insert(aggLevel.getCourserLevel().get.id,sid,ts,value,Some(StatResult(sid,ts,aggLevel.id,stats)))
       else
         sender ! Done(sid,ts)
 
-    case Update(aggLevel,sid,ts,_)=>
+    case Update(lvl,sid,ts,_) =>
+      val aggLevel = AggregationLevel(lvl).get
       // TODO: Update should use coprocessors in HBase
-      val previousRow = Bytes.toBytes(rowKey(sid,ts,AggLevel(aggLevel.id-1)))
-      val childCells:Seq[Array[Byte]] = childCellsOf(sid,ts,aggLevel)
+      val previousRow = aggLevel.getFinerLevel().get.rowKeyAsBytes(sid,ts)
+      val childCells:Seq[Array[Byte]] = aggLevel.getChildCellsAsBytes(ts)
       val stats = aggLevel match {
-        case OneMin=>
+        case OneMinuteLevel=>
           val stats = new SummaryStatistics()
-          store.get(previousRow,childCells).filter(_._2 !=null).foreach{x=>
-            stats.addValue(Bytes.toDouble(x._2))
+          store.get(previousRow,childCells).filter(_!=null).foreach{x=>
+            stats.addValue(Bytes.toDouble(x))
           }
           if (stats.getN==0)
             StatAggHelpers.INITIAL_STAT
-          else
+          else{
             List[Double](stats.getMin,stats.getMax,stats.getN,stats.getSum,stats.getSumsq)
+          }
         case otherLvls=>
-          store.get(previousRow,childCells).filter(_._2 !=null).map(x=> parse[List[Double]](Bytes.toString(x._2))).foldLeft(INITIAL_STAT)((sum,item)=>mergeStats(sum,item))
+          store.get(previousRow,childCells).filter(_!=null).map(x=> parse[List[Double]](Bytes.toString(x))).foldLeft(INITIAL_STAT)((sum,item)=>mergeStats(sum,item))
       }
-      store.put(Bytes.toBytes(rowKey(sid,ts,aggLevel)),cellKeyOf(ts,aggLevel),Bytes.toBytes(generate(stats)))
+      store.put(aggLevel.rowKeyAsBytes(sid,ts),aggLevel.getCellKeyForAsByte(ts),Bytes.toBytes(generate(stats)))
 
-      if (aggLevel.id+1 < AggLevel.maxId)
-        sender ! Update(AggLevel(aggLevel.id+1),sid,ts,Some(StatResult(sid,ts,aggLevel,stats)))
+      if (aggLevel.getCourserLevel().isDefined)
+        sender ! Update(aggLevel.getCourserLevel().get.id,sid,ts,Some(StatResult(sid,ts,aggLevel.id,stats)))
       else
         sender ! Done(sid,ts)
 
     case RawData(sid,data,tz)=>
       store.put(sid,data,tz)
-      Cache.stat_time_idx.call{statIdx=>
+      Cache.stat_time_idx.call{redis=>
         data.foreach{item =>
           val ts =new DateTime(item._1*1000L,tz)
-          val rawKey = rowOf(sid,ts,RAW)
+          val rowKey = RawLevel.rowColKey(sid,ts)
           item._2 match{
             case Some(value)=>
-              statIdx.sadd(Bytes.toBytes(rawKey._1),rawKey._2).toInt match {
-                case 0 => sender ! Update(OneMin,sid,ts,None)
-                case 1 => sender ! Insert(OneMin,sid,ts,value,None)
+              redis.sadd(rowKey._1,rowKey._2).toInt match {
+                case 0 => sender ! Update(OneMinuteLevel.id,sid,ts,None)
+                case 1 => sender ! Insert(OneMinuteLevel.id,sid,ts,value,None)
               }
-            case None => statIdx.srem(Bytes.toBytes(rawKey._1),rawKey._2).toInt match {
-              case 1 => sender ! Update(OneMin,sid,ts,None)
+            case None => redis.srem(rowKey._1,rowKey._2).toInt match {
+              case 1 => sender ! Update(OneMinuteLevel.id,sid,ts,None)
               case removedNonExisting => sender ! Done(sid,ts)
             }
           }

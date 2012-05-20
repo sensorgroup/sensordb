@@ -1,6 +1,5 @@
 package au.csiro.ict
 
-import au.csiro.ict.Validators._
 import org.scalatra.ScalatraServlet
 import au.csiro.ict.Cache._
 import com.mongodb.casbah.Imports._

@@ -5,7 +5,6 @@ import org.scalatra.ScalatraServlet
 import au.csiro.ict.JsonGenerator.generate
 import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
-import com.mongodb.casbah.query.BSONType.DBObject
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
 

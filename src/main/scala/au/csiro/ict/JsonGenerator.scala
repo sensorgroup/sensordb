@@ -4,7 +4,6 @@ import org.bson.types.ObjectId
 
 object JsonGenerator extends com.codahale.jerkson.Json{
   import org.codehaus.jackson.Version
-  import org.codehaus.jackson.map.Module
   import org.codehaus.jackson.map.Module.SetupContext
   import org.codehaus.jackson.`type`.JavaType
   import org.codehaus.jackson.map._

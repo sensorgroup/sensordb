@@ -1,26 +1,7 @@
 package au.csiro.ict
 
-import collection.mutable.ListBuffer
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTimeZone, DateTime}
-
-class StorageStreamDayIdGenerator(prefix:Seq[String],var from:DateTime,to:DateTime) extends Iterator[String] {
-  val separator:Char=Utils.SEPARATOR
-
-  override def hasNext = !buffer.isEmpty || ( !prefix.isEmpty && !from.isAfter(to))
-
-  val buffer = ListBuffer[String]()
-  override def next() = {
-    if (buffer.isEmpty){
-      buffer ++= prefix.map(p=>new StringBuilder(p).append(separator).append(Utils.TIMESTAMP_YYYYD_FORMAT.print(from)).toString())
-      from = from.plusDays(1)
-    }
-    buffer.remove(0)
-  }
-  def this(prefix:Seq[String],startDate: String, endDate: String)={
-    this(prefix,Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(startDate),Utils.TIMESTAMP_YYYYD_FORMAT.parseDateTime(endDate))
-  }
-}
 
 object Utils {
   val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD")

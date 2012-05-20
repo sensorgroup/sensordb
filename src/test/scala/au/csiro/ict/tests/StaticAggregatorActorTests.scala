@@ -14,7 +14,6 @@ import akka.actor.Props
 import akka.testkit.TestKit
 import akka.testkit.ImplicitSender
 import org.scalatra.test.scalatest.ScalatraSuite
-import au.csiro.ict.AggLevel._
 import au.csiro.ict._
 import org.joda.time.DateTime
 
@@ -26,7 +25,7 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     system.shutdown()
   }
 
-  val store = new HbaseStorage()
+  val store = new RedisStore()
   val staticAggregator = system.actorOf(Props(new StaticAggregator(store)))
   val broker = system.actorOf(Props(new UpdateBroker(staticAggregator)))
 
@@ -35,20 +34,21 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     Cache.stat_time_idx.call{(x)=>
       x.select(Cache.REDIS_STORE)
       x.flushDB()
+      x.select(Cache.STREAM_STAT_TIME_IDX)
     }
     store.drop("s1")
     val ts1M = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
     val sid="s1"
     val lvl0 = RawData(sid,Map((ts1M.getMillis/1000L).asInstanceOf[Int]->Some(5)),Utils.TZ_Sydney)
-    val lvl1=Insert(OneMin,sid,ts1M,5,None)
-    val lvl2=Insert(FiveMin,sid,ts1M,5,Some(StatResult(sid,ts1M,OneMin,List[Double](5,5,1.0,5,5*5))))
-    val lvl3=Insert(FifteenMin,sid,ts1M,5,Some(StatResult(sid,ts1M,FiveMin,List[Double](5,5,1.0,5,5*5))))
-    val lvl4=Insert(OneHour,sid,ts1M,5,Some(StatResult(sid,ts1M,FifteenMin,List[Double](5,5,1.0,5,5*5))))
-    val lvl5=Insert(ThreeHour,sid,ts1M,5,Some(StatResult(sid,ts1M,OneHour,List[Double](5,5,1.0,5,5*5))))
-    val lvl6=Insert(SixHour,sid,ts1M,5,Some(StatResult(sid,ts1M,ThreeHour,List[Double](5,5,1.0,5,5*5))))
-    val lvl7=Insert(OneDay,sid,ts1M,5,Some(StatResult(sid,ts1M,SixHour,List[Double](5,5,1.0,5,5*5))))
-    val lvl8=Insert(OneMonth,sid,ts1M,5,Some(StatResult(sid,ts1M,OneDay,List[Double](5,5,1.0,5,5*5))))
-    val lvl9=Insert(OneYear,sid,ts1M,5,Some(StatResult(sid,ts1M,OneMonth,List[Double](5,5,1.0,5,5*5))))
+    val lvl1=Insert(OneMinuteLevel.id,sid,ts1M,5,None)
+    val lvl2=Insert(FiveMinuteLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,OneMinuteLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl3=Insert(FifteenMinuteLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,FiveMinuteLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl4=Insert(OneHourLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,FifteenMinuteLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl5=Insert(ThreeHourLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,OneHourLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl6=Insert(SixHourLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,ThreeHourLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl7=Insert(OneDayLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,SixHourLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl8=Insert(OneMonthLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,OneDayLevel.id,List[Double](5,5,1.0,5,5*5))))
+    val lvl9=Insert(OneYearLevel.id,sid,ts1M,5,Some(StatResult(sid,ts1M,OneMonthLevel.id,List[Double](5,5,1.0,5,5*5))))
     val lvl10=Done(sid,ts1M)
     staticAggregator ! lvl0
     expectMsg(lvl1)
@@ -75,15 +75,15 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     val ts1M = new DateTime(2012,1,1,18,0,0,0,Utils.TZ_Sydney)
     val sid="s1"
     val lvl0 = RawData(sid,Map(Utils.dateTimeToInt(ts1M)->Some(1)),Utils.TZ_Sydney)
-    val lvl1=Insert(OneMin,sid,ts1M,1,None)
-    val lvl2=Insert(FiveMin,sid,ts1M,1,Some(StatResult(sid,ts1M,OneMin,List[Double](1,1,1.0,1,1*1))))
-    val lvl3=Insert(FifteenMin,sid,ts1M,1,Some(StatResult(sid,ts1M,FiveMin,List[Double](1,1,1.0,1,1*1))))
-    val lvl4=Insert(OneHour,sid,ts1M,1,Some(StatResult(sid,ts1M,FifteenMin,List[Double](1,1,1.0,1,1*1))))
-    val lvl5=Insert(ThreeHour,sid,ts1M,1,Some(StatResult(sid,ts1M,OneHour,List[Double](1,1,1.0,1,1*1))))
-    val lvl6=Insert(SixHour,sid,ts1M,1,Some(StatResult(sid,ts1M,ThreeHour,List[Double](1,1,1.0,1,1*1))))
-    val lvl7=Insert(OneDay,sid,ts1M,1,Some(StatResult(sid,ts1M,SixHour,List[Double](1,1,1.0,1,1*1))))
-    val lvl8=Insert(OneMonth,sid,ts1M,1,Some(StatResult(sid,ts1M,OneDay,List[Double](1,5,2.0,6,5*5+1*1))))
-    val lvl9=Insert(OneYear,sid,ts1M,1,Some(StatResult(sid,ts1M,OneMonth,List[Double](1,5,2.0,6,5*5+1*1))))
+    val lvl1=Insert(OneMinuteLevel.id,sid,ts1M,1,None)
+    val lvl2=Insert(FiveMinuteLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,OneMinuteLevel.id,List[Double](1,1,1.0,1,1*1))))
+    val lvl3=Insert(FifteenMinuteLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,FiveMinuteLevel.id,List[Double](1,1,1.0,1,1*1))))
+    val lvl4=Insert(OneHourLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,FifteenMinuteLevel.id,List[Double](1,1,1.0,1,1*1))))
+    val lvl5=Insert(ThreeHourLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,OneHourLevel.id,List[Double](1,1,1.0,1,1*1))))
+    val lvl6=Insert(SixHourLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,ThreeHourLevel.id,List[Double](1,1,1.0,1,1*1))))
+    val lvl7=Insert(OneDayLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,SixHourLevel.id,List[Double](1,1,1.0,1,1*1))))
+    val lvl8=Insert(OneMonthLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,OneDayLevel.id,List[Double](1,5,2.0,6,5*5+1*1))))
+    val lvl9=Insert(OneYearLevel.id,sid,ts1M,1,Some(StatResult(sid,ts1M,OneMonthLevel.id,List[Double](1,5,2.0,6,5*5+1*1))))
     val lvl10=Done(sid,ts1M)
     staticAggregator ! lvl0
     expectMsg(lvl1)
@@ -118,15 +118,15 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     val ts1M = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
     val sid="s1"
     val lvl0 = RawData(sid,Map(Utils.dateTimeToInt(ts1M)->Some(-2.0)),Utils.TZ_Sydney)
-    val lvl1=Update(OneMin,sid,ts1M,None)
-    val lvl2=Update(FiveMin,sid,ts1M,Some(StatResult(sid,ts1M,OneMin,List[Double](-2,-2,1.0,-2,4))))
-    val lvl3=Update(FifteenMin,sid,ts1M,Some(StatResult(sid,ts1M,FiveMin,List[Double](-2,-2,1.0,-2,4))))
-    val lvl4=Update(OneHour,sid,ts1M,Some(StatResult(sid,ts1M,FifteenMin,List[Double](-2,-2,1.0,-2,4))))
-    val lvl5=Update(ThreeHour,sid,ts1M,Some(StatResult(sid,ts1M,OneHour,List[Double](-2,-2,1.0,-2,4))))
-    val lvl6=Update(SixHour,sid,ts1M,Some(StatResult(sid,ts1M,ThreeHour,List[Double](-2,-2,1.0,-2,4))))
-    val lvl7=Update(OneDay,sid,ts1M,Some(StatResult(sid,ts1M,SixHour,List[Double](-2,-2,1.0,-2,4))))
-    val lvl8=Update(OneMonth,sid,ts1M,Some(StatResult(sid,ts1M,OneDay,List[Double](-2,1,2.0,-1,4+1))))
-    val lvl9=Update(OneYear,sid,ts1M,Some(StatResult(sid,ts1M,OneMonth,List[Double](-2,1,2.0,-1,4+1))))
+    val lvl1=Update(OneMinuteLevel.id,sid,ts1M,None)
+    val lvl2=Update(FiveMinuteLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,OneMinuteLevel.id,List[Double](-2,-2,1.0,-2,4))))
+    val lvl3=Update(FifteenMinuteLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,FiveMinuteLevel.id,List[Double](-2,-2,1.0,-2,4))))
+    val lvl4=Update(OneHourLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,FifteenMinuteLevel.id,List[Double](-2,-2,1.0,-2,4))))
+    val lvl5=Update(ThreeHourLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,OneHourLevel.id,List[Double](-2,-2,1.0,-2,4))))
+    val lvl6=Update(SixHourLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,ThreeHourLevel.id,List[Double](-2,-2,1.0,-2,4))))
+    val lvl7=Update(OneDayLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,SixHourLevel.id,List[Double](-2,-2,1.0,-2,4))))
+    val lvl8=Update(OneMonthLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,OneDayLevel.id,List[Double](-2,1,2.0,-1,4+1))))
+    val lvl9=Update(OneYearLevel.id,sid,ts1M,Some(StatResult(sid,ts1M,OneMonthLevel.id,List[Double](-2,1,2.0,-1,4+1))))
     val lvl10=Done(sid,ts1M)
     staticAggregator ! lvl0
     expectMsg(lvl1)
@@ -148,14 +148,13 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     expectMsg(lvl9)
     staticAggregator ! lvl9
     expectMsg(lvl10)
-
   }
-//  test("Bulk aggregation, all inserts"){
-//    store.drop("sbulk")
-//    val ts1 = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
-//    val rawData = (for(i<-0 until 100) yield (ts1.getMillis/1000L + i).asInstanceOf[Int] -> Some(i.toDouble)).toMap
-//    val expectedDone = for(i<-0 until 100) yield Done("sbulk",ts1.plusSeconds(i))
-//    broker ! RawData("sbulk",rawData,Utils.TZ_Sydney)
-//    expectMsgAllOf(expectedDone :_*) // this test doesn't work, as reference to Sender is lost in the broker during the process hence it cant reply back
-//  }
+  ////  test("Bulk aggregation, all inserts"){
+  ////    store.drop("sbulk")
+  ////    val ts1 = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
+  ////    val rawData = (for(i<-0 until 100) yield (ts1.getMillis/1000L + i).asInstanceOf[Int] -> Some(i.toDouble)).toMap
+  ////    val expectedDone = for(i<-0 until 100) yield Done("sbulk",ts1.plusSeconds(i))
+  ////    broker ! RawData("sbulk",rawData,Utils.TZ_Sydney)
+  ////    expectMsgAllOf(expectedDone :_*) // this test doesn't work, as reference to Sender is lost in the broker during the process hence it cant reply back
+  ////  }
 }

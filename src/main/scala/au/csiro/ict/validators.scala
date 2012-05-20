@@ -8,8 +8,6 @@ import org.bson.types.ObjectId
 import com.mongodb.casbah.Imports._
 import java.util.Date
 import javax.servlet.http.HttpSession
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
 import Cache._
 import com.codahale.jerkson.Json._
 import scala.{Option, None}
@@ -47,6 +45,8 @@ object Validators {
   def TimeZone(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x=>timezones.indexOf(x)>=0).orElse(validator.addError( "Timezone is not valid"))
 
   def Privacy(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
+
+  def IntParam(value:Option[String])(implicit validator:Validator):Option[Int]=value.filter(x => isInt(x)).map(_.toInt)
 
   def Description(value:Option[String]):Option[String]=value.map(x=>sanitize(x.trim())).orElse(EMPTY_STR)
 
@@ -129,18 +129,23 @@ object Validators {
       None
     }
   }
+  def AggregationLevelParam(v:Option[String])(implicit validator:Validator):Option[AggregationLevel]=v.flatMap{v=>
+    AggregationLevel(v.trim.toLowerCase)
+  }
+
   def EntityIdList(v:Option[String])(implicit validator:Validator):Set[ObjectId] = v match {
+    case Some(sid:String) if ObjectId.isValid(sid)=> Set(new ObjectId(sid))
     case Some(sids:String) => try {
       parse[Set[String]](sids).map{ x=>
         if (ObjectId.isValid(x))
           new ObjectId(x)
         else
-          throw new Exception("Invalid streamId:"+x)
+          throw new RuntimeException("Bad streamid array: "+x)
       } match {
-        case s:Set[ObjectId] if s.size>0 => s
+        case s:Set[ObjectId] if !s.isEmpty => s
         case empty=>
-          validator.addError("Empty sid parameter")
-          Set[ObjectId]()
+          validator.addError("Empty sid parameter, sid is an array of stream ids.")
+          empty
       }
     }catch{
       case exception =>
@@ -160,6 +165,16 @@ object Validators {
   def DateParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
     try {
       Some((Utils.ukDateFormat.parseDateTime(x).getMillis/1000L).asInstanceOf[Int])
+    } catch {
+      case err =>None
+    }
+  ).orElse{
+    validator.addError("Invalid date parameter")
+    None
+  }
+  def DateTimeParam(v:Option[String])(implicit validator:Validator):Option[DateTime]=v.flatMap(x=>
+    try {
+      Some(Utils.ukDateFormat.parseDateTime(x))
     } catch {
       case err =>None
     }
@@ -207,6 +222,16 @@ object Validators {
   def Required(v:Option[String],errorMessage:String)(implicit validator:Validator):Option[String]=v.filterNot(isEmpty).orElse{
     validator.addError(errorMessage)
     None
+  }
+  def CellKeyParam(value:Option[Int],aggLevel:AggregationLevel)(implicit validator:Validator):Option[Int]={
+    value.flatMap{x=>
+      if (aggLevel.validColumnKey(x))
+        Some(x)
+      else {
+        validator.addError("Bad column: "+value.get)
+        None
+      }
+    }
   }
 }
 

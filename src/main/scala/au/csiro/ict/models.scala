@@ -1,7 +1,6 @@
 package au.csiro.ict
 
 import com.mongodb.casbah.MongoConnection
-import com.mongodb.casbah.Imports._
 
 
 //case class Analysis(var name:String,

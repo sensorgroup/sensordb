@@ -31,7 +31,7 @@ libraryDependencies ++= Seq(
   "commons-validator"% "commons-validator" % "1.4.0",
   "com.codahale" %% "jerkson" % "0.5.0",
   "org.clapper" %% "grizzled-slf4j" % "0.6.9",
-  "net.debasishg" %% "redisclient" % "2.4.2",
+  "net.debasishg" %% "redisclient" % "2.5",
   "com.typesafe.akka" % "akka-actor" % "2.0.1",
   "com.typesafe.akka" % "akka-remote" % "2.0.1",
   "com.typesafe.akka" % "akka-kernel" % "2.0.1",
