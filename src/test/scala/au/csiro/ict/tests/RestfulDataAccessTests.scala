@@ -23,8 +23,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
 
   val user1Id = addUser("u1","pass1","000","u1@example.com","","","").get
   val user2Id = addUser("u2","pass2","000","u1@example.com","","","").get
-  val exp1Id = addExperiment("exp1",user1Id,"000",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
-  val exp2Id = addExperiment("exp2",user2Id,"000",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
+  val exp1Id = addExperiment("exp1",user1Id,"Australia/Sydney",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
+  val exp2Id = addExperiment("exp2",user2Id,"Australia/Sydney",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
   val node1Id =addNode("node1",user1Id,exp1Id,"-1","-1","-1","","","").get
   val node2Id = addNode("node2",user2Id,exp2Id,"-1","-1","-1","","","").get
   val stream1Id = addStream("stream1",user1Id,node1Id,measurementId,"","","",Some(token1)).get

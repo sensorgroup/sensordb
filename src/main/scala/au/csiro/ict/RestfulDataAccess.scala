@@ -30,16 +30,17 @@ trait RestfulDataAccess {
             haltMsg("Bad request, invalid tokens")
 
           val allKeysMapped = Streams.find(MongoDBObject("token"->MongoDBObject("$in"->packed.keys.toArray)),MongoDBObject("_id"->1,"token"->1,"nid"->1)).map{x=>
+            val sid=x.getAs[ObjectId]("_id").get
+            val timeZone = Cache.experimentTimeZoneFromNid(x.getAs[ObjectId]("nid").get)
             val token = x("token").toString
-            val sid=x("_id").toString
-            sid -> packed(token)
+            sid.toString ->(packed(token),timeZone)
           }.toMap
 
           if(allKeysMapped.size != packed.size)
             haltMsg("Bad request, invalid security token(s)")
           // TODO: update timezones based on http://joda-time.sourceforge.net/timezones.html
           allKeysMapped.foreach { item =>
-            workersProxy.process(RawData(item._1,item._2,Utils.TZ_Sydney))
+            workersProxy.process(RawData(item._1,item._2._1,item._2._2))
           }
 
           generate(Map("length"->packed.values.map(_.size).sum))
@@ -63,8 +64,8 @@ trait RestfulDataAccess {
         Nodes.findOne(MongoDBObject("_id"->nid),MongoDBObject("eid"->1)) match {
           case Some(n:DBObject)=> Experiments.findOne(MongoDBObject("_id"->n.getAs[ObjectId]("eid").get),MongoDBObject(ACCESS_RESTRICTION_FIELD->1,"timezone"->1)) match {
             case Some(e:DBObject)=> e.getAs[String](ACCESS_RESTRICTION_FIELD) match {
-              case Some(EXPERIMENT_ACCESS_PUBLIC) => Some((sid,nid,Utils.TZ_Sydney))
-              case Some(EXPERIMENT_ACCESS_PRIVATE) if UserSession(session).filter(_._1 ==  s.getAs[ObjectId]("uid")).isDefined => Some((sid,nid,Utils.TZ_Sydney))
+              case Some(EXPERIMENT_ACCESS_PUBLIC) => Some((sid,nid,DateTimeZone.forID(e.getAs[String]("timezone").get)))
+              case Some(EXPERIMENT_ACCESS_PRIVATE) if UserSession(session).filter(_._1 ==  s.getAs[ObjectId]("uid")).isDefined => Some((sid,nid,DateTimeZone.forID(e.getAs[String]("timezone").get)))
               case others =>
                 haltMsg("Access Denied")
             }

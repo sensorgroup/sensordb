@@ -8,6 +8,7 @@ import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
 import java.util.Properties
 import redis.clients.jedis.{Protocol, Jedis, JedisPoolConfig, JedisPool}
+import org.joda.time.DateTimeZone
 
 object Configuration{
   private val config = new Properties()
@@ -95,6 +96,13 @@ object Cache {
   }
 
   def NidUidFromSid(sid: ObjectId) = Streams.findOne(MongoDBObject("_id" -> sid), MongoDBObject("nid" -> 1, "uid" -> 1))
+
+  def experimentTimeZoneFromNid(nid:ObjectId):DateTimeZone = {
+    val eid:ObjectId = Nodes.findOneByID(nid,MongoDBObject("eid"->1)).get.getAs[ObjectId]("eid").get
+    val experimentInfo = Experiments.findOneByID(eid,MongoDBObject("timezone"->1))
+    val tz:String = experimentInfo.get.getAs[String]("timezone").get
+    DateTimeZone.forID(tz)
+  }
 
   def addStream(name: String, uid: ObjectId, nid: ObjectId, mid: ObjectId, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId]= {
     val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "nid" -> nid, "mid" -> mid,

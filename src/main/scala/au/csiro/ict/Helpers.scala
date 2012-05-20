@@ -18,6 +18,7 @@ object Utils {
   val zoneUTC = DateTimeZone.UTC
   val SEPARATOR = '$'
   val TZ_Sydney = DateTimeZone.forID("Australia/Sydney")
+  val TZ_Sydney_ID = "Australia/Sydney"
   def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
   def generateRowKey(sensor:String, tsInSeconds:Int) = sensor+"$"+Utils.yyyyDDDFormat.print(tsInSeconds*1000L)
