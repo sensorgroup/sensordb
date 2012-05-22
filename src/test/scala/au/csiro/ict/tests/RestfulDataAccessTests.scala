@@ -149,6 +149,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       body should include("1")
       status should equal(200)
     }
+    Thread.sleep(500) // waiting for the system to process, in the case of hbase storage, it may take sometime
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-month")){
       body should include("["+stream1Id.toString+","+date1MonthSummary+",-333.0,99.0,101.0,4617.0,439239.0]")
       status should equal(200)
@@ -205,7 +206,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
         status should equal(200)
       }
     }
-    Thread.sleep(100)
+    Thread.sleep(1000)
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-day")){
       body should include("["+stream1Id.toString+","+date1HourSummary+",0.0,99.0,151.0,8752.7,622312.29]")
       body should include(stream1Id.toString)

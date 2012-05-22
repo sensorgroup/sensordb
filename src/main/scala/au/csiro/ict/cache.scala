@@ -46,7 +46,7 @@ object Cache {
 
   cache.select(CACHE_DB)
 
-  lazy val store:Storage = new RedisStore()
+  lazy val store:Storage = new HbaseStorage()
 
   stat.select(STREAM_STAT)
 
