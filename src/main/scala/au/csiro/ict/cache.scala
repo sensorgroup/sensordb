@@ -46,7 +46,7 @@ object Cache {
 
   cache.select(CACHE_DB)
 
-  lazy val store:Storage = new HbaseStorage()
+  lazy val store:Storage = new RedisStore()
 
   stat.select(STREAM_STAT)
 
@@ -81,10 +81,9 @@ object Cache {
     Experiments.insert(toInsert)
     toInsert._id
   }
-  def addUser(name: String, password: String, timezone: String, email: String, pic: String, website: String, description: String):Option[ObjectId]= {
+  def addUser(name: String, password: String, email: String, pic: String, website: String, description: String):Option[ObjectId]= {
     val user = MongoDBObject("name" -> name,
       "password" -> BCrypt.hashpw(password, BCrypt.gensalt()),
-      "timezone" -> timezone,
       "email" -> email,
       "picture" -> pic,
       "website" -> website,

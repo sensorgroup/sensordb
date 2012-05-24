@@ -98,11 +98,11 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("error")
         status should equal(400)
       }
-      post("/experiments",Map("name"->"exp1","timezone"->"1000")){
+      post("/experiments",Map("name"->"exp1","timezone"->"Australia/Sydney")){
         // no valid session
         status should equal(400)
       }
-      post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1","timezone"->"000")) {
+      post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1")) {
         body should include ("_id")
         user1 = parse[Map[String,Any]](body)
         status must equal(200)
@@ -125,13 +125,13 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should not include ("password")
         body should include ("created_at")
       }
-      post("/register",Map("name"->"ali2","email"->"test@example.com","password"->"secret1","timezone"->"000")) {
+      post("/register",Map("name"->"ali2","email"->"test@example.com","password"->"secret1")) {
         // fails because email is not unique
         body.toLowerCase should include ("email")
         body should include ("error")
         status must equal(400)
       }
-      post("/register",Map("name"->"ali2","email"->"test2@example.com","password"->"secret2","timezone"->"100")) {
+      post("/register",Map("name"->"ali2","email"->"test2@example.com","password"->"secret2")) {
         body should not include("password")
         user2 = parse[Map[String,Any]](body)
         status must equal(200)
@@ -141,7 +141,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("ali2")
       }
 
-      post("/experiments",Map("name"->"exp3","timezone"->"1000")){
+      post("/experiments",Map("name"->"exp3","timezone"->"Australia/Sydney")){
         //        successful creation of exp3 experiment for user2
         exp3 = parse[Map[String,String]](body)
         body should include ("_id")
@@ -156,7 +156,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status should equal (200)
         body should include ("_id")
       }
-      post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1","timezone"->"0")) {
+      post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1")) {
         // user name is already used
         status must equal(400)
       }
@@ -164,7 +164,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         // Delete without providing eid
         body should include ("error")
       }
-      post("/experiments",Map("name"->"exp1","timezone"->"10000")){
+      post("/experiments",Map("name"->"exp1","timezone"->"Australi")){
         // invalid timezone
         body should include ("error")
       }
@@ -176,7 +176,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should not include ("exp2")
         body should not include ("exp1")
       }
-      post("/experiments",Map("name"->"exp1","timezone"->"1000")){
+      post("/experiments",Map("name"->"exp1","timezone"->"Australia/Sydney")){
         //        successful creation of exp1 experiment
         exp1 = parse[Map[String,String]](body)
         body should include ("_id")
@@ -209,7 +209,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         status must equal(200)
       }
 
-      post("/experiments",Map("name"->"exp1","timezone"->"1000")){
+      post("/experiments",Map("name"->"exp1","timezone"->"Australia/Sydney")){
         //failed, name reused creation of experiment
         status should equal(400)
       }
@@ -221,7 +221,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should not include ("age")
         body should include ("metadata")
       }
-      post("/experiments",Map("name"->"exp2","timezone"->"1000","public_access"->"false")){
+      post("/experiments",Map("name"->"exp2","timezone"->"Australia/Sydney","public_access"->"false")){
         // success, exp2 created
         exp2 = parse[Map[String,String]](body)
         exp2.get("created_at") should  be > exp1.get("created_at")

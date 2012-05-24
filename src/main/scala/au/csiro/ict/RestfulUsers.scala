@@ -40,19 +40,18 @@ trait RestfulUsers {
     sendSession()
   }
   get("/users"){
-    generate(Users.find(MongoDBObject(),MongoDBObject("picture"->"1","timezone"->"1","description"->"1","name"->"1","website"->"1")))
+    generate(Users.find(MongoDBObject(),MongoDBObject("picture"->"1","description"->"1","name"->"1","website"->"1")))
   }
   post("/register") {
     logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
     (UniqueUsername(Username(params.get("name"))),
       Password(params.get("password")),
-      TimeZone(params.get("timezone")),
       UniqueEmail(Email(params.get("email"))),
       Description(params.get("description")),
       PictureUrl(params.get("picture")),
       WebUrl(params.get("website"))) match {
-      case (Some(name),Some(password),Some(timezone),Some(email),Some(description),Some(pic),Some(website))=>
-        addUser(name, password, timezone, email, pic, website, description)
+      case (Some(name),Some(password),Some(email),Some(description),Some(pic),Some(website))=>
+        addUser(name, password, email, pic, website, description)
         login(name,password)
         sendSession()
       case errors => haltMsg()

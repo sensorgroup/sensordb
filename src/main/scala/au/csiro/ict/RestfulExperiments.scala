@@ -38,9 +38,8 @@ trait RestfulExperiments {
   put("/experiments"){
     // update/replace an experiment information
     val validators:Map[String,()=>Option[String]] = Map(
-      "website"-> (()=>WebUrl(params.get("value"))),
       "name"-> (()=> Name(params.get("value"))),
-      "timezone"-> (()=> TimeZone(params.get("value"))),
+      "website"-> (()=>WebUrl(params.get("value"))),
       "description"-> (()=> Description(params.get("value"))),
       "picture"-> (()=> PictureUrl(params.get("value"))),
       "access_restriction"-> (()=> Privacy(params.get("value"))))

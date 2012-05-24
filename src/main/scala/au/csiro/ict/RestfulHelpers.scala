@@ -42,7 +42,7 @@ trait RestfulHelpers {
       val uid = user._id.get
       user.put("_id",uid.toString)
       generate(Map("user"->user,
-        "experiments"->Experiments.find(MongoDBObject("uid"->uid),fields), //.map((o:DBObject)=> o.toMap+("_id"->o("_id").toString)),
+        "experiments"->Experiments.find(MongoDBObject("uid"->uid),fields),
         "nodes"->Nodes.find(MongoDBObject("uid"->uid),fields),
         "streams"->Streams.find(MongoDBObject("uid"->uid),fields)))
     }.getOrElse("{}")

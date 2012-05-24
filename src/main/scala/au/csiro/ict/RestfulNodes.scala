@@ -10,11 +10,6 @@ import au.csiro.ict.JsonGenerator.generate
 trait RestfulNodes {
   self:ScalatraServlet with RestfulHelpers=>
 
-  get("/nodes"){
-    // List the nodes
-
-  }
-
   delete("/nodes"){
     (UserSession(session),EntityId(params.get("nid"))) match {
       case (Some((uid,userName)),Some(nid))=>

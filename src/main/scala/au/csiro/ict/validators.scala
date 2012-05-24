@@ -13,7 +13,9 @@ import com.codahale.jerkson.Json._
 import scala.{Option, None}
 import scala.Predef._
 import org.joda.time.format.ISODateTimeFormat
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeZone, DateTime}
+import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 object Validators {
   val sanitize = Jsoup.clean(_:String, Whitelist.basic())
@@ -40,9 +42,9 @@ object Validators {
 
   def WebUrl(value:Option[String])(implicit validator:Validator)=value.orElse(EMPTY_STR).filter{ url=> url.isEmpty || isUrl(url)}.orElse(validator.addError( "Webpage URL is not valid"))
 
-  val timezones = List("-1200","-1130","-1100","-1030","-1000","-930","-900","-830","-800","-730","-700","-630","-600","-530","-500","-430","-400","-330","-300","-230","-200","-130","-100","-030","000" ,"030","100","130","200","230","300","330","400","430","500","530","600","630","700","730","800","830","900","930","1000","1030","1100","1130","1200")
+  val timezones = DateTimeZone.getAvailableIDs.map(_.toString)
 
-  def TimeZone(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x=>timezones.indexOf(x)>=0).orElse(validator.addError( "Timezone is not valid"))
+  def TimeZone(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(timezones.contains).orElse(validator.addError( "Timezone is not valid"))
 
   def Privacy(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
 
@@ -61,11 +63,11 @@ object Validators {
 
   val METADATA_NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_\s]{0,29}""".r.pattern.matcher(_:String).matches()
 
-  def PatternMatch(value:Option[String],pattern:(String)=>Boolean)(implicit validator:Validator)=value.orElse(validator.addError( "Value is missing")).flatMap{v=>
+  def PatternMatch(value:Option[String],pattern:(String)=>Boolean)(implicit validator:Validator)=value.orElse(validator.addError( "Name is missing")).flatMap{v=>
     if (!isInRange(v.size,1,30))
-      validator.addError("Value must have 1 to 30 characters")
+      validator.addError("Name must have 1 to 30 characters")
     else if (!pattern(v))
-      validator.addError("Value is not valid")
+      validator.addError("Name is not valid")
     else
       Some(v)
   }
@@ -91,7 +93,7 @@ object Validators {
 
   def UniqueUsername(v:Option[String])(implicit validator:Validator):Option[String]=v.flatMap{u=>
     if (Users.count(Map("name"->u))==1)
-      validator.addError("Username is not availale")
+      validator.addError("Username is not available")
     else
       Some(u)
   }
@@ -180,19 +182,6 @@ object Validators {
     }
   ).orElse{
     validator.addError("Invalid date parameter")
-    None
-  }
-  // formats the date to yyyy-MM-dd'T'HH:mm:ss.SSSZZ
-  val  isoTSFormatter = ISODateTimeFormat.dateTime()
-
-  def IsoTimestampParam(v:Option[String])(implicit validator:Validator):Option[DateTime]=v.flatMap(x=>
-    try {
-      Some(isoTSFormatter.parseDateTime(x))
-    } catch {
-      case err =>None
-    }
-  ).orElse{
-    validator.addError("Invalid timestamp parameter, expected input format yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
     None
   }
 

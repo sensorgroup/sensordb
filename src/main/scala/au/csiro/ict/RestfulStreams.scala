@@ -13,8 +13,8 @@ trait RestfulStreams {
   self:ScalatraServlet with RestfulHelpers=>
 
   delete("/streams"){
-    (UserSession(session),EntityId(params.get("sid")),EntityId(params.get("eid")),EntityId(params.get("nid"))) match {
-      case (Some((uid,userName)),Some(sid),Some(eid),Some(nid))=>
+    (UserSession(session),EntityId(params.get("sid"))) match {
+      case (Some((uid,userName)),Some(sid))=>
         delStream(uid, sid)
         // TODO: removing data behind this stream and all relevant stats.
         if(Streams.findOne(Map("uid"->uid,"_id"->sid)).isDefined)
