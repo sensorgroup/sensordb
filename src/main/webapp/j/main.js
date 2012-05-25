@@ -31,6 +31,47 @@
         return sensordb.Utils.scroll_top();
       }
     };
+    this.LineChart = (function() {
+      function LineChart(location, unit, data_provider_func) {
+        var options;
+        this.location = location;
+        this.unit = unit;
+        this.data_provider_func = data_provider_func;
+        this.elem = $(location);
+        options = {
+          legend: {
+            position: 'nw',
+            backgroundOpacity: 0.5,
+            backgroundColor: null
+          },
+          series: {
+            lines: {
+              lineWidth: 1
+            }
+          },
+          xaxis: {
+            mode: 'time',
+            localTimezone: false
+          },
+          yaxes: [
+            {
+              position: "left",
+              axisLabel: unit,
+              axisLabelUseCanvas: true
+            }
+          ],
+          grid: {
+            show: true,
+            borderWidth: 1,
+            borderColor: "#ccc"
+          },
+          selection: {
+            mode: "xy"
+          }
+        };
+      }
+      return LineChart;
+    })();
     this.Utils = (function() {
       function Utils() {}
       Utils.editor_config = {
@@ -45,14 +86,14 @@
         bodyStyle: "margin:4px; font:10pt Arial,Verdana; cursor:text"
       };
       Utils.scroll_top = function() {
-        $("body").scrollTop(0);
-        return this.guid = function() {
-          var S4;
-          S4 = function() {
-            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-          };
-          return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+        return $("body").scrollTop(0);
+      };
+      Utils.guid = function() {
+        var S4;
+        S4 = function() {
+          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
+        return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
       };
       Utils.find_in_catalog_by_stream_id = function(stream_id, catalog) {
         var exp_name, experiments, node_name, nodes, s_id, stream_name, streams, user;
@@ -440,17 +481,17 @@
     }
     Router.prototype.routes = {
       "": "home",
-      ":user/analysis/:name": "analysis",
+      "analysis/:user/:name": "analysis",
       "experiments/create": "create_experiment",
       "nodes/create": "create_node",
       "streams/create": "create_stream",
-      ":user/data": "data_page",
+      "data/:user": "data_page",
+      "data/:user/:experiment": "data_page",
+      "data/:user/:experiment/:stream": "data_page",
+      "data/:user/:experiment/:stream/:node": "data_page",
       "register": "register",
       "test": "test",
       '*path': 'error404'
-    };
-    Router.prototype.test = function() {
-      return this.session();
     };
     Router.prototype.session = function(callback_func) {
       var session_name;
@@ -526,9 +567,40 @@
         });
       });
     };
+    Router.prototype.parallel_requests = function(requests, callback) {
+      var done, to_return;
+      done = _.size(requests);
+      to_return = {};
+      if (done === 0) {
+        callback(to_return);
+      }
+      return _.each(requests, function(req, name) {
+        return $.ajax(_.extend(req, {
+          success: function(data) {
+            to_return[name] = data;
+            done -= 1;
+            if (done === 0) {
+              return callback(to_return);
+            }
+          }
+        }));
+      });
+    };
     Router.prototype.data_page = function(username) {
-      return this.layout("#tpl-data-page", {}, function() {
-        return $("#data-table").tablesorter();
+      return $.ajax({
+        type: "get",
+        url: "/session",
+        data: {
+          user: username
+        },
+        dataType: "json",
+        success: __bind(function(profile) {
+          return this.layout("#tpl-data-page", {
+            profile: profile
+          }, function() {
+            return $("table.tablesorter").tablesorter();
+          });
+        }, this)
       });
     };
     Router.prototype.analysis = function(user, name) {
@@ -549,11 +621,20 @@
       });
     };
     Router.prototype.home = function() {
-      return this.layout(first_page_tpl, {}, function(session) {
-        $("[rel=tooltip]").tooltip();
-        return $("a [rel=tooltip]").click(function() {
-          return $(this).tooltip('hide');
-        });
+      return $.ajax({
+        type: "get",
+        url: "/users",
+        dataType: "json",
+        success: __bind(function(users) {
+          return this.layout(first_page_tpl, {
+            users: users
+          }, function(session) {
+            $("[rel=tooltip]").tooltip();
+            return $("a [rel=tooltip]").click(function() {
+              return $(this).tooltip('hide');
+            });
+          });
+        }, this)
       });
     };
     Router.prototype.create_experiment = function() {
@@ -588,6 +669,14 @@
     return Router;
   })();
   $(function() {
+    $.ajaxSetup({
+      beforeSend: function() {
+        return $('.ajax-loading img').show();
+      },
+      complete: function() {
+        return $('.ajax-loading img').hide();
+      }
+    });
     window.routes = new Router();
     Backbone.history.start({
       pushState: false,

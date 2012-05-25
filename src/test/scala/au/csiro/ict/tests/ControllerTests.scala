@@ -58,7 +58,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       body should include("error")
       status must equal(400)
     }
-      get("/metadata/retrive/"+new ObjectId().toString){
+      get("/metadata/retrieve/"+new ObjectId().toString){
       body should include("{}")
       status must equal(200)
     }
@@ -185,7 +185,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       get("/metadata/add",Map("id"->exp1.apply("_id"),"name"->"age","value"->"30<script>31</script>")){
         status must equal(200)
       }
-      get("/metadata/retrive/"+exp1.apply("_id")){
+      get("/metadata/retrieve/"+exp1.apply("_id")){
         body should include("age")
         body should not include("<script>") // script tag is removed from value automatically.
         body should not include("31\"") // script tag is removed from value automatically., the double quote added to the end to emphesis that 31 should appear at the end of the text (otherwise it may appear in other places such as middle of timestamp)
@@ -203,7 +203,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       get("/metadata/remove",Map("id"->exp1.apply("_id"),"name"->"age")){
         status must equal(200)
       }
-      get("/metadata/retrive/"+exp1.apply("_id")){
+      get("/metadata/retrieve/"+exp1.apply("_id")){
         body should not include("age")
         body should not include("\"30\"")
         status must equal(200)

@@ -2959,7 +2959,7 @@ input[type="submit"].btn.btn-mini {
   margin-bottom: 18px;
 }
 .navbar-inner {
-  min-height: 40px;
+  min-height: 44px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #000000;
@@ -2993,7 +2993,7 @@ input[type="submit"].btn.btn-mini {
 .navbar .brand {
   float: left;
   display: block;
-  padding: 8px 20px 12px;
+  padding: 10px 20px 14px;
   margin-left: -20px;
   font-size: 20px;
   font-weight: 200;
@@ -3002,7 +3002,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar .navbar-text {
   margin-bottom: 0;
-  line-height: 40px;
+  line-height: 44px;
 }
 .navbar .navbar-link {
   color: #999999;
@@ -3012,7 +3012,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar .btn,
 .navbar .btn-group {
-  margin-top: 5px;
+  margin-top: 7px;
 }
 .navbar .btn-group .btn {
   margin: 0;
@@ -3033,7 +3033,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-form select,
 .navbar-form .radio,
 .navbar-form .checkbox {
-  margin-top: 5px;
+  margin-top: 7px;
 }
 .navbar-form input,
 .navbar-form select {
@@ -3057,7 +3057,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-search {
   position: relative;
   float: left;
-  margin-top: 6px;
+  margin-top: 8px;
   margin-bottom: 0;
 }
 .navbar-search .search-query {
@@ -3138,7 +3138,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar .nav > li > a {
   float: none;
-  padding: 9px 10px 11px;
+  padding: 11px 10px 13px;
   line-height: 19px;
   color: #999999;
   text-decoration: none;
@@ -3147,12 +3147,12 @@ input[type="submit"].btn.btn-mini {
 .navbar .btn {
   display: inline-block;
   padding: 4px 10px 4px;
-  margin: 5px 5px 6px;
+  margin: 7px 5px 8px;
   line-height: 18px;
 }
 .navbar .btn-group {
   margin: 0;
-  padding: 5px 5px 6px;
+  padding: 7px 5px 8px;
 }
 .navbar .nav > li > a:hover {
   background-color: transparent;
@@ -3166,7 +3166,7 @@ input[type="submit"].btn.btn-mini {
   background-color: #000000;
 }
 .navbar .divider-vertical {
-  height: 40px;
+  height: 44px;
   width: 1px;
   margin: 0 9px;
   overflow: hidden;
@@ -4202,16 +4202,46 @@ body {
 .margin-10 {
   margin: 10px;
 }
-#main {
-  margin-top: 40px;
+.margin-top-3 {
+  margin-top: 3px;
 }
-#main div.container {
-  margin-top: 20px;
+.margin-top-4 {
+  margin-top: 4px;
+}
+.margin-top-5 {
+  margin-top: 5px;
+}
+.margin-top-10 {
+  margin-top: 10px;
+}
+.margin-bottom-3 {
+  margin-bottom: 3px;
+}
+.margin-bottom-4 {
+  margin-bottom: 4px;
+}
+.margin-bottom-5 {
+  margin-bottom: 5px;
+}
+.margin-bottom-10 {
+  margin-bottom: 10px;
+}
+.pad-bottom-3 {
+  padding-bottom: 3px;
+}
+.pad-bottom-4 {
+  padding-bottom: 4px;
+}
+.pad-bottom-5 {
+  padding-bottom: 5px;
+}
+.pad-bottom-10 {
+  padding-bottom: 10px;
 }
 .no-scrollbar {
   overflow: hidden;
 }
-div#first-page img.bg {
+img.bg {
   z-index: -999;
   min-height: 100%;
   min-width: 1024px;
@@ -4237,6 +4267,7 @@ div#first-page .vertical-band {
 .navbar-fixed-top.navbar .brand {
   padding-top: 3px;
   padding-bottom: 0;
+  padding-left: 0;
   margin: 0;
 }
 .footer-contents {
@@ -4322,9 +4353,12 @@ table.tablesorter thead tr .headerSortUp {
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
-.my-alert {
-  background-color: rgba(155, 37, 28, 0.8);
-  width: 100%;
-  color: #ffffff;
-  border-bottom: 1px #eed3d7;
+.navbar .ajax-loading {
+  float: left;
+  padding: 8px 0px 12px 10px;
+  min-width: 25px;
+}
+.input-prepend .add-on input.checkbox {
+  padding: 0px;
+  margin: 0px;
 }
