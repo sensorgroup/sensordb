@@ -9,13 +9,7 @@ import com.mongodb.casbah.Imports._
 import java.util.Properties
 import redis.clients.jedis.{Protocol, Jedis, JedisPoolConfig, JedisPool}
 import org.joda.time.DateTimeZone
-
-object Configuration{
-  private val config = new Properties()
-  config.load(getClass.getResourceAsStream("/config.properties"))
-  val config_map = config.entrySet().map(x=>(x.getKey.toString.trim().toLowerCase,x.getValue.toString.trim())).toMap[String, String]
-  def apply(name:String):Option[String]= config_map.get(name.toLowerCase.trim())
-}
+import com.typesafe.config.ConfigFactory
 
 class RedisPool(val host:String,val port:Int,dbIndex:Int){
   private val pool = new JedisPool(new JedisPoolConfig(), host,port,Protocol.DEFAULT_TIMEOUT,null,dbIndex)
@@ -28,31 +22,25 @@ class RedisPool(val host:String,val port:Int,dbIndex:Int){
 }
 
 object Cache {
+  private val conf = ConfigFactory.load()
+  val SensorDBConf  = conf.getConfig("SensorDB")
 
   val CACHE_UID="uid"
 
   val CACHE_USER_NAME="user"
   val CACHE_TIMEOUT=15*60 // in seconds
-  val CACHE_DB = 1
-  val INTERIM_QUEUE = 2 // storing min/max/avg/count/sum/std per day per stream
-  val STREAM_STAT = 3 // storing min/max/avg/count/sum/std per day per stream
-  val STREAM_STAT_TIME_IDX = 4 // storing presence index per stream per day, bit index of 86400 elements (mainly zeros)
-  val REDIS_STORE = 5
+  val SESSIONS_DB = 1 // User sessions, keeping track of logged in users
+  val CACHE_DB = 2 // General Cache
+  val STREAM_STAT_TIME_IDX = 3 // storing presence index per stream per day, bit index of 86400 elements (mainly zeros)
+  val REDIS_STORE = 4 // used to store raw and aggregated sensor data permanently instead of HBase
 
-  val queue = new RedisPool(Configuration("redis.queue.host").get,Configuration("redis.queue.port").get.toInt,INTERIM_QUEUE)
-  val cache = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
-  val stat = new RedisClient(Configuration("redis.cache.host").get, Configuration("redis.cache.port").get.toInt)
-  val stat_time_idx = new RedisPool(Configuration("redis.queue.host").get, Configuration("redis.queue.port").get.toInt,STREAM_STAT_TIME_IDX)
+  val sessions = new RedisClient(SensorDBConf.getString("session.redis.host"), SensorDBConf.getInt("session.redis.port"))
+  sessions.select(SESSIONS_DB)
 
-  cache.select(CACHE_DB)
+  val stat_time_idx = new RedisPool(SensorDBConf.getString("bitindex.redis.host"), SensorDBConf.getInt("bitindex.redis.port"),STREAM_STAT_TIME_IDX)
+  val caching = new RedisPool(SensorDBConf.getString("cache.redis.host"), SensorDBConf.getInt("cache.redis.port"),CACHE_DB)
 
   lazy val store:Storage = new RedisStore()
-
-  stat.select(STREAM_STAT)
-
-  val InterdayStatIncomingQueueName = "interday-incoming-q"
-
-  val InterdayStatProcessingQueueName = "interday-processing-q"
 
   val EXPERIMENT_ACCESS_PUBLIC="0"
 
@@ -62,15 +50,17 @@ object Cache {
 
   val ACCESS_RESTRICTION_FIELD = "access_restriction"
 
-  val Experiments = MongoConnection()("sensordb")("experiments")
+  val MongoDB = MongoConnection(SensorDBConf.getString("structural-store.mongodb.host"),SensorDBConf.getInt("structural-store.mongodb.port"))("sensordb")
 
-  val Nodes = MongoConnection()("sensordb")("nodes")
+  val Experiments = MongoDB("experiments")
 
-  val Users = MongoConnection()("sensordb")("users")
+  val Nodes = MongoDB("nodes")
 
-  val Streams = MongoConnection()("sensordb")("streams")
+  val Users = MongoDB("users")
 
-  val Measurements = MongoConnection()("sensordb")("measurements")
+  val Streams = MongoDB("streams")
+
+  val Measurements = MongoDB("measurements")
 
   def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String):Option[ObjectId] ={
     val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "timezone" -> timezone, ACCESS_RESTRICTION_FIELD -> public_access,

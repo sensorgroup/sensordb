@@ -125,8 +125,8 @@ object Validators {
   def UserSession(session:HttpSession)(implicit validator:Validator):Option[(ObjectId,String)]={
     val sessionId=session.getAttribute(SESSION_ID)
     if(sessionId !=null) {
-      cache.expire(sessionId,Cache.CACHE_TIMEOUT)
-      Some(new ObjectId(Cache.cache.hget(sessionId,Cache.CACHE_UID).get)->cache.hget(sessionId,Cache.CACHE_USER_NAME).get)
+      sessions.expire(sessionId,Cache.CACHE_TIMEOUT)
+      Some(new ObjectId(Cache.sessions.hget(sessionId,Cache.CACHE_UID).get)->sessions.hget(sessionId,Cache.CACHE_USER_NAME).get)
     } else {
       None
     }

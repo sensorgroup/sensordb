@@ -8,7 +8,7 @@ import com.codahale.jerkson.Json._
 
 class RedisStore extends Storage {
 
-  private val jedis = new RedisPool("localhost",Configuration("redis.queue.port").get.toInt,Cache.REDIS_STORE)
+  private val jedis = new RedisPool(Cache.SensorDBConf.getString("data-store.redis.host"),Cache.SensorDBConf.getInt("data-store.redis.port"),Cache.REDIS_STORE)
   def getPrefixed(prefix: String):Iterable[Array[Byte]] = {
     jedis.call(j=>j.keys(prefix).map(Bytes.toBytes).toSeq)
   }

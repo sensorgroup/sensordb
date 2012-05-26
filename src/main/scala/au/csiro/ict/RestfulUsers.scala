@@ -19,9 +19,9 @@ trait RestfulUsers {
         Users.findOne(Map("name"->name,"active"->true)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
           val session_id = Utils.uuid()
           session.setAttribute (SESSION_ID,session_id)
-          cache.hset(session_id,CACHE_UID, user._id.get.toString)
-          cache.hset(session_id,CACHE_USER_NAME, user.getAs[String]("name").get)
-          cache.expire(session_id,CACHE_TIMEOUT)
+          sessions.hset(session_id,CACHE_UID, user._id.get.toString)
+          sessions.hset(session_id,CACHE_USER_NAME, user.getAs[String]("name").get)
+          sessions.expire(session_id,CACHE_TIMEOUT)
           user._id.get
         }.orElse{
           haltMsg("Login failed")
@@ -31,7 +31,7 @@ trait RestfulUsers {
   }
   def logout()={
     val ident=session.getAttribute(SESSION_ID)
-    if (ident !=null) cache.del(ident)
+    if (ident !=null) sessions.del(ident)
     session.invalidate()
     sendSession()
   }

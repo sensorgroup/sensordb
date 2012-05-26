@@ -589,3 +589,15 @@ Example data value:
 
 Response:
 An integer, confirming the total number of stream elements, (timestamp,value) pairs, sent received through this request.
+
+##SensorDB, Storage, Cache and Queue Configuration##
+
+SensorDB is using Akka for creating distributed actors with persistent message queues.
+
+SensorDB is using Redis for caching, web-based session information management, storage helper (a.k.a, storage bit index) and the actual storage (instead of HBase if configured to do so).
+
+SensorDB is using MongoDB for structural data storage (information about user, streams, experiments, nodes, etc.).
+
+All SensorDB configurations can be found at src/main/resources/config.properties
+
+SensorDB's logging configuration is specified using logback.xml at src/main/resources/logback.xml
