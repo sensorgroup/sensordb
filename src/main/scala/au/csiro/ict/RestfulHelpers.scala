@@ -27,24 +27,32 @@ trait RestfulHelpers {
     None
   }
 
-  val protectedFields = Map("token"->0,"password"->0,"email"->0)
-
   def sendSession()={
-    val current:Option[ObjectId] = UserSession(session).map(_._1)
-    val user:Option[ObjectId] = params.get("user").filterNot(_.trim.isEmpty).flatMap{uname=>
-      Users.findOne(MongoDBObject("name"->uname,"active"->true),MongoDBObject("_id"->1))
-    }.flatMap(x=>x.getAs[ObjectId]("_id"))
-    val fields = if (current.exists(x=>user.isEmpty || x.equals(user.get)))
+    val (user_session:Option[ObjectId],user:Option[ObjectId])=(UserSession(session).map(_._1),Name(params.get("user")).flatMap(uname=>Users.findOne(MongoDBObject("name"->uname,"active"->true),MongoDBObject("_id"->1)).map(_._id.get)))
+
+    val requested_user = user.orElse(user_session)
+    val ownerRequest = requested_user.filter(x=>user_session.isDefined && user_session.get == x).isDefined
+
+    val fields = if (ownerRequest)
       Map("password"->0)
     else
-      protectedFields
-    user.orElse(current).flatMap((u:ObjectId)=>Users.findOne(MongoDBObject("_id"->u),fields)).map{user=>
+      Map("token"->0,"password"->0,"email"->0)
+
+    requested_user.flatMap((u:ObjectId)=>Users.findOne(MongoDBObject("_id"->u),fields)).map{user=>
       val uid = user._id.get
-      user.put("_id",uid.toString)
+      val experiments = (if (ownerRequest)
+        Experiments.find(MongoDBObject("uid"->uid),fields)
+      else
+        Experiments.find(MongoDBObject("uid"->uid,Cache.ACCESS_RESTRICTION_FIELD->Cache.EXPERIMENT_ACCESS_PUBLIC),fields)).toList
+
+
+      val nodes = Nodes.find("eid" $in experiments.map(_._id.get).toList,fields).toList
+      val streams = Streams.find("nid" $in nodes.map(_._id.get).toList,fields)
+
       generate(Map("user"->user,
-        "experiments"->Experiments.find(MongoDBObject("uid"->uid),fields),
-        "nodes"->Nodes.find(MongoDBObject("uid"->uid),fields),
-        "streams"->Streams.find(MongoDBObject("uid"->uid),fields)))
+        "experiments"->experiments,
+        "nodes"->nodes,
+        "streams"->streams))
     }.getOrElse("{}")
   }
 

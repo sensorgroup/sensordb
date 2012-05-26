@@ -46,13 +46,13 @@ object Validators {
 
   def TimeZone(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(timezones.contains).orElse(validator.addError( "Timezone is not valid"))
 
-  def Privacy(value:Option[String])(implicit validator:Validator):Option[Int]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).map(_.toInt).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
+  def Privacy(value:Option[String])(implicit validator:Validator):Option[Int]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,2)).map(_.toInt).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
 
   def IntParam(value:Option[String])(implicit validator:Validator):Option[Int]=value.filter(x => isInt(x)).map(_.toInt)
 
   def Description(value:Option[String]):Option[String]=value.map(x=>sanitize(x.trim())).orElse(EMPTY_STR)
 
-  def Name(value:Option[String])(implicit validator:Validator)=value.orElse(validator.addError( "Name is missing")).flatMap{v=>
+  def Name(value:Option[String])(implicit validator:Validator)=value.flatMap{v=>
     if (!isAlphanumericSpace(v))
       validator.addError("Name is not valid")
     else if (!isInRange(v.size,3,30))
@@ -135,6 +135,23 @@ object Validators {
     AggregationLevel(v.trim.toLowerCase)
   }
 
+  /**
+   * This method checks if the current user owns the mentioned objectId.
+   * @param streamNodeOrExperimentId can be a experiment Id, node Id or stream Id
+   * @param user Current objectid for a user
+   * @param validator to put the error messages inside
+   * @return
+   */
+  def ObjectOwnershipCheck(streamNodeOrExperimentId:Option[ObjectId],user:Option[(ObjectId,String)])(implicit validator:Validator):Option[ObjectId]=
+    user.flatMap{uid=>
+      streamNodeOrExperimentId.map(x=>MongoDBObject("uid"->uid._1,"_id"->x)).flatMap {filter=>
+        Experiments.findOne(filter).orElse(Nodes.findOne(filter)).orElse(Streams.findOne(filter)).isDefined match{
+          case true => streamNodeOrExperimentId
+          case false => validator.addError("Permission denied")
+        }
+      }
+    }
+
   def PermissionCheckOnStreamIdList(streamIds:Set[ObjectId],user:Option[(ObjectId,String)])(implicit validator:Validator):Set[Option[(ObjectId,ObjectId,ObjectId,DateTimeZone)]] =
     streamIds.map{ sid =>
       NidUidFromSid(sid) match {
@@ -179,7 +196,10 @@ object Validators {
     validator.addError("Invalid entity id")
     None
   }
-  // formats the date to yyyyD
+
+  /**
+   * Received UK date format and if it is valid, return its value in seconds
+   */
   def DateParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
     try {
       Some((Utils.ukDateFormat.parseDateTime(x).getMillis/1000L).asInstanceOf[Int])
@@ -228,6 +248,7 @@ object Validators {
     validator.addError(errorMessage)
     None
   }
+
   def CellKeyParam(value:Option[Int],aggLevel:AggregationLevel)(implicit validator:Validator):Option[Int]={
     value.flatMap{x=>
       if (aggLevel.validColumnKey(x))

@@ -22,7 +22,7 @@ trait RestfulExperiments {
 
   post("/experiments"){
     // Add a new experiments
-    (UserSession(session),Name(params.get("name")),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{
+    (UserSession(session),Required(Name(params.get("name")),"name parameter is missing"),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{
       case (Some((uid,user_name)),Some(name),Some(description),Some(timezone),Some(website),Some(picture),Some(public_access)) if UniqueName(Experiments,"name"->name,"uid"->uid)=>
         addExperiment(name, uid, timezone, public_access, picture, website, description)
         generate(Experiments.findOne(Map("uid"->uid,"name"->name)))
@@ -33,13 +33,14 @@ trait RestfulExperiments {
   put("/experiments"){
     // update/replace an experiment information
     val validators:Map[String,()=>Option[_]] = Map(
-      "name"-> (()=> Name(params.get("value"))),
+      "name"-> (()=> Required(Name(params.get("value")),"name parameter is missing")),
       "website"-> (()=>WebUrl(params.get("value"))),
       "description"-> (()=> Description(params.get("value"))),
       "picture"-> (()=> PictureUrl(params.get("value"))),
       "access_restriction"-> (()=> Privacy(params.get("value"))))
 
-    (UserSession(session),EntityId(params.get("eid")),params.get("field").filter(validators.keys.contains),params.get("value")) match {
+    val user_session = UserSession(session)
+    (user_session,ObjectOwnershipCheck(EntityId(params.get("eid")),user_session),params.get("field").filter(validators.keys.contains),params.get("value")) match {
       case (Some((uid,userName)),Some(eid),Some(field),Some(value)) if validators(field).apply().isDefined && (!(field.equals("name")) || UniqueName(Experiments,"name"->value,"uid"->uid)) =>
         Experiments.findAndModify(Map("uid"->uid,"_id"->eid),$set(field->value,"updated_at"->System.currentTimeMillis()))
         generate(Experiments.findOne(Map("uid"->uid,"_id"->eid)))

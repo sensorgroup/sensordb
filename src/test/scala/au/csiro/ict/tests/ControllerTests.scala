@@ -51,11 +51,11 @@ class ControllerTests extends ScalatraSuite with FunSuite{
     }
 
     get("/metadata/remove",Map("id"->new ObjectId().toString,"name"->"age")){
-      body should include("error")
+      body should include("error")  // fails because there is no valid user session
       status must equal(400)
     }
       get("/metadata/add",Map("id"->new ObjectId().toString,"name"->"age","value"->"30")){
-      body should include("error")
+      body should include("error") // fails because there is no valid user session
       status must equal(400)
     }
       get("/metadata/retrieve/"+new ObjectId().toString){
@@ -68,7 +68,6 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should not include("_id")
         body should not include("token")
       }
-      //
 
       delete("/nodes"){
         // Delete without providing eid nor nid
@@ -122,6 +121,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
       get("/session",Map("user"->"ali")){
         body should include ("_id")
+        body should not include ("email")
         body should not include ("password")
         body should include ("created_at")
       }
@@ -152,13 +152,13 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("{}")
         status should equal (200)
       }
-      post("/login",Map("name"->"ali","password"->"secret1")) {
-        status should equal (200)
-        body should include ("_id")
-      }
       post("/register",Map("name"->"ali","email"->"test@example.com","password"->"secret1")) {
         // user name is already used
         status must equal(400)
+      }
+      post("/login",Map("name"->"ali","password"->"secret1")) {
+        status should equal (200)
+        body should include ("_id")
       }
       delete("/experiments"){
         // Delete without providing eid
@@ -182,6 +182,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should include ("_id")
         status should equal(200)
       }
+
       get("/metadata/add",Map("id"->exp1.apply("_id"),"name"->"age","value"->"30<script>31</script>")){
         status must equal(200)
       }
@@ -221,7 +222,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
         body should not include ("age")
         body should include ("metadata")
       }
-      post("/experiments",Map("name"->"exp2","timezone"->"Australia/Sydney","public_access"->"false")){
+      post("/experiments",Map("name"->"exp2","timezone"->"Australia/Sydney","public_access"->Cache.EXPERIMENT_ACCESS_PRIVATE.toString)){
         // success, exp2 created
         exp2 = parse[Map[String,String]](body)
         exp2.get("created_at") should  be > exp1.get("created_at")
@@ -229,6 +230,7 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
       put("/experiments",Map("field"->"name","value"->"exp2","eid"->exp1("_id"))){
         // rename fails, exp1 can't be renamed to exp2, name exists
+        body should include("error")
         status should equal(400)
       }
 
@@ -356,10 +358,60 @@ class ControllerTests extends ScalatraSuite with FunSuite{
       }
 
       get("/session"){
-        // machine is used in ObjectId's if they aren't stored as strings
         body should include ("token")
+        // User Ali has Experiment2 which is private, at this stage it has one node, named "node1 renamed" and "node1 renamed" has one stream, named stream1
+        body should include ("node1 renamed")
+        body should include ("exp2")
+        body should include ("exp 123")
+        body should include ("stream1")
         body should not include ("machine")
       }
+
+      post("/logout"){
+        body should include ("{}")
+        status should equal (200)
+      }
+
+      get("/session",Map("user"->"ali")){
+        // Permission check, after logout, all the private experiments and its children should be invisible.
+        body should not include ("token")
+        // User Ali has Experiment2 which is private, at this stage it has one node, named "node1 renamed" and "node1 renamed" has one stream, named stream1
+        body should not include ("node1 renamed")
+        body should not include ("exp2")
+        body should include ("exp 123")
+        body should not include ("stream1")
+        body should not include ("machine")
+        body should  include ("ali")
+      }
+
+      post("/login",Map("name"->"ali2","password"->"secret2")) {
+        status should equal (200)
+        body should include ("_id")
+      }
+
+
+      get("/session",Map("user"->"ali")){
+        // Permission check, another user which is logged in still can't see private private experiments of others and their children.
+        body should not include ("token")
+        // User Ali has Experiment2 which is private, at this stage it has one node, named "node1 renamed" and "node1 renamed" has one stream, named stream1
+        body should not include ("node1 renamed")
+        body should not include ("exp2")
+        body should include ("exp 123")
+        body should not include ("stream1")
+        body should not include ("machine")
+        body should  include ("ali")
+      }
+
+      post("/logout"){
+        body should include ("{}")
+        status should equal (200)
+      }
+
+      post("/login",Map("name"->"ali","password"->"secret1")) {
+        status should equal (200)
+        body should include ("_id")
+      }
+
       delete("/nodes",Map("nid"->node1("_id"))){
         status should equal(200)
       }
@@ -379,10 +431,6 @@ class ControllerTests extends ScalatraSuite with FunSuite{
 
       delete("/experiments",Map("eid"->exp2("_id"))){
         status should equal(200)
-      }
-      get("/session"){
-        body should not include ("exp 123")
-        body should not include ("exp2")
       }
 
       post("/remove",Map("name"->"ali","password"->"secret2")) {
