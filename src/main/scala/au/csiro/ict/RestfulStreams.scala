@@ -16,10 +16,7 @@ trait RestfulStreams {
     (UserSession(session),EntityId(params.get("sid"))) match {
       case (Some((uid,userName)),Some(sid))=>
         delStream(uid, sid)
-        if(Streams.findOne(Map("uid"->uid,"_id"->sid)).isDefined)
-          haltMsg("Delete Failed")
-        else
-          halt(200,"Delete succeeded")
+        halt(200,"Delete succeeded")
 
       case errors => haltMsg()
     }

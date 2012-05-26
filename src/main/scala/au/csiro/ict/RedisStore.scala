@@ -10,7 +10,7 @@ class RedisStore extends Storage {
 
   private val jedis = new RedisPool(Cache.SensorDBConf.getString("data-store.redis.host"),Cache.SensorDBConf.getInt("data-store.redis.port"),Cache.REDIS_STORE)
   def getPrefixed(prefix: String):Iterable[Array[Byte]] = {
-    jedis.call(j=>j.keys(prefix).map(Bytes.toBytes).toSeq)
+    jedis.call(j=>j.keys(prefix+"*").map(Bytes.toBytes).toSeq)
   }
 
   def put(row: Array[Byte], col: Array[Byte], value: Array[Byte]) {
@@ -65,7 +65,7 @@ class RedisStore extends Storage {
   def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[Array[Byte]]= jedis.call{jedis=>jedis.hmget(row,cols :_*)}
 
   def drop(streamId: String) {
-      getPrefixed(streamId+"*").foreach((x)=>jedis.call{jedis=>jedis.del(x)})
+      getPrefixed(streamId).foreach((x)=>jedis.call{jedis=>jedis.del(x)})
   }
 
   def close() {

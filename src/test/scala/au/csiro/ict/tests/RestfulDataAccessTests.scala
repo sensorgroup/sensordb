@@ -215,9 +215,20 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   }
 
   test("Dummy, cleaning ..."){
+    get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"raw")){
+      status should equal(200)   // confirming stream exists and has some data
+    }
+    store.getPrefixed(stream1Id.toString).size should be > 0
     delUser(user1Id)
     delUser(user2Id)
-    1 should equal(1)
+    for(lvl <- AggregationLevel.Levels.keys)
+    get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->lvl)){
+        status should equal(400)
+      }
+    store.getPrefixed(stream1Id.toString).size must equal(0)
+    post(DATA_RAW_URI,Map("data"->generate(Map(token1->Map((date1).toString-> 1.0 ))))){
+      status should equal(400) // security token doesn't exist
+    }
   }
 
 }

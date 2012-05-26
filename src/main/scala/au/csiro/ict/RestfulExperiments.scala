@@ -15,10 +15,7 @@ trait RestfulExperiments {
       case (Some((uid,userName)),Some(expId))=>
         delExperiment(uid, expId)
         val failed=Experiments.findOne(Map("uid"->uid,"_id"->expId)).isDefined
-        if(failed)
-          haltMsg("Delete Failed")
-        else
-          halt(200,"Delete succeeded")
+        halt(200,"Delete succeeded")
       case errors=>haltMsg()
     }
   }

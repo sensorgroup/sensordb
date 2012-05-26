@@ -3,10 +3,8 @@ package au.csiro.ict
 import org.mindrot.jbcrypt.BCrypt
 import com.redis._
 import org.bson.types.ObjectId
-import scala.collection.JavaConversions._
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
-import java.util.Properties
 import redis.clients.jedis.{Protocol, Jedis, JedisPoolConfig, JedisPool}
 import org.joda.time.DateTimeZone
 import com.typesafe.config.ConfigFactory
@@ -111,28 +109,30 @@ object Cache {
       "created_at" -> System.currentTimeMillis(),
       "description" -> description)
     Nodes.insert(toInsert)
+    Nodes
     toInsert._id
   }
   def delUser(uId: ObjectId) {
-    List(Streams,Nodes,Experiments).foreach(_.remove(MongoDBObject("uid"->uId)))
+    Experiments.find(MongoDBObject("uid"->uId)).foreach((x)=>delExperiment(uId,x.getAs[ObjectId]("_id").get))
     Users.remove(MongoDBObject("_id" -> uId))
   }
 
   def delExperiment(uId: ObjectId, expId: ObjectId) {
-    Nodes.find(MongoDBObject("uid"->uId,"eid"->expId),MongoDBObject("_id"->1)).foreach{nId=>
-      Streams.remove(MongoDBObject("uid"->uId,"nid"->nId))
-    }
-    Nodes.remove(MongoDBObject("uid"->uId,"eid"->expId))
+    Nodes.find(MongoDBObject("uid"->uId,"eid"->expId),MongoDBObject("_id"->1)).map(_.getAs[ObjectId]("_id").get).foreach{nId=> delNode(uId,nId) }
     Experiments.remove(MongoDBObject("uid" -> uId, "_id" -> expId))
   }
 
   def delNode(uId: ObjectId, nId: ObjectId) {
-    Streams.remove(MongoDBObject("uid"->uId,"nid"->nId))
+    Streams.find(MongoDBObject("uid"->uId,"nid"->nId),MongoDBObject("_id"->1)).map(_.getAs[ObjectId]("_id").get).foreach{sid=>
+      delStream(uId,sid)
+    }
     Nodes.remove(Map("uid" -> uId, "_id" -> nId))
   }
 
   def delStream(uId: ObjectId, sid: ObjectId) {
-    Streams.remove(Map("uid" -> uId, "_id" -> sid))
+    Streams.findAndRemove(MongoDBObject("uid" -> uId, "_id" -> sid)).map(_.getAs[ObjectId]("_id").get).foreach{sid=>
+      store.drop(sid.toString)
+    }
   }
 
 }

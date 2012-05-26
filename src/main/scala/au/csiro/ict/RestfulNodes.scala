@@ -14,10 +14,7 @@ trait RestfulNodes {
     (UserSession(session),EntityId(params.get("nid"))) match {
       case (Some((uid,userName)),Some(nid))=>
         delNode(uid, nid)
-        if(Nodes.findOne(Map("uid"->uid,"_id"->nid)).isDefined)
-          haltMsg("Delete Failed")
-        else
-          halt(200,"Delete succeeded")
+        halt(200,"Delete succeeded")
       case errors => haltMsg()
     }
   }
