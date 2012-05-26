@@ -45,7 +45,7 @@ Internally, timestamps are presented in unix format (milliseconds since epoch). 
 ![](https://github.com/alisalehi/sensordb/raw/master/documents/data-flow-2.png)
 
 
-Markdown syntax http://daringfireball.net/projects/markdown/syntax or http://warpedvisions.org/projects/markdown-cheat-sheet/
+Markdown syntax `http://daringfireball.net/projects/markdown/syntax` or `http://warpedvisions.org/projects/markdown-cheat-sheet/`
 
 #Restful API Documentation#
 
@@ -434,7 +434,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 ### GET /measurements ###
 Measurements are referenced from streams (mid field in the stream definition.)
 
-Sample output of /measurements
+Sample output of `/measurements`
 
 	[
 	    {
@@ -598,6 +598,6 @@ SensorDB is using Redis for caching, web-based session information management, s
 
 SensorDB is using MongoDB for structural data storage (information about user, streams, experiments, nodes, etc.).
 
-All SensorDB configurations can be found at src/main/resources/config.properties
+All SensorDB configurations can be found at `src/main/resources/application.conf`
 
-SensorDB's logging configuration is specified using logback.xml at src/main/resources/logback.xml
+SensorDB's logging configuration is specified using `logback.xml` at `src/main/resources/logback.xml`

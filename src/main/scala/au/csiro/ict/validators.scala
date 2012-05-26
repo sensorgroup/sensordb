@@ -30,7 +30,7 @@ object Validators {
     private var _errors:List[String] = Nil;
     def errors = _errors
 
-    def addError(msg:String):Option[String]= {
+    def addError(msg:String):Option[Nothing]= {
       _errors::=msg
       None
     }
@@ -46,7 +46,7 @@ object Validators {
 
   def TimeZone(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(timezones.contains).orElse(validator.addError( "Timezone is not valid"))
 
-  def Privacy(value:Option[String])(implicit validator:Validator):Option[String]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
+  def Privacy(value:Option[String])(implicit validator:Validator):Option[Int]=value.filter(x => !x.trim.isEmpty && isInt(x) && isInRange(x.toInt,0,1)).map(_.toInt).orElse(Some(Cache.EXPERIMENT_ACCESS_PUBLIC))
 
   def IntParam(value:Option[String])(implicit validator:Validator):Option[Int]=value.filter(x => isInt(x)).map(_.toInt)
 
@@ -134,6 +134,22 @@ object Validators {
   def AggregationLevelParam(v:Option[String])(implicit validator:Validator):Option[AggregationLevel]=v.flatMap{v=>
     AggregationLevel(v.trim.toLowerCase)
   }
+
+  def PermissionCheckOnStreamIdList(streamIds:Set[ObjectId],user:Option[(ObjectId,String)])(implicit validator:Validator):Set[Option[(ObjectId,ObjectId,ObjectId,DateTimeZone)]] =
+    streamIds.map{ sid =>
+      NidUidFromSid(sid) match {
+        case Some((ownerId,nid)) => experimentTimeZoneFromNid(nid) match {
+          case Some((eid,access,tz))=> access match{
+            case EXPERIMENT_ACCESS_PUBLIC => Some((sid,nid,eid,tz))
+            case EXPERIMENT_ACCESS_PRIVATE if user.filter(_._1 ==  ownerId).isDefined => Some((sid,nid,eid,tz))
+            case other =>
+              validator.addError("Bad input, access denied, please verify the body of your request")
+          }
+          case other => validator.addError("Bad input, missing experiment, please verify the body of your request")
+        }
+        case other => validator.addError("Bad input, missing node, please verify the body of your request")
+      }
+    }
 
   def EntityIdList(v:Option[String])(implicit validator:Validator):Set[ObjectId] = v match {
     case Some(sid:String) if ObjectId.isValid(sid)=> Set(new ObjectId(sid))

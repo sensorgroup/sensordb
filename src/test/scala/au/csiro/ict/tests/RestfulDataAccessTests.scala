@@ -18,17 +18,21 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
 
   val token1 =  "STREAM01-b494-497b-a95e-b27824098057"
   val token2 =  "STREAM02-b494-497b-a95e-b27824098059"
+  val token3 =  "STREAM03-b494-497b-a95e-b27824098059"
 
   val measurementId = new ObjectId()
 
-  val user1Id = addUser("u1","pass1","u1@example.com","","","").get
-  val user2Id = addUser("u2","pass2","u1@example.com","","","").get
+  val user1Id = addUser("user1","password1","u1@example.com","","","").get
+  val user2Id = addUser("user2","password2","u1@example.com","","","").get
   val exp1Id = addExperiment("exp1",user1Id,"Australia/Sydney",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
   val exp2Id = addExperiment("exp2",user2Id,"Australia/Sydney",Cache.EXPERIMENT_ACCESS_PUBLIC,"","","").get
+  val exp3Id = addExperiment("exp3",user2Id,"Australia/Sydney",Cache.EXPERIMENT_ACCESS_PRIVATE,"","","").get
   val node1Id =addNode("node1",user1Id,exp1Id,"-1","-1","-1","","","").get
   val node2Id = addNode("node2",user2Id,exp2Id,"-1","-1","-1","","","").get
+  val node3Id = addNode("node2",user2Id,exp3Id,"-1","-1","-1","","","").get
   val stream1Id = addStream("stream1",user1Id,node1Id,measurementId,"","","",Some(token1)).get
   val stream2Id = addStream("stream2",user2Id,node2Id,measurementId,"","","",Some(token2)).get
+  val stream3Id = addStream("stream3",user2Id,node3Id,measurementId,"","","",Some(token3)).get
   val date1UKFormat = "30-01-2010"
   val date1 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:20",Utils.TZ_Sydney)
   val date2 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:21",Utils.TZ_Sydney)
@@ -46,6 +50,13 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       body should include("{}")
       status should equal(200)
     }
+  }
+  test("Check the stream3 to be not accessible as it belong to a private experiment, no data pushed out at any aggregation levels") {
+    for(lvl <- AggregationLevel.Levels.keys)
+      get(DATA_RAW_URI,Map("level"->lvl,"sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
+        body should include("{}")
+        status should equal(200)
+      }
   }
 
   test("Data insertion, missing data parameter") {
@@ -74,13 +85,15 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
   }
 
-  test("Data insertion, good format, 100 times, one insert each time") {
-    for (i<- 0 until 100){
-      post(DATA_RAW_URI , Map("data"->("{\""+token1+"\":{\""+(date1+i)+"\":"+i+"}}"))){
-        body should include("1")
-        status should equal(200)
+  test("Data insertion, good format, 100 times, one insert each time. Identical data inserted into two streams") {
+    val tokens = List(token1,token3)
+    for (token<- tokens)
+      for (i<- 0 until 100){
+        post(DATA_RAW_URI , Map("data"->("{\""+token+"\":{\""+(date1+i)+"\":"+i+"}}"))){
+          body should include("1")
+          status should equal(200)
+        }
       }
-    }
     Thread.sleep(1000)
   }
   test("Check that stream 1 is not empty") {
@@ -92,6 +105,43 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       status should equal(200)
     }
   }
+
+  test("Check the stream3 to be not accessible as it belong to a private experiment") {
+    get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
+      body should include("{}")
+    }
+  }
+
+  test("Check the stream3 to be not accessible as it belong to a private experiment owned by user2") {
+    session{
+      post("/login",Map("name"->"user1","password"->"password1")) {
+        status should equal (200)
+      }
+      get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
+        body should include("{}")
+      }
+      post("/logout")()
+      get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
+        body should include("{}")
+      }
+    }
+  }
+
+  test("Check the stream3 to be accessible to user2 as it belong to a private experiment owned by user2") {
+    session{
+      post("/login",Map("name"->"user2","password"->"password2")) {
+        status should equal (200)
+      }
+      get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
+        body should not include("{}")
+      }
+      post("/logout")()
+      get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
+        body should include("{}")
+      }
+    }
+  }
+
   test("Testing EntityIDList Validator"){
     implicit val validator = Validators.Validator()
     Validators.EntityIdList(Some("[]")) should have size(0)
@@ -126,13 +176,15 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
       body should include("["+stream1Id.toString+","+date1YYSummary+",0.0,99.0,100.0,4950.0,328350.0]")
       status should equal(200)
     }
-    get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString,new ObjectId().toString)),"sd"->date1UKFormat,"ed"->date1UKFormat)){ // non-existing stream id
-      body should include("error")
-      status should equal(400)
+    val tempId = new ObjectId().toString
+    get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString,tempId)),"sd"->date1UKFormat,"ed"->date1UKFormat)){ // non-existing stream id
+      body should include(stream1Id.toString)
+      body should not include(tempId)
+      status should equal(200)
     }
     get(DATA_RAW_URI , Map("sid"->generate(Set(new ObjectId().toString)),"sd"->date1UKFormat,"ed"->date1UKFormat)){ //non-existing stream id
-      body should include("error")
-      status should equal(400)
+      body should include("{}")
+      status should equal(200)
     }
 
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString,stream2Id.toString)),"level"->"1-year","sd"->date1UKFormat,"ed"->date1UKFormat)){
@@ -222,11 +274,13 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     delUser(user1Id)
     delUser(user2Id)
     for(lvl <- AggregationLevel.Levels.keys)
-    get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->lvl)){
-        status should equal(400)
+      get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->lvl)){
+        body should include("{}")
+        status should equal(200)
       }
     store.getPrefixed(stream1Id.toString).size must equal(0)
     post(DATA_RAW_URI,Map("data"->generate(Map(token1->Map((date1).toString-> 1.0 ))))){
+      body should include("error")
       status should equal(400) // security token doesn't exist
     }
   }

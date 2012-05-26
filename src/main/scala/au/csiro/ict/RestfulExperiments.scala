@@ -32,7 +32,7 @@ trait RestfulExperiments {
 
   put("/experiments"){
     // update/replace an experiment information
-    val validators:Map[String,()=>Option[String]] = Map(
+    val validators:Map[String,()=>Option[_]] = Map(
       "name"-> (()=> Name(params.get("value"))),
       "website"-> (()=>WebUrl(params.get("value"))),
       "description"-> (()=> Description(params.get("value"))),

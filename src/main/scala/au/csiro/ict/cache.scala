@@ -40,11 +40,11 @@ object Cache {
 
   lazy val store:Storage = new RedisStore()
 
-  val EXPERIMENT_ACCESS_PUBLIC="0"
+  val EXPERIMENT_ACCESS_PUBLIC=0
 
-  val EXPERIMENT_ACCESS_PRIVATE="1"
+  val EXPERIMENT_ACCESS_FRIENDS=1
 
-  val EXPERIMENT_ACCESS_FRIENDS="2"
+  val EXPERIMENT_ACCESS_PRIVATE=2
 
   val ACCESS_RESTRICTION_FIELD = "access_restriction"
 
@@ -60,8 +60,11 @@ object Cache {
 
   val Measurements = MongoDB("measurements")
 
-  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: String, picture: String, website: String, description: String):Option[ObjectId] ={
-    val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "timezone" -> timezone, ACCESS_RESTRICTION_FIELD -> public_access,
+  def addExperiment(name: String, uid: ObjectId, timezone: String, public_access: Int, picture: String, website: String, description: String):Option[ObjectId] ={
+    val toInsert = MongoDBObject("name" -> name,
+      "uid" -> uid,
+      "timezone" -> timezone,
+      ACCESS_RESTRICTION_FIELD -> public_access,
       "picture" -> picture, "website" -> website,
       "updated_at" -> System.currentTimeMillis(),
       "created_at" -> System.currentTimeMillis(),
@@ -83,14 +86,21 @@ object Cache {
     user._id
   }
 
-  def NidUidFromSid(sid: ObjectId) = Streams.findOne(MongoDBObject("_id" -> sid), MongoDBObject("nid" -> 1, "uid" -> 1))
+  /**
+   * Finds UserId and NodeId for a given StreamId
+   * @param sid StreamId
+   * @return, the first element of the pair is userId while the second element in the pair is nodeId.
+   */
+  def NidUidFromSid(sid: ObjectId):Option[(ObjectId,ObjectId)] = Streams.findOne(MongoDBObject("_id" -> sid), MongoDBObject("nid" -> 1, "uid" -> 1)).map((x)=>x.getAs[ObjectId]("uid").get->x.getAs[ObjectId]("nid").get)
 
-  def experimentTimeZoneFromNid(nid:ObjectId):DateTimeZone = {
-    val eid:ObjectId = Nodes.findOneByID(nid,MongoDBObject("eid"->1)).get.getAs[ObjectId]("eid").get
-    val experimentInfo = Experiments.findOneByID(eid,MongoDBObject("timezone"->1))
-    val tz:String = experimentInfo.get.getAs[String]("timezone").get
-    DateTimeZone.forID(tz)
-  }
+  def experimentTimeZoneFromNid(nid:ObjectId):Option[(ObjectId,Int,DateTimeZone)] =
+    Nodes.findOneByID(nid,MongoDBObject("eid"->1)).flatMap(_.getAs[ObjectId]("eid") match {
+      case Some(eid:ObjectId)=>
+        Experiments.findOneByID(eid,MongoDBObject("timezone"->1,ACCESS_RESTRICTION_FIELD->1)).map((exp)=> (eid,exp.getAs[Int](ACCESS_RESTRICTION_FIELD).get, DateTimeZone.forID(exp.getAs[String]("timezone").get)))
+      case others =>
+        println("====>"+others)
+        None
+    })
 
   def addStream(name: String, uid: ObjectId, nid: ObjectId, mid: ObjectId, picture: String, website: String, description: String,tokenOption:Option[String]=None):Option[ObjectId]= {
     val toInsert = MongoDBObject("name" -> name, "uid" -> uid, "nid" -> nid, "mid" -> mid,

@@ -29,13 +29,12 @@ trait RestfulDataAccess {
           if(!packed.keys.forall(Utils.keyPatternMatcher))
             haltMsg("Bad request, invalid tokens")
 
-          val allKeysMapped = Streams.find(MongoDBObject("token"->MongoDBObject("$in"->packed.keys.toArray)),MongoDBObject("_id"->1,"token"->1,"nid"->1)).map{x=>
-            val sid=x.getAs[ObjectId]("_id").get
-            val timeZone = Cache.experimentTimeZoneFromNid(x.getAs[ObjectId]("nid").get)
+          val allKeysMapped = Streams.find(MongoDBObject("token"->MongoDBObject("$in"->packed.keys.toArray)),MongoDBObject("_id"->1,"token"->1,"nid"->1)).flatMap{x=>
+            val sid = x.getAs[ObjectId]("_id").get
+            val nid = x.getAs[ObjectId]("nid").get
             val token = x("token").toString
-            sid.toString ->(packed(token),timeZone)
+            Cache.experimentTimeZoneFromNid(nid).map(x=> sid.toString -> (packed(token),x._3))
           }.toMap
-
           if(allKeysMapped.size != packed.size)
             haltMsg("Bad request, invalid security token(s)")
           allKeysMapped.foreach { item =>
@@ -51,31 +50,6 @@ trait RestfulDataAccess {
     }
   }
 
-  /**
-   * if the current user doesn't have enough rights to access sid, the method returns None otherwise returns ObjectId of a parent Node ID
-   * @param sid to check user permission on
-   * @return SID, NodeId and Experiment's TZ only if user has enough permissions to access this stream
-   */
-  def permissionCheck(sid:ObjectId):Option[(ObjectId,ObjectId,DateTimeZone)]={
-    NidUidFromSid(sid) match {
-      case Some(s:DBObject) =>
-        val nid:ObjectId = s.getAs[ObjectId]("nid").get
-        Nodes.findOne(MongoDBObject("_id"->nid),MongoDBObject("eid"->1)) match {
-          case Some(n:DBObject)=> Experiments.findOne(MongoDBObject("_id"->n.getAs[ObjectId]("eid").get),MongoDBObject(ACCESS_RESTRICTION_FIELD->1,"timezone"->1)) match {
-            case Some(e:DBObject)=> e.getAs[String](ACCESS_RESTRICTION_FIELD) match {
-              case Some(EXPERIMENT_ACCESS_PUBLIC) => Some((sid,nid,DateTimeZone.forID(e.getAs[String]("timezone").get)))
-              case Some(EXPERIMENT_ACCESS_PRIVATE) if UserSession(session).filter(_._1 ==  s.getAs[ObjectId]("uid")).isDefined => Some((sid,nid,DateTimeZone.forID(e.getAs[String]("timezone").get)))
-              case others =>
-                haltMsg("Access Denied")
-            }
-            case other => haltMsg("Bad input, access denied, please verify the body of your request")
-          }
-          case other => haltMsg("Bad input, missing experiment, please verify the body of your request")
-        }
-      case other => haltMsg("Bad input, missing node, please verify the body of your request")
-    }
-  }
-
   get("/data"){
     /* querying raw data from a stream by sending GET requests to /data url.
     * Required parameters are
@@ -86,22 +60,19 @@ trait RestfulDataAccess {
     * et (optional) => end time => similar format to ST
     * level (optional, default is raw)=> Level is text and can be raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
     */
-    (AggregationLevelParam(params.get("level")),EntityIdList(params.get("sid")),DateParam(params.get("sd")),DateParam(params.get("ed"))) match {
+    val user_session = UserSession(session)
+    (AggregationLevelParam(params.get("level")),PermissionCheckOnStreamIdList(EntityIdList(params.get("sid")),user_session),DateParam(params.get("sd")),DateParam(params.get("ed"))) match {
       case (levelOption,sids,Some(start_date),Some(end_date)) if !sids.isEmpty=>
         val level = levelOption.getOrElse(RawLevel)
         val cols = (CellKeyParam(IntParam(params.get("st")),level),CellKeyParam(IntParam(params.get("et")),level)) match {
           case (Some(fromColIdx:Int),Some(toColIdx:Int)) => Some((fromColIdx,toColIdx))
           case others => None
         }
-        var timezones: Set[Option[(ObjectId,ObjectId, DateTimeZone)]] = sids.map(permissionCheck)
-        if(timezones.forall(_.isDefined)){
-          val chunker = new DefaultChunkFormatter(new JSONWriter(response.getWriter))
-          timezones.groupBy(_.get._3).foreach{(reqs)=>
-            store.get(reqs._2.map(_.get._1.toString),start_date,end_date,cols,reqs._1,level,chunker)
-          }
-          chunker.done()
-        }else
-          haltMsg("Permission denied")
+        val chunker = new DefaultChunkFormatter(new JSONWriter(response.getWriter))
+        sids.filter(_ != None).groupBy(_.get._4).foreach{(sid)=> // group by timezone
+          store.get(sid._2.map(_.get._1.toString),start_date,end_date,cols,sid._1,level,chunker)
+        }
+        chunker.done()
 
       case others => haltMsg("Bad input, missing stream, please verify the body of your request")
     }
