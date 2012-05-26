@@ -12,16 +12,12 @@ case class RawData(sid:String,value:Map[Int,Option[Double]],tz:DateTimeZone) ext
 case class Insert(aggLevel:String,sid:String,ts:DateTime,value:Double,sr:Option[StatResult]) extends SDBMsg
 case class Update(nextAggLevel:String,sid:String,ts:DateTime,sr:Option[StatResult]) extends SDBMsg
 
-/**
- * Todo: UpdateBroker should use persistent queue, anything form of persistent would do.
- */
-
 class UpdateBroker(val staticAggregator:ActorRef) extends Actor with Logger {
   def receive = {
     case msg@RawData(sid,value,tz) => staticAggregator ! msg
     case msg@Insert(aggLevel,sid,ts,value,previuosCalcResult) => staticAggregator !msg
     case msg@Update(aggLevel,sid,ts,previuosCalcResult) => staticAggregator !msg
-    case msg@Done(sid,ts)=>  /** TODO: use this to keep track of active workers. **/
+    case msg@Done(sid,ts)=>  /** use this to keep track of active workers. **/
   }
 }
 

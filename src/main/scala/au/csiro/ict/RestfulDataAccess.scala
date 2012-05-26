@@ -38,7 +38,6 @@ trait RestfulDataAccess {
 
           if(allKeysMapped.size != packed.size)
             haltMsg("Bad request, invalid security token(s)")
-          // TODO: update timezones based on http://joda-time.sourceforge.net/timezones.html
           allKeysMapped.foreach { item =>
             workersProxy.process(RawData(item._1,item._2._1,item._2._2))
           }

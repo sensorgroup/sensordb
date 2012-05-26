@@ -14,7 +14,6 @@ trait RestfulNodes {
     (UserSession(session),EntityId(params.get("nid"))) match {
       case (Some((uid,userName)),Some(nid))=>
         delNode(uid, nid)
-        // TODO: bug, permission check required, it is checked by delNode but not
         if(Nodes.findOne(Map("uid"->uid,"_id"->nid)).isDefined)
           haltMsg("Delete Failed")
         else

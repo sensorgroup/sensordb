@@ -16,7 +16,7 @@ trait RestfulUsers {
     UserSession(session) match{
       case Some((uid,userName))=> Some(uid)
       case None=>
-        Users.findOne(Map("name"->name)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
+        Users.findOne(Map("name"->name,"active"->true)).filter(r=> BCrypt.checkpw(password, r.getAs[String]("password").get)).map{ user=>
           val session_id = Utils.uuid()
           session.setAttribute (SESSION_ID,session_id)
           cache.hset(session_id,CACHE_UID, user._id.get.toString)
@@ -40,23 +40,9 @@ trait RestfulUsers {
     sendSession()
   }
   get("/users"){
-    generate(Users.find(MongoDBObject(),MongoDBObject("picture"->"1","description"->"1","name"->"1","website"->"1")))
+    generate(Users.find(MongoDBObject("active"->true),MongoDBObject("picture"->"1","description"->"1","name"->"1","website"->"1")))
   }
-  post("/register") {
-    logger.info("User registering with username:"+params.get("name")+" and email:"+params.get("email"))
-    (UniqueUsername(Username(params.get("name"))),
-      Password(params.get("password")),
-      UniqueEmail(Email(params.get("email"))),
-      Description(params.get("description")),
-      PictureUrl(params.get("picture")),
-      WebUrl(params.get("website"))) match {
-      case (Some(name),Some(password),Some(email),Some(description),Some(pic),Some(website))=>
-        addUser(name, password, email, pic, website, description)
-        login(name,password)
-        sendSession()
-      case errors => haltMsg()
-    }
-  }
+
   post("/logout"){
     logout()
   }

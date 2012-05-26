@@ -8,6 +8,7 @@ with FileUploadSupport
 with FlashMapSupport
 with RestfulDataAccess
 with RestfulUsers
+with RestfulUserRegistration
 with RestfulExperiments
 /* with ScalateSupport */
 with RestfulNodes

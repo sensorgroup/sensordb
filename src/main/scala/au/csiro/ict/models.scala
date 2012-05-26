@@ -2,7 +2,6 @@ package au.csiro.ict
 
 import com.mongodb.casbah.MongoConnection
 
-
 //case class Analysis(var name:String,
 //                    var user_id:String,
 //                    var description:Option[String],

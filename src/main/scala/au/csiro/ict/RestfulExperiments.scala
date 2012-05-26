@@ -11,7 +11,6 @@ trait RestfulExperiments {
   self:ScalatraServlet with RestfulHelpers=>
 
   delete("/experiments"){
-    //TODO: Test cascading deletes
     (UserSession(session),EntityId(params.get("eid"))) match{
       case (Some((uid,userName)),Some(expId))=>
         delExperiment(uid, expId)
@@ -23,8 +22,7 @@ trait RestfulExperiments {
       case errors=>haltMsg()
     }
   }
-  //
-  //  //todo: test that experiment information with private flag is not available through session
+
   post("/experiments"){
     // Add a new experiments
     (UserSession(session),Name(params.get("name")),Description(params.get("description")),TimeZone(params.get("timezone")),WebUrl(params.get("website")),PictureUrl(params.get("picture")),Privacy(params.get("public_access"))) match{

@@ -250,6 +250,8 @@ Removes a registered user and all of his experiments, nodes and streams.
 
 ###POST /login###
 
+Used to login with a username and password. Note that a user must be activated before he can login.
+
 |Parameter|Required|Description|
 |---------|--------|-----------|
 |name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
@@ -453,6 +455,7 @@ Sample output of /measurements
 	    }, ...
 	]
 
+At this stage, measurements are inserted directly (manually) into MongoDB. Look into mongodb.readme to see how it is done.
 
 ##Metadata API ##
 |Resource|Method|Description|

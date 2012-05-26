@@ -32,7 +32,7 @@ trait RestfulHelpers {
   def sendSession()={
     val current:Option[ObjectId] = UserSession(session).map(_._1)
     val user:Option[ObjectId] = params.get("user").filterNot(_.trim.isEmpty).flatMap{uname=>
-      Users.findOne(MongoDBObject("name"->uname),MongoDBObject("_id"->1))
+      Users.findOne(MongoDBObject("name"->uname,"active"->true),MongoDBObject("_id"->1))
     }.flatMap(x=>x.getAs[ObjectId]("_id"))
     val fields = if (current.exists(x=>user.isEmpty || x.equals(user.get)))
       Map("password"->0)

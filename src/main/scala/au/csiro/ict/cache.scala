@@ -81,11 +81,12 @@ object Cache {
     Experiments.insert(toInsert)
     toInsert._id
   }
-  def addUser(name: String, password: String, email: String, pic: String, website: String, description: String):Option[ObjectId]= {
+  def addUser(name: String, password: String, email: String, pic: String, website: String, description: String,active:Boolean=true):Option[ObjectId]= {
     val user = MongoDBObject("name" -> name,
       "password" -> BCrypt.hashpw(password, BCrypt.gensalt()),
       "email" -> email,
       "picture" -> pic,
+      "active" -> active,
       "website" -> website,
       "description" -> description,
       "created_at" -> System.currentTimeMillis(),

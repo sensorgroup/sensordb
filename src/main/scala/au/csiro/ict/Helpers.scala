@@ -5,7 +5,6 @@ import org.joda.time.{DateTimeZone, DateTime}
 
 object Utils {
   val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD")
-  //  val isoDateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
   val yyyyFormat = DateTimeFormat.forPattern("yyyy");
   val yyyyWWFormat = DateTimeFormat.forPattern("yyyyww");
   val yyyyMMFormat = DateTimeFormat.forPattern("yyyyMM");
