@@ -1,0 +1,15 @@
+<!-- This template is used on the very first welcome page containing full page background image -->
+<img class="bg" src="i/crops.jpeg"/>
+<div id="first-page" >
+	<div class="vertical-band full-center">
+		<div class="center">
+			<div ng-repeat="u in users">
+				<a href="#/data/{{u.name}}">
+					<img rel="tooltip" title="User: {{u.name}}" src="{{u.picture}}" />
+				</a>
+			</div>
+			<h1 class="center"><img src="i/sensordb-logo.png"></h1>
+		</div>
+	</div>
+</div>
+<div ng-include src="'/p/footer.html'"></div>

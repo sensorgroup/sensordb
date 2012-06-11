@@ -1,0 +1,43 @@
+<div class="container">
+	<div class="navbar">
+		<div class="container" style="width: auto;">
+			<ul class="nav">
+				<a class="btn btn-primary" id="add-new-widget" >Add New Widget</a>
+			</ul>
+			<ul class="nav pull-right">
+				<a class="btn btn-primary" id="exit-edit-mode" >Exit Edit Mode</a>
+			</ul>
+		</div>
+	</div>
+	<% _.each(widgets,function(widget,title){%>
+	<div class="widget" id="<%=widget.html_id%>">
+		<div class="page-header">
+			<button class="btn btn-primary pull-right">Edit</button>
+			<h2 class=""><%=title%></h2>
+		</div>
+		<div class="body">
+			<div class="help">
+				<p><%=widget.description%></p>
+			</div>
+			<div class="config">
+				<form class="well">
+					<label>Configuration</label>
+					<textarea class="span11" rows="20"><%=JSON.stringify(widget.conf,undefined,2)%></textarea>
+					<button type="button" class="btn btn-success">Apply</button>
+					<button type="button" class="btn btn-warning">Discard Changes</button>
+					<button type="button" class="btn btn-info">Sample Configuration</button>
+					<button type="button" class="btn btn-danger pull-right">Remove Widget</button>
+				</form>
+				<div class="page-header">
+					<h3 class="center">Widget</h3>
+				</div>
+			</div>
+			<div class="result">
+				<div class="in-widget-config"></div>
+				<div class="widget-output"></div>
+			</div>
+		</div>
+	</div>
+	<%});%>
+</div>
+<div ng-include src="'/p/footer.html'"></div>

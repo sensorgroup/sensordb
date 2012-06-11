@@ -17,6 +17,10 @@ body {
     min-height: 100%;
 }
 
+.pad-0{
+	padding: 0px;
+}
+
 .pad-20 {
     padding: 20px 0;
 }
@@ -68,6 +72,7 @@ body {
 	padding-bottom: 10px;
 }
 
+
 .no-scrollbar{
 	overflow:hidden;
 }
@@ -84,11 +89,10 @@ img.bg {
 }
 
 div#first-page  {
-
     .vertical-band {
-        position: relative;
-        width: 100%;
-        margin: 10% auto;
+//        position: relative;
+//        width: 100%;
+//        margin: 10% auto;
         padding: 20px 0;
         #translucent > .background(@white, 0.5);
     }
@@ -98,7 +102,7 @@ div#first-page  {
         margin-right:10px;
     }
     input{
-        margin-top: 5px;
+        margin-top: 7px;
     }
     .brand{
         padding-top: 3px;
@@ -178,4 +182,12 @@ table.tablesorter thead tr {
 .input-prepend .add-on input.checkbox{
 	padding: 0px;
 	margin: 0px;
+}
+
+.error input{
+	background: @errorBackground;
+}
+.alert {
+	margin-bottom: 0;
+
 }

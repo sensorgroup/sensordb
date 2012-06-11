@@ -1,0 +1,71 @@
+<div class="container">
+	<legend><h2>Create Node</h2></legend>
+	<form action="/nodes" method="post" class="form-horizontal">
+		<fieldset>
+			<div class="control-group">
+				<label class="control-label" >Experiment</label>
+				<div class="controls">
+					<select name="experiment" class="span9">
+						<option>Experiment 1</option>
+					</select>
+					<p class="help-block">Choose the experiment which this node belongs to</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Name</label>
+				<div class="controls">
+					<input type="text" class="span9" name="name">
+					<p class="help-block">Name of this node must be unique within the selected experiment</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Description</label>
+				<div class="controls">
+					<textarea rows="5" class="span9" name="description"></textarea>
+					<p class="help-block">You can click on show source and build complex description text using standard html.<p>
+
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" >Latitude</label>
+				<div class="controls">
+					<input type="text" class="span9" name="latitude">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Longitude</label>
+				<div class="controls">
+					<input type="text" class="span9" name="longitude">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Altitude</label>
+				<div class="controls">
+					<input type="text" class="span9" name="altitude">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Picture URL</label>
+				<div class="controls">
+					<input type="text" class="span9" name="picture">
+					<p class="help-block">Simply upload your images to <a href="http://imgur.com/">Imgur</a> or <a href="http://www.dropmocks.com/">Dropmocks</a> or <a href="http://tinypic.com/">TinyPic</a> or <a href="http://minus.com/">Minus</a> or any other online image sharing service</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Website</label>
+				<div class="controls">
+					<input type="text" class="span9" name="website">
+					<p class="help-block">Public URL for more information about this experiment</p>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary btn-large">Create</button>
+				<a class="btn btn-large">Cancel</a>
+			</div>
+		</fieldset>
+		<div class="offset1">
+		</div>
+	</form>
+</div>
+<div ng-include src="'/p/footer.html'"></div>

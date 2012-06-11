@@ -1,5 +1,5 @@
 (function() {
-  var Router, SampleDatabase, WidgetStore;
+  var SampleDatabase, WidgetStore;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -9,28 +9,6 @@
     return child;
   };
   this.module("sensordb", function() {
-    var Experiment, Experiments;
-    this.show_errors = function(res) {
-      var errors;
-      errors = _.reduce((_.defaults(jQuery.parseJSON(res.responseText), {
-        "errors": []
-      }))["errors"], (function(sum, msg) {
-        return sum + ("<p>" + msg + "</p>");
-      }), "");
-      if (errors.length > 0) {
-        $(".alert-error").show().find("div.messages").html(errors);
-        return sensordb.Utils.scroll_top();
-      }
-    };
-    this.show_alert = function(selector, messages) {
-      messages = _.reduce(messages, (function(sum, msg) {
-        return sum + ("<p>" + msg + "</p>");
-      }), "");
-      if (messages.length > 0) {
-        $(selector).show().find("div.messages").html(messages);
-        return sensordb.Utils.scroll_top();
-      }
-    };
     this.LineChart = (function() {
       function LineChart(location, unit, data_provider_func) {
         var options;
@@ -70,32 +48,14 @@
           }
         };
       }
-      return LineChart;
-    })();
-    this.Utils = (function() {
-      function Utils() {}
-      Utils.editor_config = {
-        width: '700px',
-        height: 250,
-        controls: "bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " + "indent | alignleft center alignright justify | undo redo | " + "image link unlink | cut copy paste | source",
-        colors: "FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " + "CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " + "BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " + "999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " + "666 900 C60 C93 990 090 399 33F 60C 939 " + "333 600 930 963 660 060 366 009 339 636 " + "000 300 630 633 330 030 033 006 309 303",
-        fonts: "Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," + "Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
-        useCSS: false,
-        docType: '<!DOCTYPE html>',
-        docCSSFile: "",
-        bodyStyle: "margin:4px; font:10pt Arial,Verdana; cursor:text"
-      };
-      Utils.scroll_top = function() {
-        return $("body").scrollTop(0);
-      };
-      Utils.guid = function() {
+      LineChart.guid = function() {
         var S4;
         S4 = function() {
           return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
         return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
       };
-      Utils.find_in_catalog_by_stream_id = function(stream_id, catalog) {
+      LineChart.find_in_catalog_by_stream_id = function(stream_id, catalog) {
         var exp_name, experiments, node_name, nodes, s_id, stream_name, streams, user;
         for (user in catalog) {
           experiments = catalog[user];
@@ -113,7 +73,7 @@
           }
         }
       };
-      return Utils;
+      return LineChart;
     })();
     this.DataRequest = (function() {
       function DataRequest(local_info, user_id, experiment, node, stream, fields, checkCache, live, from, to) {
@@ -207,7 +167,7 @@
       Database.prototype.catalog = function(selectors) {};
       return Database;
     })();
-    this.Widget = (function() {
+    return this.Widget = (function() {
       __extends(Widget, Backbone.Events);
       function Widget(widget) {
         this.widget = widget;
@@ -224,29 +184,6 @@
         return alert('not implemented');
       };
       return Widget;
-    })();
-    Experiment = (function() {
-      __extends(Experiment, Backbone.Model);
-      function Experiment() {
-        Experiment.__super__.constructor.apply(this, arguments);
-      }
-      Experiment.prototype.defaults = function() {
-        return {
-          user_id: 123
-        };
-      };
-      Experiment.prototype.initialize = function() {};
-      Experiment.prototype.validate = function(attrs) {};
-      return Experiment;
-    })();
-    return Experiments = (function() {
-      __extends(Experiments, Backbone.Collection);
-      function Experiments() {
-        Experiments.__super__.constructor.apply(this, arguments);
-      }
-      Experiments.prototype.url = '/experiments';
-      Experiments.prototype.model = Experiment;
-      return Experiments;
     })();
   });
   WidgetStore = (function() {
@@ -472,57 +409,8 @@
     return SampleDatabase;
   })();
   window.db = new SampleDatabase();
-  window.rm = new sensordb.GroupedRequestManager(window.db);
-  Router = (function() {
-    var first_page_tpl;
-    __extends(Router, Backbone.Router);
-    function Router() {
-      Router.__super__.constructor.apply(this, arguments);
-    }
-    Router.prototype.routes = {
-      "": "home",
-      "analysis/:user/:name": "analysis",
-      "experiments/create": "create_experiment",
-      "nodes/create": "create_node",
-      "streams/create": "create_stream",
-      "data/:user": "data_page",
-      "data/:user/:experiment": "data_page",
-      "data/:user/:experiment/:stream": "data_page",
-      "data/:user/:experiment/:stream/:node": "data_page",
-      "register": "register",
-      "test": "test",
-      '*path': 'error404'
-    };
-    Router.prototype.session = function(callback_func) {
-      var session_name;
-      if (_.isUndefined(callback_func)) {
-        return;
-      }
-      session_name = "sdb-session";
-      if (_.isNull(lscache.get(session_name)) || _.isEmpty(lscache.get(session_name))) {
-        return $.ajax({
-          type: 'get',
-          url: '/session',
-          success: (function(res) {
-            var session_info;
-            session_info = jQuery.parseJSON(res);
-            lscache.set(session_name, session_info);
-            return callback_func(session_info);
-          }),
-          error: (function(errors) {
-            sensordb.show_errors(errors);
-            return callback_func({});
-          })
-        });
-      } else {
-        return callback_func(lscache.get(session_name));
-      }
-    };
-    Router.prototype.default_route = function() {
-      return this.navigate("/#");
-    };
-    first_page_tpl = "#tpl-first-page";
-    Router.prototype.layout = function(template_id, template_params, callback_func) {
+  window.rm = new sensordb.GroupedRequestManager(window.db)({
+    layout: function(template_id, template_params, callback_func) {
       if (template_params == null) {
         template_params = {};
       }
@@ -550,8 +438,8 @@
         sensordb.Utils.scroll_top();
         return callback_func(session);
       });
-    };
-    Router.prototype.register = function() {
+    },
+    register: function() {
       return this.layout("#tpl-register", {}, function() {
         $("body textarea").cleditor(sensordb.Utils.editor_config);
         return $("#registration a.btn-primary").click(function() {
@@ -566,8 +454,8 @@
           });
         });
       });
-    };
-    Router.prototype.parallel_requests = function(requests, callback) {
+    },
+    parallel_requests: function(requests, callback) {
       var done, to_return;
       done = _.size(requests);
       to_return = {};
@@ -585,8 +473,8 @@
           }
         }));
       });
-    };
-    Router.prototype.data_page = function(username) {
+    },
+    data_page: function(username) {
       return $.ajax({
         type: "get",
         url: "/session",
@@ -602,8 +490,8 @@
           });
         }, this)
       });
-    };
-    Router.prototype.analysis = function(user, name) {
+    },
+    analysis: function(user, name) {
       var widgets;
       widgets = db.analysis(user)[name];
       _.each(widgets, function(value) {
@@ -619,107 +507,6 @@
       return this.layout("#tpl-analysis", {
         widgets: widgets
       });
-    };
-    Router.prototype.home = function() {
-      return $.ajax({
-        type: "get",
-        url: "/users",
-        dataType: "json",
-        success: __bind(function(users) {
-          return this.layout(first_page_tpl, {
-            users: users
-          }, function(session) {
-            $("[rel=tooltip]").tooltip();
-            return $("a [rel=tooltip]").click(function() {
-              return $(this).tooltip('hide');
-            });
-          });
-        }, this)
-      });
-    };
-    Router.prototype.create_experiment = function() {
-      return this.layout("#tpl-experiment-create", {}, function() {
-        $("body textarea").cleditor(sensordb.Utils.editor_config);
-        return $(".container form").ajaxForm(function() {
-          return alert("Thank you for your comment!");
-        });
-      });
-    };
-    Router.prototype.create_node = function() {
-      return this.layout("#tpl-node-create", {}, function() {
-        $("body textarea").cleditor(sensordb.Utils.editor_config);
-        return $(".container form").ajaxForm(function() {
-          return alert("Thank you for your comment!");
-        });
-      });
-    };
-    Router.prototype.create_stream = function() {
-      return this.layout("#tpl-stream-create", {}, function() {
-        $("body textarea").cleditor(sensordb.Utils.editor_config);
-        return $(".container form").ajaxForm(function() {
-          return alert("Thank you for your comment!");
-        });
-      });
-    };
-    Router.prototype.error404 = function(path) {
-      return this.layout("#tpl-404", {
-        path: path
-      });
-    };
-    return Router;
-  })();
-  $(function() {
-    $.ajaxSetup({
-      beforeSend: function() {
-        return $('.ajax-loading img').show();
-      },
-      complete: function() {
-        return $('.ajax-loading img').hide();
-      }
-    });
-    window.routes = new Router();
-    Backbone.history.start({
-      pushState: false,
-      root: "/"
-    });
-    $("body").on("click", "a#login-btn", function(e) {
-      var credentials;
-      credentials = {
-        name: $("#login-name").val(),
-        password: $("#login-password").val()
-      };
-      return $.ajax({
-        type: 'post',
-        url: '/login',
-        data: credentials,
-        success: (function(res) {
-          return window.routes.session(function(s) {
-            $("body div#navigation").html(_.template($("#navbar-tpl").html(), {
-              session: s
-            }));
-            return sensordb.show_alert(".alert-success", ["Logged in successfully"]);
-          });
-        }),
-        error: function(errors) {
-          return sensordb.show_errors(errors);
-        }
-      });
-    });
-    return $("body").on("click", "a#logout-btn", function(e) {
-      return $.ajax({
-        type: 'post',
-        url: '/logout',
-        success: function() {
-          lscache.flush();
-          return window.routes.session(function(s) {
-            console.log(s);
-            $("body div#navigation").html(_.template($("#navbar-tpl").html(), {
-              session: s
-            }));
-            return sensordb.show_alert(".alert-success", ["Logged out successfully"]);
-          });
-        }
-      });
-    });
+    }
   });
 }).call(this);

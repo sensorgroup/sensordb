@@ -4190,6 +4190,9 @@ body {
   padding: 0;
   min-height: 100%;
 }
+.pad-0 {
+  padding: 0px;
+}
 .pad-20 {
   padding: 20px 0;
 }
@@ -4252,9 +4255,6 @@ img.bg {
   left: 0;
 }
 div#first-page .vertical-band {
-  position: relative;
-  width: 100%;
-  margin: 10% auto;
   padding: 20px 0;
   background-color: rgba(255, 255, 255, 0.5);
 }
@@ -4262,7 +4262,7 @@ div#first-page .vertical-band {
   margin-right: 10px;
 }
 .navbar-fixed-top.navbar input {
-  margin-top: 5px;
+  margin-top: 7px;
 }
 .navbar-fixed-top.navbar .brand {
   padding-top: 3px;
@@ -4361,4 +4361,10 @@ table.tablesorter thead tr .headerSortUp {
 .input-prepend .add-on input.checkbox {
   padding: 0px;
   margin: 0px;
+}
+.error input {
+  background: #f2dede;
+}
+.alert {
+  margin-bottom: 0;
 }

@@ -1,0 +1,110 @@
+<div ng-controller="HeaderCtrl">
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner" >
+			<div class="container" style="width: auto;">
+				<a class="ajax-loading"><img src="i/loading.gif" class="hide"/></a>
+				<a class="brand" href="/"><img src="i/sensordb-logo.png"></a>
+				<ul class="nav">
+					<li>
+						<a href="#">Home</a>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#">Profile</a>
+							</li>
+							<li>
+								<a href="#">Data</a>
+							</li>
+							<li>
+								<a href="#">Analysis</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Data</a>
+						<ul class="dropdown-menu">
+							<li><a href="#/create/experiment">New Experiment</a></li>
+							<li><a href="#/create/node">New Node</a></li>
+							<li><a href="#/create/stream">New Stream</a></li>
+							<li class="divider"></li>
+							<li><a href="#/data/{{username}}"><i class="icon-th"></i> Data Explorer</a></li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{"Analysis"}}</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#/experiment/">Yanco</a>
+							</li>
+							<li>
+								<a href="#/experiment/">Western Australia Rainy Season Data Analysis 2010 Visualized</a>
+							</li>
+							<li>
+								<a href="#/experiment/">Deployment Sample</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#register">Register</a>
+					</li>
+					<li>
+						<a href="http://github.com/alisalehi/sensordb">About</a>
+					</li>
+				</ul>
+				<ul class="pull-right nav">
+					<ul class="nav hide" ng-show="loggedIn">
+						<li class="no-margin" >
+							<div class="no-margin">
+								<a class="btn btn-primary" id="logout-btn" >Logout</a>
+							</div>
+						</li>
+					</ul>
+					<form class=" form-inline"  ng-hide="loggedIn" >
+						<ul class="nav">
+							<li>
+								<input class="span2 focused" id="login-name" type="text" value="Username">
+							</li>
+						</ul>
+						<ul class="nav">
+							<li>
+								<input class="span2 focused" id="login-password" type="password" value="Password">
+							</li>
+						</ul>
+						<ul class="nav">
+							<li  >
+								<div>
+									<a class="btn btn-primary" id="login-btn" >Login</a>
+								</div>
+							</li>
+						</ul>
+					</form>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="pad-20"></div>
+	<!-- Error Message dialog  -->
+	<div id="error-messages" class="no-margin" ng-show="error_messages" >
+		<div class="alert alert-error no-round-corner"  style="width: auto;">
+			<ul class="container" ng-repeat="m in error_messages">
+				<li>
+					{{m}}
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Success Message dialog  -->
+	<div id="success-messages"  class="pad-0" ng-show="success_messages">
+		<div class="alert alert-success no-round-corner"  style="width: auto; margin-bottom: 0px;">
+			<ul class="container" ng-repeat="m in success_messages">
+				<li>
+					{{m}}
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

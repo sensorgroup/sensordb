@@ -1,0 +1,113 @@
+<div class="container">
+	<legend><h2>Registration Form</h2></legend>
+	<form method="post" id="registration" class="form-horizontal">
+		<fieldset>
+			<div class="control-group">
+				<label class="control-label">Name</label>
+				<div class="controls">
+					<input type="text" class="span9" name="name">
+					<p class="help-block">You username must be unique and have at least 3 characters</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" >Password</label>
+				<div class="controls">
+					<input type="password" class="span9" name="password">
+					<p class="help-block">You password must have at least 6 characters</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Email</label>
+				<div class="controls">
+					<input type="text" class="span9" name="email">
+					<p class="help-block">You email must not be previously registered and will be used to reset your password</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Description</label>
+				<div class="controls">
+					<textarea rows="5" class="span9" name="description"></textarea>
+					<p class="help-block">You can click on show source and build complex description text using standard html.<p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Picture URL</label>
+				<div class="controls">
+					<input type="text" class="span9" name="picture">
+					<p class="help-block">Simply upload your images to <a href="http://imgur.com/">Imgur</a> or <a href="http://www.dropmocks.com/">Dropmocks</a> or <a href="http://tinypic.com/">TinyPic</a> or <a href="http://minus.com/">Minus</a> or any other online image sharing service</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Website</label>
+				<div class="controls">
+					<input type="text" class="span9" name="website">
+					<p class="help-block">Public URL for more information about this user</p>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Timezone</label>
+				<div class="controls">
+					<select name="timezone" class="span9">
+						<option value="-1200">UTC -12:00</option>
+						<option value="-1130">UTC -11:30</option>
+						<option value="-1100">UTC -11:00</option>
+						<option value="-1030">UTC -10:30</option>
+						<option value="-1000">UTC -10:00</option>
+						<option value="-930">UTC -9:30</option>
+						<option value="-900">UTC -9:00</option>
+						<option value="-830">UTC -8:30</option>
+						<option value="-800">UTC -8:00</option>
+						<option value="-730">UTC -7:30</option>
+						<option value="-700">UTC -7:00</option>
+						<option value="-630">UTC -6:30</option>
+						<option value="-600">UTC -6:00</option>
+						<option value="-530">UTC -5:30</option>
+						<option value="-500">UTC -5:00</option>
+						<option value="-430">UTC -4:30</option>
+						<option value="-400">UTC -4:00</option>
+						<option value="-330">UTC -3:30</option>
+						<option value="-300">UTC -3:00</option>
+						<option value="-230">UTC -2:30</option>
+						<option value="-200">UTC -2:00</option>
+						<option value="-130">UTC -1:30</option>
+						<option value="-100">UTC -1:00</option>
+						<option value="-030">UTC -0:30</option>
+						<option value="000" selected>UTC 0:00</option>
+						<option value="030">UTC 0:30</option>
+						<option value="100">UTC 1:00</option>
+						<option value="130">UTC 1:30</option>
+						<option value="200">UTC 2:00</option>
+						<option value="230">UTC 2:30</option>
+						<option value="300">UTC 3:00</option>
+						<option value="330">UTC 3:30</option>
+						<option value="400">UTC 4:00</option>
+						<option value="430">UTC 4:30</option>
+						<option value="500">UTC 5:00</option>
+						<option value="530">UTC 5:30</option>
+						<option value="600">UTC 6:00</option>
+						<option value="630">UTC 6:30</option>
+						<option value="700">UTC 7:00</option>
+						<option value="730">UTC 7:30</option>
+						<option value="800">UTC 8:00</option>
+						<option value="830">UTC 8:30</option>
+						<option value="900">UTC 9:00</option>
+						<option value="930">UTC 9:30</option>
+						<option value="1000">UTC 10:00</option>
+						<option value="1030">UTC 10:30</option>
+						<option value="1100">UTC 11:00</option>
+						<option value="1130">UTC 11:30</option>
+						<option value="1200">UTC 12:00</option>
+					</select>
+					<p class="help-block">Timezone information is used to correctly display time series data</p>
+				</div>
+			</div>
+			<div class="form-actions">
+				<a class="btn btn-primary btn-large">Register My Interest</a>
+				<p class="pad-10">SensorDB is free but it is in beta stage with invitation only accounts. To <strong>activate</strong> your account, send us an email to <strong>david.deery@csiro.au</strong> with information about your project and why should we enable your account.</p>
+			</div>
+		</fieldset>
+		<div class="offset1">
+		</div>
+	</form>
+</div>
+<div ng-include src="'/p/footer.html'"></div>

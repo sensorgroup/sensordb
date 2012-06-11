@@ -1,0 +1,201 @@
+<div class="container data-page" ng-cloak>
+	<div class="modal hide" id="download-modal">
+		<div class="modal-header">
+			<button class="close" data-dismiss="modal">×</button>
+			<h3>Data Download</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal">
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label" >Experiment</label>
+						<div class="controls">
+							<select id="experiment" class="span4">
+								<option ng-repeat="e in experiment_names">{{e}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Node</label>
+						<div class="controls">
+							<select id="node" class="span4">
+								<option>All Nodes</option>
+								<option ng-repeat="n in node_names">{{n}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" >Stream</label>
+						<div class="controls">
+							<select id="stream" class="span4">
+								<option>All Streams</option>
+								<option ng-repeat="s in stream_names">{{s}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" >From</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on"><input class="checkbox" type="checkbox" ng-model="from_ts_checkbox" /></span><input id="from-ts" class="input-xlarge" type="text" disabled ng-disabled="!from_ts_checkbox"/>
+							</div>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label" >To</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on"><input class="checkbox"  ng-model="to_ts_checkbox" type="checkbox" /></span><input id="to-ts" class="input-xlarge" type="text" disabled ng-disabled="!to_ts_checkbox">
+							</div>
+						</div>
+					</div>
+
+				</fieldset>
+			</form>
+		</div>
+		<div class="modal-footer">
+			<a class="btn btn-primary">Download</a>
+			<a class="btn" data-dismiss="modal">Close</a>
+		</div>
+	</div>
+	<div class="description">
+		<div class="page-header">
+			<div class="btn-group pull-right">
+				<a class="btn"  data-toggle="modal" href="#download-modal"><i class="icon-download-alt"></i> Download</a>
+				<a class="btn"><i class="icon-tags"></i> Hide Metadata</a>
+
+				<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="#"><i class="icon-barcode"></i> Show/Generate Token</a></li>
+					<li><a href="#" data-toggle="modal" data-target="#add-metadata-modal"><i class="icon-tag"></i> Set Metadata</a></li>
+					<li><a href="#"><i class="icon-remove"></i> Remove Metadata</a></li>
+					<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+					<li><a href="#"><i class="icon-trash"></i> Remove</a></li>
+				</ul>
+			</div><!-- /btn-group -->
+			<h3 class="pad-bottom-10 "><a href="#data/sample1">Sample1</a> &raquo; <a href="#data/sample1/experiment1">Experiment1</a> &raquo; <a href="#data/sample1/experiment1/node1">Node 1</a> &raquo; <a href="#data/sample1/experiment1/node1/stream1">Stream 1</a> </h3>
+		</div>
+		<div class="row">
+			<div class="span9">
+				<div class="row caption">
+					<p class="center span9">Plot for <strong><span class="from_timestamp">12/2/2003</span></strong> until <strong><span class="to_timestamp">10/3/2009</span></strong><a class="reset-zoom btn pull-right">Reset Zoom</a></p>
+				</div>
+				<div class="flot" style="height:210px;width:650px;"></div>
+			</div>
+
+			<div class="span3">
+				<table class="table table-bordered" id="properties">
+					<tbody>
+					<tr><td>Owner</td><td>Ali</td></tr>
+					<tr><td>Nodes</td><td>34</td></tr>
+					<tr><td>Streams</td><td>492</td></tr>
+					<tr><td>Streams</td><td>492</td></tr>
+					<tr><td>Streams</td><td>492</td></tr>
+					<tr><td>Elements</td><td>492</td></tr>
+					<tr><td>Updated</td><td>135 minutes ago</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="metadata pad-10">
+		<!--<h3 class="">Metadata Explorer [Show]</h3>-->
+		<div class="row">
+			<div class="span12">
+				<table class="table no-margin" ng-show="metadata" >
+					<thead>
+					<tr>
+						<th>Name</th>
+						<th>Value</th>
+						<th>Effective From</th>
+						<th>Effective Until</th>
+						<th>Created By</th>
+						<th>Created At</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="m in metadata">
+						<td>{{m.name}}</td>
+						<td>{{m.value}}</td>
+						<td>{{m.from}}</td>
+						<td>{{m.to}}</td><!--18:30 on 12/02/2010-->
+						<td>{{m.update_by}}</td>
+						<td>{{m.update_at}</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<hr/>
+	<div>
+		<form class="form-horizontal">
+			<h3 class="pull-left span2 no-left-margin">Filters</h3>
+			<div class="btn-toolbar" style="margin-top: 18px;">
+				<div class="btn-group filter-selector" >
+					<a class="btn dropdown-toggle " data-toggle="dropdown"><span class="btn-label">Choose an Experiment</span> <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li ng-repeat="e in experiment_names"><a href="">{{e}}</a></li>
+					</ul>
+				</div><!-- /btn-group -->
+				<div class="btn-group filter-selector">
+					<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="btn-label">All Nodes</span> <span class="caret"></span></a>
+					<ul  class="dropdown-menu">
+						<li><a href="">All Nodes</a></li>
+						<li class="divider"></li>
+						<li ng-repeat="n in node_names"><a href="">{{n}}</a></li>
+					</ul>
+				</div><!-- /btn-group -->
+				<div class="btn-group filter-selector" >
+					<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="btn-label">All Streams</span>  <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="">All Streams</a></li>
+						<li class="divider"></li>
+						<li ng-repeat="s in stream_names"><a href="">{{s}}</a></li>
+					</ul>
+				</div><!-- /btn-group -->
+				<div class="btn-group pull-right" data-toggle="buttons-radio">
+					<button class="btn active">Today</button>
+					<button class="btn">7d</button>
+					<button class="btn">30d</button>
+					<button class="btn">1q</button>
+					<button class="btn">1y</button>
+					<button class="btn">All</button>
+				</div>
+			</div>
+		</form>
+		<table class="table table-bordered table-striped tablesorter" id="data-table">
+			<thead>
+			<tr>
+				<th>Experiment</th>
+				<th>Node</th>
+				<th>Stream</th>
+				<th>Count</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>StDev</th>
+				<th>Avg</th>
+				<th>Last Value</th>
+				<th>Last Timestamp</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td><a>Yanco Experiment 2</a></td>
+				<td><a>Janz [Irrigated]</a></td>
+				<td><a>Temperature</a></td>
+				<td>24,541</td>
+				<td>-10.231</td>
+				<td>43.654</td>
+				<td>3.432</td>
+				<td>17.342</td>
+				<td>19.342</td>
+				<td>25 minutes ago</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div ng-include src="'/p/footer.html'"></div>

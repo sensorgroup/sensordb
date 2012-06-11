@@ -1,14 +1,4 @@
 @module "sensordb", ->
-	@show_errors = (res) ->
-		errors = _.reduce((_.defaults(jQuery.parseJSON(res.responseText),{"errors":[]}))["errors"],((sum,msg)->sum+"<p>#{msg}</p>"),"")
-		if (errors.length>0)
-			$(".alert-error").show().find("div.messages").html(errors)
-			sensordb.Utils.scroll_top()
-	@show_alert = (selector,messages) ->
-		messages = _.reduce(messages,((sum,msg)->sum+"<p>#{msg}</p>"),"")
-		if (messages.length>0)
-			$(selector).show().find("div.messages").html(messages)
-			sensordb.Utils.scroll_top()
 	class @LineChart
 		constructor: (@location,@unit,@data_provider_func) ->
 			@elem = $(location)
@@ -63,28 +53,7 @@
 #			@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
 #			@elem.find(".caption").show()
 
-	class @Utils
-		@editor_config=
-			width:'700px'
-			height:250
-			controls:"bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " +
-			"indent | alignleft center alignright justify | undo redo | " +
-			"image link unlink | cut copy paste | source",
-			colors:"FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " +
-			"CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " +
-			"BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " +
-			"999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " +
-			"666 900 C60 C93 990 090 399 33F 60C 939 " +
-			"333 600 930 963 660 060 366 009 339 636 " +
-			"000 300 630 633 330 030 033 006 309 303",
-			fonts:"Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," +
-			"Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
-			useCSS:false,
-			docType:'<!DOCTYPE html>',
-			docCSSFile:"",
-			bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
 
-		@scroll_top = -> $("body").scrollTop(0)
 		@guid= ->
 			S4 = -> (((1+Math.random())*0x10000)|0).toString(16).substring(1)
 			(S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
@@ -150,19 +119,6 @@
 		process_config: (new_conf)->
 
 		sample_config: -> alert('not implemented')
-
-	class Experiment extends Backbone.Model
-		defaults: () ->
-			user_id:123
-
-		initialize: ()->
-
-		validate:(attrs)->
-
-	class Experiments extends Backbone.Collection
-		url: '/experiments'
-		model:Experiment
-
 
 class WidgetStore
 	constructor: ->
@@ -322,40 +278,6 @@ class SampleDatabase extends sensordb.Database
 window.db = new SampleDatabase()
 window.rm = new sensordb.GroupedRequestManager(window.db)
 
-class Router extends Backbone.Router
-	routes:
-		"": "home"
-		"analysis/:user/:name" : "analysis"
-		"experiments/create" : "create_experiment"
-		"nodes/create" : "create_node"
-		"streams/create" : "create_stream"
-		"data/:user" : "data_page"
-		"data/:user/:experiment" : "data_page"
-		"data/:user/:experiment/:stream" : "data_page"
-		"data/:user/:experiment/:stream/:node" : "data_page"
-		"register" : "register"
-		"test":"test"
-		'*path':  'error404'
-
-	session: (callback_func)->
-		return if _.isUndefined(callback_func)
-		session_name="sdb-session"
-		if _.isNull(lscache.get(session_name)) || _.isEmpty(lscache.get(session_name))
-			$.ajax({type:'get', url:'/session',success:((res)->
-				session_info =jQuery.parseJSON(res)
-				lscache.set(session_name,session_info)
-				callback_func(session_info)
-			),error:((errors)->
-				sensordb.show_errors(errors)
-				callback_func({})
-			)})
-		else
-			callback_func(lscache.get(session_name))
-
-	default_route: -> @navigate("/#")
-
-	first_page_tpl = "#tpl-first-page"
-
 	layout:(template_id,template_params={},callback_func=(session)->{})->
 		@session (session)->
 			session ||={}
@@ -405,50 +327,3 @@ class Router extends Backbone.Router
 					alert("Failed! Loading widget #{value.handler}")
 
 		@layout("#tpl-analysis", {widgets})
-
-	home: ()->
-		$.ajax type:"get", url:"/users" , dataType:"json", success:(users)=>
-			@layout first_page_tpl,{users},(session)->
-				$("[rel=tooltip]").tooltip()
-				$("a [rel=tooltip]").click(->$(this).tooltip('hide')) # this is required for single page apps as page rewrite even is not received by tooltip
-
-	create_experiment: () ->
-		@layout "#tpl-experiment-create", {},()->
-			$("body textarea").cleditor(sensordb.Utils.editor_config)
-			$(".container form").ajaxForm ->
-				alert("Thank you for your comment!")
-
-	create_node: () ->
-		@layout "#tpl-node-create",{},()->
-			$("body textarea").cleditor(sensordb.Utils.editor_config)
-			$(".container form").ajaxForm ->
-				alert("Thank you for your comment!")
-	create_stream: () ->
-		@layout "#tpl-stream-create",{},()->
-			$("body textarea").cleditor(sensordb.Utils.editor_config)
-			$(".container form").ajaxForm ->
-				alert("Thank you for your comment!")
-
-	error404: (path) -> @layout("#tpl-404",{path})
-
-$ () ->
-	$.ajaxSetup
-		beforeSend: -> $('.ajax-loading img').show()
-		complete: -> $('.ajax-loading img').hide()
-
-	window.routes = new Router()
-	Backbone.history.start({pushState:false, root: "/"})
-	$("body").on "click","a#login-btn",(e)->
-		credentials = name:$("#login-name").val() , password:$("#login-password").val()
-		$.ajax type:'post', url:'/login', data:credentials , success:((res)->
-			window.routes.session (s) ->
-				$("body div#navigation").html((_.template($("#navbar-tpl").html(),{session:s})))
-				sensordb.show_alert(".alert-success",["Logged in successfully"])
-		) , error:(errors)->sensordb.show_errors(errors)
-	$("body").on "click","a#logout-btn",(e)->
-		$.ajax type:'post',url:'/logout' , success:()->
-			lscache.flush()
-			window.routes.session (s) ->
-				console.log(s)
-				$("body div#navigation").html((_.template($("#navbar-tpl").html(),{session:s})))
-				sensordb.show_alert(".alert-success",["Logged out successfully"])
