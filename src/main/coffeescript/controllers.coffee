@@ -38,16 +38,6 @@ class SDB
 			docCSSFile:""
 			bodyStyle:"margin:4px; font:10pt Arial,Verdana; cursor:text"
 
-		@SessionFor: ($rootScope,user,callback) ->
-			session = (lscache.get(SDB.SDB_SESSION_NAME)||{})[user]
-			if (session?.user?.name)
-				callback && callback(session)
-			else
-				$.ajax type:'get', url:'/session',data:(if user then {'user':user} else {}), success: (res)->
-					msg = jQuery.parseJSON(res)
-					$rootScope.$broadcast(SDB.SESSION_INFO,msg)
-					callback && callback(msg)
-
 apply_tooltips = ()->
 	$("a [rel=tooltip]").tooltip()
 	$("a [rel=tooltip]").click(->$(this).tooltip('hide')) # this is required for single page apps as page rewrite even is not received by tooltip
@@ -65,11 +55,12 @@ window.HomeCtrl = ($scope, $location,$routeParams,$cookies,$resource,$timeout) -
 
 window.AnalysisCtrl = ($scope, $location,$routeParams) ->
 
-window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams) ->
+window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 	user = $routeParams['username']
 	$scope.user = user
 
-	sensordb.Utils.SessionFor $rootScope,user, (session)->
+	((lscache.get(SDB.SDB_SESSION_NAME)||{})[user]) || $resource('/session',(if user then {'user':user} else {})).get (session)->
+		$rootScope.$broadcast(SDB.SESSION_INFO,session)
 		$scope.experiments = session.experiments
 		$scope.nodes = session.nodes
 		$scope.streams = session.streams
@@ -78,14 +69,16 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams) ->
 		$scope.node_names = _.uniq(_.map(session.nodes,(e)->e.name))
 		$scope.stream_names = _.uniq(_.map(session.streams,(e)->e.name))
 
-		$(".filter-selector").on 'click' , (e)->
-			src = $(e.srcElement)
-			newSelection = src.text()
-			parent = src.parents(".btn-group").find(".btn-label")
-			oldSelection = parent.text()
-			if (oldSelection isnt newSelection)
-				parent.text(newSelection)
 
+
+
+	$(".filter-selector").on 'click' , (e)->
+		src = $(e.srcElement)
+		newSelection = src.text()
+		parent = src.parents(".btn-group").find(".btn-label")
+		oldSelection = parent.text()
+		if (oldSelection isnt newSelection)
+			parent.text(newSelection)
 
 window.ExperimentCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)
@@ -99,8 +92,8 @@ window.StreamCreateCtrl = ($scope,$location, $routeParams,$timeout) ->
 window.Err404Ctrl = ($scope) ->
 	$scope.url=window.location.href
 
-window.HeaderCtrl = ($scope,$rootScope,$cookies,$timeout)->
-	sensordb.Utils.SessionFor($rootScope)
+window.HeaderCtrl = ($scope,$rootScope,$cookies,$timeout,$resource)->
+	$resource('/session').get (session)->	$rootScope.$broadcast(SDB.SESSION_INFO,session)
 
 	$scope.$on SDB.CLEAR_ALERT_MESSAGE, -> $timeout((()->$scope.success_messages=$scope.error_messages=undefined),1500)
 
@@ -136,13 +129,13 @@ window.HeaderCtrl = ($scope,$rootScope,$cookies,$timeout)->
 			$scope.username =session?.user?.name
 			lscache.set(SDB.USER_NAME,session?.user?.name)
 		$scope.loggedIn = lscache.get(SDB.USER_NAME)
-		$scope.$apply()
 
 	$scope.$on SDB.INVALIDATE_SESSION, ()->
 		lscache.flush()
 
 	$("body").on "click","a#login-btn",(e)->
 		credentials = {name:$("#login-name").val(), password:$("#login-password").val()}
+
 		$.ajax type:'post', url:'/login', data:credentials , success:((res)->
 			session_info =jQuery.parseJSON(res)
 

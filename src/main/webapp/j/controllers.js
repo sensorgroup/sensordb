@@ -37,27 +37,6 @@
         docCSSFile: "",
         bodyStyle: "margin:4px; font:10pt Arial,Verdana; cursor:text"
       };
-      Utils.SessionFor = function($rootScope, user, callback) {
-        var session, _ref;
-        session = (lscache.get(SDB.SDB_SESSION_NAME) || {})[user];
-        if ((session != null ? (_ref = session.user) != null ? _ref.name : void 0 : void 0)) {
-          return callback && callback(session);
-        } else {
-          return $.ajax({
-            type: 'get',
-            url: '/session',
-            data: (user ? {
-              'user': user
-            } : {}),
-            success: function(res) {
-              var msg;
-              msg = jQuery.parseJSON(res);
-              $rootScope.$broadcast(SDB.SESSION_INFO, msg);
-              return callback && callback(msg);
-            }
-          });
-        }
-      };
       return Utils;
     })();
   });
@@ -78,11 +57,14 @@
     });
   };
   window.AnalysisCtrl = function($scope, $location, $routeParams) {};
-  window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams) {
+  window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
     var user;
     user = $routeParams['username'];
     $scope.user = user;
-    return sensordb.Utils.SessionFor($rootScope, user, function(session) {
+    (lscache.get(SDB.SDB_SESSION_NAME) || {})[user] || $resource('/session', (user ? {
+      'user': user
+    } : {})).get(function(session) {
+      $rootScope.$broadcast(SDB.SESSION_INFO, session);
       $scope.experiments = session.experiments;
       $scope.nodes = session.nodes;
       $scope.streams = session.streams;
@@ -92,19 +74,19 @@
       $scope.node_names = _.uniq(_.map(session.nodes, function(e) {
         return e.name;
       }));
-      $scope.stream_names = _.uniq(_.map(session.streams, function(e) {
+      return $scope.stream_names = _.uniq(_.map(session.streams, function(e) {
         return e.name;
       }));
-      return $(".filter-selector").on('click', function(e) {
-        var newSelection, oldSelection, parent, src;
-        src = $(e.srcElement);
-        newSelection = src.text();
-        parent = src.parents(".btn-group").find(".btn-label");
-        oldSelection = parent.text();
-        if (oldSelection !== newSelection) {
-          return parent.text(newSelection);
-        }
-      });
+    });
+    return $(".filter-selector").on('click', function(e) {
+      var newSelection, oldSelection, parent, src;
+      src = $(e.srcElement);
+      newSelection = src.text();
+      parent = src.parents(".btn-group").find(".btn-label");
+      oldSelection = parent.text();
+      if (oldSelection !== newSelection) {
+        return parent.text(newSelection);
+      }
     });
   };
   window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
@@ -119,8 +101,10 @@
   window.Err404Ctrl = function($scope) {
     return $scope.url = window.location.href;
   };
-  window.HeaderCtrl = function($scope, $rootScope, $cookies, $timeout) {
-    sensordb.Utils.SessionFor($rootScope);
+  window.HeaderCtrl = function($scope, $rootScope, $cookies, $timeout, $resource) {
+    $resource('/session').get(function(session) {
+      return $rootScope.$broadcast(SDB.SESSION_INFO, session);
+    });
     $scope.$on(SDB.CLEAR_ALERT_MESSAGE, function() {
       return $timeout((function() {
         return $scope.success_messages = $scope.error_messages = void 0;
@@ -159,8 +143,7 @@
         $scope.username = session != null ? (_ref3 = session.user) != null ? _ref3.name : void 0 : void 0;
         lscache.set(SDB.USER_NAME, session != null ? (_ref4 = session.user) != null ? _ref4.name : void 0 : void 0);
       }
-      $scope.loggedIn = lscache.get(SDB.USER_NAME);
-      return $scope.$apply();
+      return $scope.loggedIn = lscache.get(SDB.USER_NAME);
     });
     $scope.$on(SDB.INVALIDATE_SESSION, function() {
       return lscache.flush();
