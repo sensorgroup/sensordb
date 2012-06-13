@@ -53,7 +53,7 @@ object Validators {
   def Description(value:Option[String]):Option[String]=value.map(x=>sanitize(x.trim())).orElse(EMPTY_STR)
 
   def Name(value:Option[String])(implicit validator:Validator)=value.flatMap{v=>
-    if (!isAlphanumericSpace(v))
+    if (!NAME_REGEX(v))
       validator.addError("Name is not valid")
     else if (!isInRange(v.size,3,30))
       validator.addError("Name must have 3 to 30 characters")
@@ -62,6 +62,7 @@ object Validators {
   }
 
   val METADATA_NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_\s]{0,29}""".r.pattern.matcher(_:String).matches()
+  val NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_\-\.\s]{0,29}""".r.pattern.matcher(_:String).matches()
 
   def PatternMatch(value:Option[String],pattern:(String)=>Boolean)(implicit validator:Validator)=value.orElse(validator.addError( "Name is missing")).flatMap{v=>
     if (!isInRange(v.size,1,30))

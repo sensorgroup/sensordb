@@ -298,7 +298,7 @@ Note: Upon successful registration, the user is automatically logs in (no separa
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric)
+|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
 |timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]
 |description|No|Description of this experiment, limited HTML allowed
 |website|No|A URL for a website containing more information about this experiment
@@ -340,7 +340,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of the node, must be unique within a experiment, 3 to 30 characters (alphanumeric)
+|name|Yes|Name of the node, must be unique within a experiment, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
 |eid|Yes| Experiment Id which this node belongs to
 |description|No|Description of this experiment, limited HTML is allowed
 |website|No|A URL for a website containing more information about this experiment
@@ -386,7 +386,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of the stream, must be unique within a node, 3 to 30 characters (alphanumeric)
+|name|Yes|Name of the stream, must be unique within a node, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
 |nid|Yes|Parent node id
 |description|No|Description of this stream, limited HTML is allowed
 |website|No|A URL for a website containing more information about this stream

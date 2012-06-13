@@ -58,36 +58,89 @@
   };
   window.AnalysisCtrl = function($scope, $location, $routeParams) {};
   window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
-    var user;
+    var apply_selection_filters, user;
     user = $routeParams['username'];
     $scope.user = user;
     (lscache.get(SDB.SDB_SESSION_NAME) || {})[user] || $resource('/session', (user ? {
       'user': user
     } : {})).get(function(session) {
       $rootScope.$broadcast(SDB.SESSION_INFO, session);
+      $scope.session = session;
       $scope.experiments = session.experiments;
       $scope.nodes = session.nodes;
       $scope.streams = session.streams;
       $scope.experiment_names = _.uniq(_.map(session.experiments, function(e) {
         return e.name;
       }));
-      $scope.node_names = _.uniq(_.map(session.nodes, function(e) {
-        return e.name;
+      $scope.node_names = _.uniq(_.map(session.nodes, function(n) {
+        return n.name;
       }));
-      return $scope.stream_names = _.uniq(_.map(session.streams, function(e) {
-        return e.name;
+      return $scope.stream_names = _.uniq(_.map(session.streams, function(s) {
+        return s.name;
       }));
     });
-    return $(".filter-selector").on('click', function(e) {
-      var newSelection, oldSelection, parent, src;
+    $(".filter-selector").on('click', function(e) {
+      var newSelection, oldSelection, parent, selected_exp, selected_node, selected_stream, src;
       src = $(e.srcElement);
       newSelection = src.text();
       parent = src.parents(".btn-group").find(".btn-label");
       oldSelection = parent.text();
       if (oldSelection !== newSelection) {
-        return parent.text(newSelection);
+        parent.text(newSelection);
+        selected_stream = _.filter([$("#stream-filter .btn-label").text()], function(i) {
+          return i !== "All Streams";
+        })[0];
+        selected_node = _.filter([$("#node-filter .btn-label").text()], function(i) {
+          return i !== "All Nodes";
+        })[0];
+        selected_exp = _.filter([$("#experiment-filter .btn-label").text()], function(i) {
+          return i !== "Choose an Experiment";
+        })[0];
+        return apply_selection_filters(selected_stream, selected_node, selected_exp, $scope.session);
       }
     });
+    return apply_selection_filters = function(selected_stream, selected_node, selected_exp, session) {
+      var experiment_ids, experiments, node_eids, node_ids, nodes, stream_nids, streams;
+      if (selected_exp || selected_node || selected_stream) {
+        streams = selected_stream ? _.filter(session.streams, function(s) {
+          return s.name === selected_stream;
+        }) : session.streams;
+        stream_nids = _.map(streams, function(s) {
+          return s.nid;
+        });
+        nodes = selected_node ? _.filter(session.nodes, function(n) {
+          return n.name === selected_node;
+        }) : (selected_stream ? _.filter(session.nodes, function(n) {
+          return _.indexOf(stream_nids, n._id) >= 0;
+        }) : session.nodes);
+        node_eids = _.map(nodes, function(n) {
+          return n.eid;
+        });
+        experiments = selected_exp ? _.filter(session.experiments, function(e) {
+          return e.name === selected_exp;
+        }) : _.filter(session.experiments, function(e) {
+          return _.indexOf(node_eids, e._id) >= 0;
+        });
+        experiment_ids = _.map(experiments, function(i) {
+          return i._id;
+        });
+        nodes = _.filter(nodes, function(n) {
+          return _.indexOf(experiment_ids, n.eid) >= 0;
+        });
+        node_ids = _.map(nodes, function(n) {
+          return n._id;
+        });
+        streams = _.filter(streams, function(s) {
+          return _.indexOf(node_ids, s.nid) >= 0;
+        });
+        $scope.node_names = _.uniq(_.map(nodes, function(n) {
+          return n.name;
+        }));
+        return $scope.stream_names = _.uniq(_.map(streams, function(s) {
+          return s.name;
+        }));
+      }
+    };
   };
   window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
     return $("body textarea").cleditor(sensordb.Utils.editor_config);

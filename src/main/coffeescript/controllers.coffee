@@ -61,16 +61,14 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 
 	((lscache.get(SDB.SDB_SESSION_NAME)||{})[user]) || $resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)
+		$scope.session = session
 		$scope.experiments = session.experiments
 		$scope.nodes = session.nodes
 		$scope.streams = session.streams
 
 		$scope.experiment_names = _.uniq(_.map(session.experiments,(e)->e.name))
-		$scope.node_names = _.uniq(_.map(session.nodes,(e)->e.name))
-		$scope.stream_names = _.uniq(_.map(session.streams,(e)->e.name))
-
-
-
+		$scope.node_names = _.uniq(_.map(session.nodes,(n)->n.name))
+		$scope.stream_names = _.uniq(_.map(session.streams,(s)->s.name))
 
 	$(".filter-selector").on 'click' , (e)->
 		src = $(e.srcElement)
@@ -79,6 +77,31 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 		oldSelection = parent.text()
 		if (oldSelection isnt newSelection)
 			parent.text(newSelection)
+			selected_stream = _.filter([$("#stream-filter .btn-label").text()],(i)->i isnt "All Streams")[0]
+			selected_node = _.filter([$("#node-filter .btn-label").text()],(i)->i isnt "All Nodes")[0]
+			selected_exp = _.filter([$("#experiment-filter .btn-label").text()],(i)-> i isnt "Choose an Experiment")[0]
+			apply_selection_filters(selected_stream,selected_node,selected_exp,$scope.session)
+
+	apply_selection_filters = (selected_stream,selected_node,selected_exp,session)->
+		if (selected_exp || selected_node || selected_stream)
+
+#			streams = if selected_stream then (_.filter session.streams,(s)-> s.name is selected_stream) else session.streams
+#			stream_nids = _.map streams,(s)->s.nid
+#			nodes = if selected_node then (_.filter session.nodes,(n)-> n.name is selected_node) else (if selected_stream then _.filter session.nodes,(n)-> _.indexOf(stream_nids,n._id)>=0 else session.nodes)
+#			node_eids = _.map nodes,(n)->n.eid
+#			experiments = if selected_exp then (_.filter session.experiments,(e)-> e.name is selected_exp) else  _.filter session.experiments,(e)-> _.indexOf(node_eids,e._id)>=0
+#			experiment_ids = _.map experiments,(i)->i._id
+#			nodes = _.filter nodes, (n)-> _.indexOf(experiment_ids,n.eid)>=0
+#			node_ids = _.map nodes, (n)->n._id
+#			streams = _.filter streams, (s)-> _.indexOf(node_ids,s.nid)>=0
+##			$scope.experiment_names = _.uniq(_.map(sess,(e)->e.name))
+#			$scope.node_names = _.uniq(_.map(nodes,(n)->n.name))
+#			$scope.stream_names = _.uniq(_.map(streams,(s)->s.name))
+
+
+#			console.log(streams)
+#			console.log(nodes)
+#			console.log(experiments)
 
 window.ExperimentCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)

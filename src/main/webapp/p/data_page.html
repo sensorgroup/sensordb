@@ -134,35 +134,35 @@
 		<form class="form-horizontal">
 			<h3 class="pull-left span2 no-left-margin">Filters</h3>
 			<div class="btn-toolbar" style="margin-top: 18px;">
-				<div class="btn-group filter-selector" >
+				<div class="btn-group filter-selector" id="experiment-filter" >
 					<a class="btn dropdown-toggle " data-toggle="dropdown"><span class="btn-label">Choose an Experiment</span> <span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li ng-repeat="e in experiment_names"><a href="">{{e}}</a></li>
+						<li ng-repeat="e in experiment_names"><a>{{e}}</a></li>
 					</ul>
 				</div><!-- /btn-group -->
-				<div class="btn-group filter-selector">
+				<div class="btn-group filter-selector" id="node-filter">
 					<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="btn-label">All Nodes</span> <span class="caret"></span></a>
 					<ul  class="dropdown-menu">
 						<li><a href="">All Nodes</a></li>
 						<li class="divider"></li>
-						<li ng-repeat="n in node_names"><a href="">{{n}}</a></li>
+						<li ng-repeat="n in node_names"><a>{{n}}</a></li>
 					</ul>
 				</div><!-- /btn-group -->
-				<div class="btn-group filter-selector" >
+				<div class="btn-group filter-selector" id="stream-filter">
 					<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="btn-label">All Streams</span>  <span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="">All Streams</a></li>
+						<li><a>All Streams</a></li>
 						<li class="divider"></li>
 						<li ng-repeat="s in stream_names"><a href="">{{s}}</a></li>
 					</ul>
 				</div><!-- /btn-group -->
 				<div class="btn-group pull-right" data-toggle="buttons-radio">
-					<button class="btn active">Today</button>
-					<button class="btn">7d</button>
-					<button class="btn">30d</button>
-					<button class="btn">1q</button>
-					<button class="btn">1y</button>
-					<button class="btn">All</button>
+					<a class="btn active" id="data-today">Today</a>
+					<a class="btn" id="data-7d">7d</a>
+					<a class="btn" id="data-30d">30d</a>
+					<a class="btn" id="data-1q">1q</a>
+					<a class="btn" id="data-1y">1y</a>
+					<a class="btn" id="data-ever">All</a>
 				</div>
 			</div>
 		</form>

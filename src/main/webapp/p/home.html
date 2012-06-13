@@ -3,8 +3,8 @@
 <div id="first-page" >
 	<div class="vertical-band full-center">
 		<div class="center">
-			<div ng-repeat="u in users">
-				<a href="#/data/{{u.name}}">
+			<div >
+				<a ng-repeat="u in users" href="#/data/{{u.name}}">
 					<img rel="tooltip" title="User: {{u.name}}" src="{{u.picture}}" />
 				</a>
 			</div>
