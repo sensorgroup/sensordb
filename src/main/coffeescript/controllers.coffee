@@ -83,7 +83,7 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			apply_selection_filters(selected_stream,selected_node,selected_exp,$scope.session)
 
 	apply_selection_filters = (selected_stream,selected_node,selected_exp,session)->
-		if (selected_exp || selected_node || selected_stream)
+#		if (selected_exp || selected_node || selected_stream)
 
 #			streams = if selected_stream then (_.filter session.streams,(s)-> s.name is selected_stream) else session.streams
 #			stream_nids = _.map streams,(s)->s.nid

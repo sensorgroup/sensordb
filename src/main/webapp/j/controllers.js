@@ -99,48 +99,7 @@
         return apply_selection_filters(selected_stream, selected_node, selected_exp, $scope.session);
       }
     });
-    return apply_selection_filters = function(selected_stream, selected_node, selected_exp, session) {
-      var experiment_ids, experiments, node_eids, node_ids, nodes, stream_nids, streams;
-      if (selected_exp || selected_node || selected_stream) {
-        streams = selected_stream ? _.filter(session.streams, function(s) {
-          return s.name === selected_stream;
-        }) : session.streams;
-        stream_nids = _.map(streams, function(s) {
-          return s.nid;
-        });
-        nodes = selected_node ? _.filter(session.nodes, function(n) {
-          return n.name === selected_node;
-        }) : (selected_stream ? _.filter(session.nodes, function(n) {
-          return _.indexOf(stream_nids, n._id) >= 0;
-        }) : session.nodes);
-        node_eids = _.map(nodes, function(n) {
-          return n.eid;
-        });
-        experiments = selected_exp ? _.filter(session.experiments, function(e) {
-          return e.name === selected_exp;
-        }) : _.filter(session.experiments, function(e) {
-          return _.indexOf(node_eids, e._id) >= 0;
-        });
-        experiment_ids = _.map(experiments, function(i) {
-          return i._id;
-        });
-        nodes = _.filter(nodes, function(n) {
-          return _.indexOf(experiment_ids, n.eid) >= 0;
-        });
-        node_ids = _.map(nodes, function(n) {
-          return n._id;
-        });
-        streams = _.filter(streams, function(s) {
-          return _.indexOf(node_ids, s.nid) >= 0;
-        });
-        $scope.node_names = _.uniq(_.map(nodes, function(n) {
-          return n.name;
-        }));
-        return $scope.stream_names = _.uniq(_.map(streams, function(s) {
-          return s.name;
-        }));
-      }
-    };
+    return apply_selection_filters = function(selected_stream, selected_node, selected_exp, session) {};
   };
   window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
     return $("body textarea").cleditor(sensordb.Utils.editor_config);
