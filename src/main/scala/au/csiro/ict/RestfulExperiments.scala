@@ -11,6 +11,8 @@ trait RestfulExperiments {
   self:ScalatraServlet with RestfulHelpers=>
 
   delete("/experiments"){
+    params.foreach(x=>println(x._1,x._2))
+    println("---------------")
     (UserSession(session),EntityId(params.get("eid"))) match{
       case (Some((uid,userName)),Some(expId))=>
         delExperiment(uid, expId)
