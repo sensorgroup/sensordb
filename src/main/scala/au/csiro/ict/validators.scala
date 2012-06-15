@@ -194,7 +194,7 @@ object Validators {
   }
 
   def EntityId(v:Option[String])(implicit validator:Validator):Option[ObjectId]=v.filter{ v=>
-    println("id:"+v)
+    println("id:"+v + " :: "+org.bson.types.ObjectId.isValid(v))
     org.bson.types.ObjectId.isValid(v)
   }.map(x=>new ObjectId(x)).orElse{
     validator.addError("Invalid entity id")
