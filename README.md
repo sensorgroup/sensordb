@@ -320,7 +320,7 @@ Use this request to update experiment information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
-### DELETE /experiments ###
+### DELETE /experiments?eid=_eid_ ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -364,7 +364,7 @@ Use this request to update node information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this node.
 
-### DELETE /nodes ###
+### DELETE /nodes=?nid=_nid_ ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -408,7 +408,7 @@ Use this request to update stream information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this stream.
 
-### DELETE /streams ###
+### DELETE /streams?sid=_sid_ ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
