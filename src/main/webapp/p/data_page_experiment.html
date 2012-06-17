@@ -1,0 +1,19 @@
+<div class="description" ng-show="selection_experiment">
+	<div class="row">
+		<div class="span9">
+			<p>{{selection_experiment.description || "This experiment hasn't provided a description"}}</p>
+		</div>
+
+		<div class="span3">
+			<table class="table table-bordered" id="properties">
+				<tbody>
+				<tr><td>Owner</td><td><a href="#/data/{{user}}">{{user}}</a></td></tr>
+				<tr><td>Nodes</td><td>{{selection_experiment_nodes}}</td></tr>
+				<tr><td>Streams</td><td>{{selection_experiment_streams}}</td></tr>
+				<tr><td>Timezone</td><td>{{selection_experiment.timezone}}</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!--<hr/>-->
+</div>

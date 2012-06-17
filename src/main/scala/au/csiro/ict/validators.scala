@@ -62,7 +62,7 @@ object Validators {
   }
 
   val METADATA_NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_\s]{0,29}""".r.pattern.matcher(_:String).matches()
-  val NAME_REGEX="""[a-zA-Z][a-zA-Z0-9_\-\.\s]{0,29}""".r.pattern.matcher(_:String).matches()
+  val NAME_REGEX="""[a-zA-Z0-9][a-zA-Z0-9_\-\.\s]{0,29}""".r.pattern.matcher(_:String).matches()
 
   def PatternMatch(value:Option[String],pattern:(String)=>Boolean)(implicit validator:Validator)=value.orElse(validator.addError( "Name is missing")).flatMap{v=>
     if (!isInRange(v.size,1,30))
@@ -194,7 +194,6 @@ object Validators {
   }
 
   def EntityId(v:Option[String])(implicit validator:Validator):Option[ObjectId]=v.filter{ v=>
-    println("id:"+v + " :: "+org.bson.types.ObjectId.isValid(v))
     org.bson.types.ObjectId.isValid(v)
   }.map(x=>new ObjectId(x)).orElse{
     validator.addError("Invalid entity id")

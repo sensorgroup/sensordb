@@ -60,24 +60,90 @@
   window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
     var apply_selection_filters, user;
     user = $routeParams['username'];
+    $scope.hide_metadata = false;
     $scope.user = user;
     (lscache.get(SDB.SDB_SESSION_NAME) || {})[user] || $resource('/session', (user ? {
       'user': user
     } : {})).get(function(session) {
+      var node_ids, selection_id;
       $rootScope.$broadcast(SDB.SESSION_INFO, session);
       $scope.session = session;
-      $scope.experiments = session.experiments;
-      $scope.nodes = session.nodes;
-      $scope.streams = session.streams;
-      $scope.experiment_names = _.uniq(_.map(session.experiments, function(e) {
+      $scope.experiments = _.reduce(session.experiments, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+      $scope.nodes = _.reduce(session.nodes, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+      $scope.streams = _.reduce(session.streams, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+      $scope.experiment_names = _.sortBy(_.map(session.experiments, function(e) {
         return e.name;
-      }));
-      $scope.node_names = _.uniq(_.map(session.nodes, function(n) {
+      }), function(x) {
+        return x;
+      });
+      $scope.node_names = _.sortBy(_.uniq(_.map(session.nodes, function(n) {
         return n.name;
-      }));
-      return $scope.stream_names = _.uniq(_.map(session.streams, function(s) {
+      })), function(x) {
+        return x;
+      });
+      $scope.stream_names = _.sortBy(_.uniq(_.map(session.streams, function(s) {
         return s.name;
-      }));
+      })), function(x) {
+        return x;
+      });
+      selection_id = $routeParams.selection_id;
+      if (selection_id) {
+        $scope.selection_stream = $scope.streams[selection_id];
+        $scope.selection_node = $scope.nodes[selection_id];
+        $scope.selection_experiment = $scope.experiments[selection_id];
+        node_ids = {};
+        $scope.selection_experiment_nodes = _.reduce(session.nodes, (function(sum, v) {
+          if (v.eid === selection_id) {
+            sum += 1;
+            node_ids[v._id] = 1;
+          }
+          return sum;
+        }), 0);
+        $scope.selection_experiment_streams = _.reduce(session.streams, (function(sum, v) {
+          if (node_ids[v.nid]) {
+            sum += 1;
+          }
+          return sum;
+        }), 0);
+      }
+      if ($scope.selection_stream) {
+        $scope.selection_sid = selection_id;
+        $scope.selection_nid = $scope.selection_stream.nid;
+        $scope.selection_eid = $scope.nodes[$scope.selection_nid].eid;
+      }
+      if ($scope.selection_node) {
+        $scope.selection_sid = void 0;
+        $scope.selection_nid = selection_id;
+        $scope.selection_eid = $scope.selection_node.eid;
+        $scope.selection_node_streams = _.reduce(session.streams, (function(sum, v) {
+          if (v.nid === selection_id) {
+            sum += 1;
+          }
+          return sum;
+        }), 0);
+      }
+      if ($scope.selection_experiment) {
+        $scope.selection_sid = void 0;
+        $scope.selection_nid = void 0;
+        $scope.selection_eid = selection_id;
+      }
+      return apply_selection_filters($scope.session);
+    });
+    $("body").on("click", function(e) {
+      var src;
+      src = $(e.srcElement);
+      if (src.attr("id") === "show_hide_metadata") {
+        return $scope.hide_metadata = !$scope.hide_metadata;
+      }
     });
     $(".filter-selector").on('click', function(e) {
       var newSelection, oldSelection, parent, selected_exp, selected_node, selected_stream, src;
@@ -99,7 +165,91 @@
         return apply_selection_filters(selected_stream, selected_node, selected_exp, $scope.session);
       }
     });
-    return apply_selection_filters = function(selected_stream, selected_node, selected_exp, session) {};
+    return apply_selection_filters = function(session, selected_stream, selected_node, selected_exp) {
+      var exp, experiment_ids, experiment_names, experiments, filtered_rows, node_eids, node_exp, node_ids, node_names, nodes, seen_exps, seen_nodes, stream_names, stream_nids, stream_node_exp, streams;
+      if (selected_exp || selected_node || selected_stream) {
+        streams = selected_stream ? _.filter(session.streams, function(s) {
+          return s.name === selected_stream;
+        }) : session.streams;
+        stream_nids = _.map(streams, function(s) {
+          return s.nid;
+        });
+        nodes = selected_node ? _.filter(session.nodes, function(n) {
+          return n.name === selected_node;
+        }) : (selected_stream ? _.filter(session.nodes, function(n) {
+          return _.indexOf(stream_nids, n._id) >= 0;
+        }) : session.nodes);
+        node_eids = _.map(nodes, function(n) {
+          return n.eid;
+        });
+        experiments = selected_exp ? _.filter(session.experiments, function(e) {
+          return e.name === selected_exp;
+        }) : _.filter(session.experiments, function(e) {
+          return _.indexOf(node_eids, e._id) >= 0;
+        });
+        experiment_ids = _.map(experiments, function(i) {
+          return i._id;
+        });
+        nodes = _.filter(nodes, function(n) {
+          return _.indexOf(experiment_ids, n.eid) >= 0;
+        });
+        node_ids = _.map(nodes, function(n) {
+          return n._id;
+        });
+        streams = _.filter(streams, function(s) {
+          return _.indexOf(node_ids, s.nid) >= 0;
+        });
+        experiment_names = _.sortBy(_.map(experiments, function(e) {
+          return e.name;
+        }), function(x) {
+          return x;
+        });
+        node_names = _.sortBy(_.uniq(_.map(nodes, function(n) {
+          return n.name;
+        })), function(x) {
+          return x;
+        });
+        return stream_names = _.sortBy(_.uniq(_.map(streams, function(s) {
+          return s.name;
+        })), function(x) {
+          return x;
+        });
+      } else {
+        seen_nodes = {};
+        seen_exps = {};
+        filtered_rows = [];
+        stream_node_exp = _.reduce($scope.streams, (function(sum, v) {
+          var exp_id;
+          exp_id = $scope.nodes[v.nid].eid;
+          sum.push({
+            s: v._id,
+            n: v.nid,
+            e: exp_id
+          });
+          seen_nodes[v.nid] = 1;
+          seen_exps[exp_id] = 1;
+          return sum;
+        }), filtered_rows);
+        node_exp = _.reduce(_.difference(_.keys($scope.nodes), _.keys(seen_nodes)) || [], (function(sum, v) {
+          var node;
+          node = $scope.nodes[v];
+          seen_exps[node.eid] = 1;
+          seen_nodes[node._id] = 1;
+          sum.push({
+            n: node._id,
+            e: node.eid
+          });
+          return sum;
+        }), filtered_rows);
+        exp = _.reduce(_.difference(_.keys($scope.experiments), _.keys(seen_exps)), (function(sum, eid) {
+          sum.push({
+            e: eid
+          });
+          return sum;
+        }), filtered_rows);
+        return $scope.filtered_rows = _.union(stream_node_exp, node_exp, exp);
+      }
+    };
   };
   window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
     return $("body textarea").cleditor(sensordb.Utils.editor_config);

@@ -13,6 +13,10 @@
       templateUrl: '/p/data_page.html',
       controller: DataPageCtrl
     });
+    $routeProvider.when('/data/:username/:selection_id', {
+      templateUrl: '/p/data_page.html',
+      controller: DataPageCtrl
+    });
     $routeProvider.when('/analysis', {
       templateUrl: '/p/analysis.html',
       controller: AnalysisCtrl

@@ -1,0 +1,32 @@
+<div ng-show="!hide_metadata" id="metadata-list">
+
+	<div ng-show="((selection_stream||selection_node||selection_experiment) &&(selection_stream||selection_node||selection_experiment).metadata)">
+		<div class="row">
+			<div class="span12">
+				<table class="table no-margin"  >
+					<thead>
+					<tr>
+						<th>Name</th>
+						<th>Value</th>
+						<th>Effective From</th>
+						<th>Effective Until</th>
+						<th>Created By</th>
+						<th>Created At</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="(v,m) in (selection_stream||selection_node||selection_experiment).metadata">
+						<td>{{v}}</td>
+						<td>{{m.value}}</td>
+						<td>{{m.from || "-"}}</td>
+						<td>{{m.to || "-"}}</td><!--18:30 on 12/02/2010-->
+						<td><a href="#/data/{{m.updated_by}}">{{m.updated_by}}</a></td>
+						<td>{{m.updated_at}}</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+

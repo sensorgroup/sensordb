@@ -1,0 +1,168 @@
+<div class="modal hide" id="download-modal">
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal">×</button>
+		<h3>Data Download</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label" >Experiment</label>
+					<div class="controls">
+						<select id="experiment" class="span4">
+							<option ng-repeat="e in experiment_names">{{e}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Node</label>
+					<div class="controls">
+						<select id="node" class="span4">
+							<option>All Nodes</option>
+							<option ng-repeat="n in node_names">{{n}}</option>
+						</select>
+					</div>
+
+				</div>
+				<div class="control-group">
+					<label class="control-label" >Stream</label>
+					<div class="controls">
+						<select id="stream" class="span4">
+							<option>All Streams</option>
+							<option ng-repeat="s in stream_names">{{s}}</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" >From</label>
+					<div class="controls">
+						<div class="input-prepend">
+							<span class="add-on"><input class="checkbox" type="checkbox" ng-model="from_ts_checkbox" /></span><input id="from-ts" class="input-xlarge" type="text" di	sabled ng-disabled="!from_ts_checkbox"/>
+						</div>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" >To</label>
+					<div class="controls">
+						<div class="input-prepend">
+							<span class="add-on"><input class="checkbox"  ng-model="to_ts_checkbox" type="checkbox" /></span><input id="to-ts" class="input-xlarge" type="text" disabled ng-disabled="!to_ts_checkbox">
+						</div>
+					</div>
+				</div>
+
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-primary">Download</a>
+		<a class="btn" data-dismiss="modal">Close</a>
+	</div>
+</div>
+<div class="modal hide" id="remove-metadata-modal">
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal">×</button>
+		<h3>Remove Metadata</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label" >Metadata key</label>
+					<div class="controls">
+						<select id="metadata-key" class="span4">
+							<option ng-repeat="(v,m) in (selection_stream||selection_node||selection_experiment).metadata" value="{{v}}">{{v}}</option>
+						</select>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-primary">Remove</a>
+		<a class="btn" data-dismiss="modal">Close</a>
+	</div>
+</div>
+<div class="modal alert-danger hide" id="remove-selection-modal" >
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal">×</button>
+		<h3>Remove {{(selection_stream && "Stream")||(selection_node && "Node")||(selection_experiment && "Experiment")}}</h3>
+	</div>
+	<div class="modal-body">
+		<p>Are you sure you want to remove {{(selection_stream || selection_node || selection_experiments).name}} ? This action is irreversible</p>
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-primary">Remove</a>
+		<a class="btn" data-dismiss="modal">Cancel</a>
+	</div>
+</div>
+<div class="modal hide" id="set-metadata-modal">
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal">×</button>
+		<h3>Set a Metadata Value for {{(selection_stream||selection_node||selection_experiment).name}}</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label" >Key</label>
+					<div class="controls">
+						<input class="span4" name="metadata-key">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Value</label>
+					<div class="controls">
+						<input class="span4" name="metadata-value">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" >Description</label>
+					<div class="controls">
+						<input class="span4" name="metadata-description">
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" >Effective From</label>
+					<div class="controls">
+						<div class="input-prepend">
+							<span class="add-on"><input class="checkbox" type="checkbox" ng-model="from_ts_checkbox" /></span><input id="from-ts" class="input-xlarge" type="text" di	sabled ng-disabled="!from_ts_checkbox"/>
+						</div>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label" >Effective To</label>
+					<div class="controls">
+						<div class="input-prepend">
+							<span class="add-on"><input class="checkbox"  ng-model="to_ts_checkbox" type="checkbox" /></span><input id="to-ts" class="input-xlarge" type="text" disabled ng-disabled="!to_ts_checkbox">
+						</div>
+					</div>
+				</div>
+
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-primary">Apply</a>
+		<a class="btn" data-dismiss="modal">Cancel</a>
+	</div>
+</div>
+<div class="page-header" ng-show="selection_experiment || selection_node || selection_stream">
+	<div class="btn-group pull-right">
+		<a class="btn"  data-toggle="modal" data-target="#download-modal"><i class="icon-download-alt"></i> Download</a>
+		<a class="btn" id="show_hide_metadata"><i class="icon-tags"></i> {{(!hide_metadata && "Hide Metadata") || (hide_metadata && "Show Metadata")}}</a>
+
+		<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="#"><i class="icon-barcode"></i> Show/Generate Token</a></li>
+			<li><a href="#" data-toggle="modal" data-target="#set-metadata-modal"><i class="icon-tag"></i> Set Metadata</a></li>
+			<li><a href="#" data-toggle="modal" data-target="#remove-metadata-modal"><i class="icon-remove"></i> Remove Metadata</a></li>
+			<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+			<li><a href="#" data-toggle="modal" data-target="#remove-selection-modal"><i class="icon-trash"></i> Remove</a></li>
+		</ul>
+	</div><!-- /btn-group -->
+	<h3 class="pad-bottom-10 "><a href="#/data/{{user}}">{{user}}</a><span ng-show="selection_eid"> &raquo; <a href="#/data/{{user}}/{{selection_eid}}" >{{experiments[selection_eid].name}}</a></span><span ng-show="selection_nid"> &raquo; <a href="#/data/{{user}}/{{selection_nid}}">{{nodes[selection_nid].name}}</a></span><span ng-show="selection_sid"> &raquo; <a href="#/data/{{user}}/{{selection_sid}}">{{streams[selection_sid].name}}</a></span></h3>
+</div>

@@ -44,7 +44,6 @@ trait RestfulDataAccess {
           generate(Map("length"->packed.values.map(_.size).sum))
         } catch {
           case e:java.lang.Exception =>
-            e.printStackTrace()
             haltMsg("Bad input, can't parse the data parameter, please verify the body of your request")
         }
       case missing => haltMsg("Bad input, missing parameter data from our request")
