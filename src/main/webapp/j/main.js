@@ -9,183 +9,142 @@
     return child;
   };
   this.module("sensordb", function() {
-    this.LineChart = (function() {
-      function LineChart(location, unit, data_provider_func) {
-        var options;
-        this.location = location;
-        this.unit = unit;
-        this.data_provider_func = data_provider_func;
-        this.elem = $(location);
-        options = {
-          legend: {
-            position: 'nw',
-            backgroundOpacity: 0.5,
-            backgroundColor: null
-          },
-          series: {
-            lines: {
-              lineWidth: 1
-            }
-          },
-          xaxis: {
-            mode: 'time',
-            localTimezone: false
-          },
-          yaxes: [
-            {
-              position: "left",
-              axisLabel: unit,
-              axisLabelUseCanvas: true
-            }
-          ],
-          grid: {
-            show: true,
-            borderWidth: 1,
-            borderColor: "#ccc"
-          },
-          selection: {
-            mode: "xy"
-          }
-        };
-      }
-      LineChart.guid = function() {
-        var S4;
-        S4 = function() {
-          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-        };
-        return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+    this.guid = function() {
+      var S4;
+      S4 = function() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
       };
-      LineChart.find_in_catalog_by_stream_id = function(stream_id, catalog) {
-        var exp_name, experiments, node_name, nodes, s_id, stream_name, streams, user;
-        for (user in catalog) {
-          experiments = catalog[user];
-          for (exp_name in experiments) {
-            nodes = experiments[exp_name];
-            for (node_name in nodes) {
-              streams = nodes[node_name];
-              for (stream_name in streams) {
-                s_id = streams[stream_name];
-                if (s_id.sid === stream_id) {
-                  return [user, exp_name, node_name, stream_name, s_id.unit];
-                }
+      return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+    };
+    return this.find_in_catalog_by_stream_id = function(stream_id, catalog) {
+      var exp_name, experiments, node_name, nodes, s_id, stream_name, streams, user;
+      for (user in catalog) {
+        experiments = catalog[user];
+        for (exp_name in experiments) {
+          nodes = experiments[exp_name];
+          for (node_name in nodes) {
+            streams = nodes[node_name];
+            for (stream_name in streams) {
+              s_id = streams[stream_name];
+              if (s_id.sid === stream_id) {
+                return [user, exp_name, node_name, stream_name, s_id.unit];
               }
             }
           }
         }
-      };
-      return LineChart;
-    })();
-    this.DataRequest = (function() {
-      function DataRequest(local_info, user_id, experiment, node, stream, fields, checkCache, live, from, to) {
-        this.local_info = local_info;
-        this.user_id = user_id;
-        this.experiment = experiment;
-        this.node = node;
-        this.stream = stream;
-        this.fields = fields;
-        this.checkCache = checkCache;
-        this.live = live;
-        this.from = from;
-        this.to = to;
-        this.id = [
-          this.user_id, this.experiment, this.node, this.stream, _.map(this.fields, function(v, k) {
-            return "" + k + "->" + v;
-          }), this.checkCache, this.live, this.from, this.to
-        ].join('$');
       }
-      return DataRequest;
-    })();
-    this.GroupedDataRequest = (function() {
-      function GroupedDataRequest(local_info, data_requests, call_back) {
-        this.local_info = local_info;
-        this.data_requests = data_requests;
-        this.call_back = call_back;
-        _.each(this.data_requests, function(r) {
-          return r._res = void 0;
-        });
-        this.id = _.map(this.data_requests, function(req) {
-          return req.id;
-        }).join("$$");
-        this.live = _.any(this.data_requests, function(r) {
-          return r.live;
-        });
-      }
-      GroupedDataRequest.prototype.fire = function() {
-        return this.call_back(this.data_requests);
-      };
-      return GroupedDataRequest;
-    })();
-    this.GroupedRequestManager = (function() {
-      function GroupedRequestManager(db) {
-        this.db = db;
-        this.remove_grouped_data_request = __bind(this.remove_grouped_data_request, this);
-        this.listeners = {};
-      }
-      GroupedRequestManager.prototype.add_grouped_data_request = function(grouped_data_request) {
-        if (!this.listeners[grouped_data_request.id]) {
-          this.listeners[grouped_data_request.id] = grouped_data_request;
-          return _.each(grouped_data_request.data_requests, __bind(function(req) {
-            return this.db.download(req, __bind(function(res) {
-              return this.data_received(req.id, res);
-            }, this));
-          }, this));
-        } else {
-          return console.log("This request " + grouped_data_request.id + " exists in the listener's list.");
-        }
-      };
-      GroupedRequestManager.prototype.remove_grouped_data_request = function(grouped_data_request) {
-        return delete this.listeners[grouped_data_request.id];
-      };
-      GroupedRequestManager.prototype.data_received = function(data_request_id, data_response) {
-        return _.each(this.listeners, __bind(function(grouped_data_request) {
-          var anything_to_set;
-          anything_to_set = _.filter(grouped_data_request.data_requests, __bind(function(req) {
-            return req.id === data_request_id && (!req._res || (req._res && req.live));
-          }, this));
-          if (anything_to_set.length > 0) {
-            _.each(anything_to_set, function(r) {
-              return r._res = data_response;
-            });
-            if (_.all(grouped_data_request.data_requests, function(req) {
-              return req._res !== void 0;
-            })) {
-              grouped_data_request.fire();
-              if (!grouped_data_request.live) {
-                delete this.listeners[grouped_data_request.id];
-                return console.debug("Grouped Data Request " + grouped_data_request.id + " is triggered and removed (not live).");
-              }
-            }
-          }
-        }, this));
-      };
-      return GroupedRequestManager;
-    })();
-    this.Database = (function() {
-      function Database() {}
-      Database.prototype.analysis = function(username) {};
-      Database.prototype.download = function(data_request, callback) {};
-      Database.prototype.catalog = function(selectors) {};
-      return Database;
-    })();
-    return this.Widget = (function() {
-      __extends(Widget, Backbone.Events);
-      function Widget(widget) {
-        this.widget = widget;
-        this.db = window.db;
-        this.elem = $("\#" + this.widget.html_id);
-        this.id = this.widget.html_id;
-        this.process_config(this.widget.conf);
-      }
-      Widget.prototype.dataFeeds = function(conf) {
-        return alert('not implemented');
-      };
-      Widget.prototype.process_config = function(new_conf) {};
-      Widget.prototype.sample_config = function() {
-        return alert('not implemented');
-      };
-      return Widget;
-    })();
+    };
   });
+  this.DataRequest = (function() {
+    function DataRequest(local_info, user_id, experiment, node, stream, fields, checkCache, live, from, to) {
+      this.local_info = local_info;
+      this.user_id = user_id;
+      this.experiment = experiment;
+      this.node = node;
+      this.stream = stream;
+      this.fields = fields;
+      this.checkCache = checkCache;
+      this.live = live;
+      this.from = from;
+      this.to = to;
+      this.id = [
+        this.user_id, this.experiment, this.node, this.stream, _.map(this.fields, function(v, k) {
+          return "" + k + "->" + v;
+        }), this.checkCache, this.live, this.from, this.to
+      ].join('$');
+    }
+    return DataRequest;
+  })();
+  this.GroupedDataRequest = (function() {
+    function GroupedDataRequest(local_info, data_requests, call_back) {
+      this.local_info = local_info;
+      this.data_requests = data_requests;
+      this.call_back = call_back;
+      _.each(this.data_requests, function(r) {
+        return r._res = void 0;
+      });
+      this.id = _.map(this.data_requests, function(req) {
+        return req.id;
+      }).join("$$");
+      this.live = _.any(this.data_requests, function(r) {
+        return r.live;
+      });
+    }
+    GroupedDataRequest.prototype.fire = function() {
+      return this.call_back(this.data_requests);
+    };
+    return GroupedDataRequest;
+  })();
+  this.GroupedRequestManager = (function() {
+    function GroupedRequestManager(db) {
+      this.db = db;
+      this.remove_grouped_data_request = __bind(this.remove_grouped_data_request, this);
+      this.listeners = {};
+    }
+    GroupedRequestManager.prototype.add_grouped_data_request = function(grouped_data_request) {
+      if (!this.listeners[grouped_data_request.id]) {
+        this.listeners[grouped_data_request.id] = grouped_data_request;
+        return _.each(grouped_data_request.data_requests, __bind(function(req) {
+          return this.db.download(req, __bind(function(res) {
+            return this.data_received(req.id, res);
+          }, this));
+        }, this));
+      } else {
+        return console.log("This request " + grouped_data_request.id + " exists in the listener's list.");
+      }
+    };
+    GroupedRequestManager.prototype.remove_grouped_data_request = function(grouped_data_request) {
+      return delete this.listeners[grouped_data_request.id];
+    };
+    GroupedRequestManager.prototype.data_received = function(data_request_id, data_response) {
+      return _.each(this.listeners, __bind(function(grouped_data_request) {
+        var anything_to_set;
+        anything_to_set = _.filter(grouped_data_request.data_requests, __bind(function(req) {
+          return req.id === data_request_id && (!req._res || (req._res && req.live));
+        }, this));
+        if (anything_to_set.length > 0) {
+          _.each(anything_to_set, function(r) {
+            return r._res = data_response;
+          });
+          if (_.all(grouped_data_request.data_requests, function(req) {
+            return req._res !== void 0;
+          })) {
+            grouped_data_request.fire();
+            if (!grouped_data_request.live) {
+              delete this.listeners[grouped_data_request.id];
+              return console.debug("Grouped Data Request " + grouped_data_request.id + " is triggered and removed (not live).");
+            }
+          }
+        }
+      }, this));
+    };
+    return GroupedRequestManager;
+  })();
+  this.Database = (function() {
+    function Database() {}
+    Database.prototype.analysis = function(username) {};
+    Database.prototype.download = function(data_request, callback) {};
+    Database.prototype.catalog = function(selectors) {};
+    return Database;
+  })();
+  this.Widget = (function() {
+    __extends(Widget, Backbone.Events);
+    function Widget(widget) {
+      this.widget = widget;
+      this.db = window.db;
+      this.elem = $("\#" + this.widget.html_id);
+      this.id = this.widget.html_id;
+      this.process_config(this.widget.conf);
+    }
+    Widget.prototype.dataFeeds = function(conf) {
+      return alert('not implemented');
+    };
+    Widget.prototype.process_config = function(new_conf) {};
+    Widget.prototype.sample_config = function() {
+      return alert('not implemented');
+    };
+    return Widget;
+  })();
   WidgetStore = (function() {
     function WidgetStore() {
       this.widgets = {};
@@ -439,22 +398,6 @@
         return callback_func(session);
       });
     },
-    register: function() {
-      return this.layout("#tpl-register", {}, function() {
-        $("body textarea").cleditor(sensordb.Utils.editor_config);
-        return $("#registration a.btn-primary").click(function() {
-          return $.ajax({
-            type: 'post',
-            url: '/register',
-            data: $("#registration").serialize(),
-            success: (function(res) {
-              return console.log(res);
-            }),
-            error: sensordb.show_errors
-          });
-        });
-      });
-    },
     parallel_requests: function(requests, callback) {
       var done, to_return;
       done = _.size(requests);
@@ -472,23 +415,6 @@
             }
           }
         }));
-      });
-    },
-    data_page: function(username) {
-      return $.ajax({
-        type: "get",
-        url: "/session",
-        data: {
-          user: username
-        },
-        dataType: "json",
-        success: __bind(function(profile) {
-          return this.layout("#tpl-data-page", {
-            profile: profile
-          }, function() {
-            return $("table.tablesorter").tablesorter();
-          });
-        }, this)
       });
     },
     analysis: function(user, name) {

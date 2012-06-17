@@ -1,6 +1,5 @@
 'use strict'
 
-
 html5mode = ($locationProvider) -> $locationProvider.html5Mode(false)
 
 routes = ($routeProvider)->

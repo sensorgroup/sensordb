@@ -1,6 +1,7 @@
 (function() {
   'use strict';
   var SDB, apply_tooltips;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   $(function() {
     return $.ajaxSetup({
       beforeSend: function() {
@@ -24,6 +25,86 @@
     return SDB;
   })();
   this.module("sensordb", function() {
+    this.LineChart = (function() {
+      function LineChart(location, unit, data_provider_func) {
+        var end_date, options, place_holder, plot, start_date, to_plot;
+        this.location = location;
+        this.unit = unit;
+        this.data_provider_func = data_provider_func;
+        this.elem = $(location);
+        options = {
+          legend: {
+            position: 'nw',
+            backgroundOpacity: 0.5,
+            backgroundColor: null
+          },
+          series: {
+            lines: {
+              lineWidth: 1
+            }
+          },
+          xaxis: {
+            mode: 'time',
+            localTimezone: false
+          },
+          yaxes: [
+            {
+              position: "left",
+              axisLabel: unit,
+              axisLabelUseCanvas: true
+            }
+          ],
+          grid: {
+            show: true,
+            borderWidth: 1,
+            borderColor: "#ccc"
+          },
+          selection: {
+            mode: "xy"
+          }
+        };
+        to_plot = _.map(req_res, function(rr) {
+          return {
+            shadowSize: 1,
+            data: rr._res.data,
+            yaxis: 1
+          };
+        });
+        place_holder = this.elem.find('.flot');
+        place_holder.unbind("plotselected").bind("plotselected", __bind(function(event, ranges) {
+          var end_date, plot, start_date;
+          plot = $.plot(place_holder, to_plot, $.extend(true, {}, options, {
+            xaxis: {
+              min: ranges.xaxis.from,
+              max: ranges.xaxis.to,
+              yaxis: {
+                min: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.from),
+                max: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.to)
+              }
+            },
+            y2axis: {
+              min: (ranges.y2axis === void 0 ? 0 : ranges.y2axis.from),
+              max: (ranges.y2axis === void 0 ? 0 : ranges.y2axis.to),
+              axisLabel: (right_axis_unit.length > 0 ? right_axis_unit[0] : void 0)
+            }
+          }));
+          this.elem.find(".caption .reset-zoom").unbind("click").click(__bind(function() {
+            return this.plot(conf, req_res);
+          }, this));
+          start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0));
+          end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0));
+          this.elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
+          return this.elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
+        }, this));
+        plot = $.plot(place_holder, to_plot, options);
+        start_date = plot.getAxes()['xaxis']['min'];
+        end_date = plot.getAxes()['xaxis']['max'];
+        this.elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
+        this.elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
+        this.elem.find(".caption").show();
+      }
+      return LineChart;
+    })();
     return this.Utils = (function() {
       function Utils() {}
       Utils.editor_config = {
@@ -59,10 +140,73 @@
   window.AnalysisCtrl = function($scope, $location, $routeParams) {};
   window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
     var apply_selection_filters, user;
+    $scope.plot_data_stream_chart = function() {
+      var elem, end_date, options, place_holder, plot, start_date, to_plot;
+      options = {
+        series: {
+          lines: {
+            lineWidth: 1
+          }
+        },
+        xaxis: {
+          mode: 'time',
+          localTimezone: false
+        },
+        grid: {
+          show: true,
+          borderWidth: 1,
+          borderColor: "#ccc"
+        },
+        selection: {
+          mode: "xy"
+        }
+      };
+      to_plot = [
+        {
+          shadowSize: 2,
+          data: [[-373597200000, 315.71], [-370918800000, 317.45], [-368326800000, 317.50]],
+          yaxis: 1
+        }
+      ];
+      elem = $("#stream-chart");
+      place_holder = elem.find('.flot');
+      place_holder.unbind("plotselected").bind("plotselected", __bind(function(event, ranges) {
+        var end_date, plot, start_date;
+        plot = $.plot(place_holder, to_plot, $.extend(true, {}, options, {
+          xaxis: {
+            min: ranges.xaxis.from,
+            max: ranges.xaxis.to
+          },
+          yaxis: {
+            min: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.from),
+            max: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.to)
+          }
+        }));
+        elem.find(".caption .reset-zoom").unbind("click").click(__bind(function() {
+          return $scope.plot_data_stream_chart();
+        }, this));
+        start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0));
+        end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0));
+        elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
+        return elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
+      }, this));
+      plot = $.plot(place_holder, to_plot, options);
+      start_date = plot.getAxes()['xaxis']['min'];
+      end_date = plot.getAxes()['xaxis']['max'];
+      elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
+      elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
+      return elem.find(".caption").show();
+    };
     user = $routeParams['username'];
     $scope.hide_metadata = false;
     $scope.user = user;
-    (lscache.get(SDB.SDB_SESSION_NAME) || {})[user] || $resource('/session', (user ? {
+    $resource('/measurements').query(function(measurements) {
+      return $scope.measurements = _.reduce(measurements, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+    });
+    $resource('/session', (user ? {
       'user': user
     } : {})).get(function(session) {
       var node_ids, selection_id;

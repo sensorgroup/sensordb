@@ -62,58 +62,7 @@ class WidgetTemperatureHumidityRange extends sensordb.Widget
 		right_axis_unit = _.uniq(_.map(_.filter(req_res, (rr)->rr.local_info.axis == 'right'),(rr)->rr.local_info.unit))
 		_.each {'left':left_axis_unit,'right':right_axis_unit},(lbl,name)->
 				console.log("#{name} axis can have only one unit * #{lbl.join(",")} is not valid, first one will be used.") if (lbl.length >1)
-		options = 
-			legend:
-				position: 'nw'
-				backgroundOpacity:0.5
-				backgroundColor: null
-			series: 
-				lines:
-					lineWidth: 1
-			xaxis: 
-				mode: 'time'
-				localTimezone: false
-			yaxes: [{position:"left",axisLabel: (if left_axis_unit.length>0 then left_axis_unit[0] else undefined),axisLabelUseCanvas: true},
-			{position:"right",axisLabel: (if right_axis_unit.length>0 then right_axis_unit[0] else undefined),axisLabelUseCanvas: true}]
-			grid:
-				show: true
-				borderWidth:1
-				borderColor:"#ccc"
-			
-		_.extend(options,{selection:{mode: "xy"}}) if (conf.zoom)
-		to_plot = _.map req_res, (rr)->
-			label: "#{rr.experiment} &raquo; #{rr.node} &raquo; #{rr.stream}"
-			shadowSize:conf.line_shadow
-			data: rr._res.data
-			yaxis: (if rr.local_info.axis is 'left' then 1 else 2)
-		place_holder = @elem.find('.flot')
-		if (conf.zoom)
-			place_holder.unbind("plotselected").bind "plotselected", (event,ranges)=>
-				plot = $.plot(place_holder,to_plot,($.extend(true, {}, options,
-					xaxis:
-						min: ranges.xaxis.from
-						max: ranges.xaxis.to, 
-					yaxis:
-						min: (if ranges.yaxis is undefined then 0 else ranges.yaxis.from)
-						max: (if ranges.yaxis is undefined then 0 else ranges.yaxis.to)
-					y2axis:
-						min: (if ranges.y2axis is undefined then 0 else ranges.y2axis.from)
-						max: (if ranges.y2axis is undefined then 0 else ranges.y2axis.to) 
-						axisLabel: (if right_axis_unit.length>0 then right_axis_unit[0] else undefined)
-					)))
-				@elem.find(".caption .reset-zoom").unbind("click").click => @plot(conf,req_res)
-				start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0))
-				end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0))
-				# Verify the TimeZone and perform correct formatting of the timestamp
-				@elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
-				@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
-				
-		plot = $.plot(place_holder, to_plot, options)
-		start_date = plot.getAxes()['xaxis']['min']
-		end_date = plot.getAxes()['xaxis']['max']
-		
-		@elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
-		@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
-		@elem.find(".caption").show()
+
+
 
 ws.registerWidget("WidgetTemperatureHumidityRange",WidgetTemperatureHumidityRange)

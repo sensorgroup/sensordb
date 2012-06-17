@@ -1,58 +1,4 @@
 @module "sensordb", ->
-	class @LineChart
-		constructor: (@location,@unit,@data_provider_func) ->
-			@elem = $(location)
-			options =
-				legend:
-					position: 'nw'
-					backgroundOpacity:0.5
-					backgroundColor: null
-				series:
-					lines:
-						lineWidth: 1
-				xaxis:
-					mode: 'time'
-					localTimezone: false
-				yaxes: [{position:"left",axisLabel: unit,axisLabelUseCanvas: true}]
-				grid:
-					show: true
-					borderWidth:1
-					borderColor:"#ccc"
-				selection:{mode: "xy"}
-
-#			to_plot = _.map req_res, (rr)->
-#				shadowSize:1
-#				data: rr._res.data
-#				yaxis: (if rr.local_info.axis is 'left' then 1 else 2)
-#			place_holder = @elem.find('.flot')
-#			place_holder.unbind("plotselected").bind "plotselected", (event,ranges)=>
-#				plot = $.plot(place_holder,to_plot,($.extend(true, {}, options,
-#					xaxis:
-#						min: ranges.xaxis.from
-#						max: ranges.xaxis.to,
-#						yaxis:
-#							min: (if ranges.yaxis is undefined then 0 else ranges.yaxis.from)
-#							max: (if ranges.yaxis is undefined then 0 else ranges.yaxis.to)
-#					y2axis:
-#						min: (if ranges.y2axis is undefined then 0 else ranges.y2axis.from)
-#						max: (if ranges.y2axis is undefined then 0 else ranges.y2axis.to)
-#						axisLabel: (if right_axis_unit.length>0 then right_axis_unit[0] else undefined)
-#				)))
-#				@elem.find(".caption .reset-zoom").unbind("click").click => @plot(conf,req_res)
-#				start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0))
-#				end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0))
-#				# Verify the TimeZone and perform correct formatting of the timestamp
-#				@elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
-#				@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
-#
-#			plot = $.plot(place_holder, to_plot, options)
-#			start_date = plot.getAxes()['xaxis']['min']
-#			end_date = plot.getAxes()['xaxis']['max']
-#
-#			@elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
-#			@elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
-#			@elem.find(".caption").show()
-
 
 		@guid= ->
 			S4 = -> (((1+Math.random())*0x10000)|0).toString(16).substring(1)
@@ -294,12 +240,6 @@ window.rm = new sensordb.GroupedRequestManager(window.db)
 			sensordb.Utils.scroll_top()
 			callback_func(session)
 
-	register: ->
-		@layout "#tpl-register",{},()->
-			$("body textarea").cleditor(sensordb.Utils.editor_config)
-			$("#registration a.btn-primary").click ->
-				$.ajax({type:'post', url:'/register', data:$("#registration").serialize(),success:((res)->console.log(res)),error:sensordb.show_errors})
-
 	parallel_requests: (requests,callback)->
 		done = _.size(requests) # Number of total requests
 		to_return = {}
@@ -310,11 +250,6 @@ window.rm = new sensordb.GroupedRequestManager(window.db)
 				done -=1
 				callback(to_return) if(done ==0)
 			}))
-
-	data_page: (username) ->
-		$.ajax type:"get", url:"/session" , data:{user:username},dataType:"json" , success:(profile)=>
-			@layout "#tpl-data-page",{profile},()->
-				$("table.tablesorter").tablesorter()
 
 	analysis: (user,name) ->
 		widgets = db.analysis(user)[name]

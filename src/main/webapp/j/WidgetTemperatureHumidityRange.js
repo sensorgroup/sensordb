@@ -120,7 +120,7 @@
       return window.rm.add_grouped_data_request(grouped_data_req);
     };
     WidgetTemperatureHumidityRange.prototype.plot = function(conf, req_res) {
-      var end_date, left_axis_unit, options, place_holder, plot, right_axis_unit, start_date, to_plot;
+      var left_axis_unit, right_axis_unit;
       left_axis_unit = _.uniq(_.map(_.filter(req_res, function(rr) {
         return rr.local_info.axis === 'left';
       }), function(rr) {
@@ -131,7 +131,7 @@
       }), function(rr) {
         return rr.local_info.unit;
       }));
-      _.each({
+      return _.each({
         'left': left_axis_unit,
         'right': right_axis_unit
       }, function(lbl, name) {
@@ -139,87 +139,6 @@
           return console.log("" + name + " axis can have only one unit * " + (lbl.join(",")) + " is not valid, first one will be used.");
         }
       });
-      options = {
-        legend: {
-          position: 'nw',
-          backgroundOpacity: 0.5,
-          backgroundColor: null
-        },
-        series: {
-          lines: {
-            lineWidth: 1
-          }
-        },
-        xaxis: {
-          mode: 'time',
-          localTimezone: false
-        },
-        yaxes: [
-          {
-            position: "left",
-            axisLabel: (left_axis_unit.length > 0 ? left_axis_unit[0] : void 0),
-            axisLabelUseCanvas: true
-          }, {
-            position: "right",
-            axisLabel: (right_axis_unit.length > 0 ? right_axis_unit[0] : void 0),
-            axisLabelUseCanvas: true
-          }
-        ],
-        grid: {
-          show: true,
-          borderWidth: 1,
-          borderColor: "#ccc"
-        }
-      };
-      if (conf.zoom) {
-        _.extend(options, {
-          selection: {
-            mode: "xy"
-          }
-        });
-      }
-      to_plot = _.map(req_res, function(rr) {
-        return {
-          label: "" + rr.experiment + " &raquo; " + rr.node + " &raquo; " + rr.stream,
-          shadowSize: conf.line_shadow,
-          data: rr._res.data,
-          yaxis: (rr.local_info.axis === 'left' ? 1 : 2)
-        };
-      });
-      place_holder = this.elem.find('.flot');
-      if (conf.zoom) {
-        place_holder.unbind("plotselected").bind("plotselected", __bind(function(event, ranges) {
-          var end_date, plot, start_date;
-          plot = $.plot(place_holder, to_plot, $.extend(true, {}, options, {
-            xaxis: {
-              min: ranges.xaxis.from,
-              max: ranges.xaxis.to
-            },
-            yaxis: {
-              min: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.from),
-              max: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.to)
-            },
-            y2axis: {
-              min: (ranges.y2axis === void 0 ? 0 : ranges.y2axis.from),
-              max: (ranges.y2axis === void 0 ? 0 : ranges.y2axis.to),
-              axisLabel: (right_axis_unit.length > 0 ? right_axis_unit[0] : void 0)
-            }
-          }));
-          this.elem.find(".caption .reset-zoom").unbind("click").click(__bind(function() {
-            return this.plot(conf, req_res);
-          }, this));
-          start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0));
-          end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0));
-          this.elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
-          return this.elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
-        }, this));
-      }
-      plot = $.plot(place_holder, to_plot, options);
-      start_date = plot.getAxes()['xaxis']['min'];
-      end_date = plot.getAxes()['xaxis']['max'];
-      this.elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
-      this.elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
-      return this.elem.find(".caption").show();
     };
     return WidgetTemperatureHumidityRange;
   })();
