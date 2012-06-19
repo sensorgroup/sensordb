@@ -539,34 +539,25 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |level|no|raw|Aggregation level|level is text and can be set to one of the following values: raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
 |sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012
 |ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012
-|sid|yes||stream id(s)| sid _or_ [sid1,sid2,sid3,...]
+|sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
 
 Response: 	JSON array
 If the aggregation level is raw, the output format is
 
-	[
-		[sid1,time1,value1],
-		[sid1,time2,value2],
-		[sid1,time3,value3],
-		...,
-		[sid2,timeA,valueA],
-		[sid2,timeB,valueB],
-		[sid2,timeC,valueC]
-	]
+	{
+		sid1:[[time1,value1],[time2,value2],...],
+		sid2:[[time1,value1],[time2,value2],...],
+		...
+	}
 
 In the above response, sid is stream id in string, time is an integer, presenting number of seconds since epoch (timezone aware) and value is a double precision number.
 
 If aggregation level is not raw, the output format is
 
-	[
-		[sid1,time1,[min1,max1,count1,sum1,sumSq1]],
-		[sid1,time2,[min2,max2,count2,sum2,sumSq2]],
-		[sid1,time3,[min3,max3,count3,sum3,sumSq3]],
-		...,
-		[sid2,timeA,[minA,maxA,countA,sumA,sumSqA]],
-		[sid2,timeB,[minB,maxB,countB,sumB,sumSqB]],
-		[sid2,timeC,[minC,maxC,countC,sumC,sumSqC]]
-	]
+	{
+		sid1:[[time1,min1,max1,count1,sum1,sumSq1],[time2,min2,max2,count2,sum2,sumSq2],...],
+		sid2:[[timeA,minA,maxA,countA,sumA,sumSqA],[timeB,minB,maxB,countB,sumB,sumSqB],...],
+	}
 
 ### POST /data ###
 This request can be used for pushing sensor data into SensorDB. One or more value from one or more streams can be pushed at the same time. The total request body size must be less than 500Kb.
