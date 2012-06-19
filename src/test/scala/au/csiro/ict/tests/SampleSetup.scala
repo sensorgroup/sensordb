@@ -12,8 +12,8 @@
 //import org.scalatra.test.ScalatraTests._
 //
 ///**
-//* sample mock backend data for javascript testing
-//*/
+// * sample mock backend data for javascript testing
+// */
 //class SampleSetup extends ScalatraSuite with FunSuite {
 //
 //  addServlet(classOf[SensorDB], "/*")
@@ -164,6 +164,10 @@
 //        streamId = idOf(body)
 //        status should equal(200)
 //      }
+//      var tokens = Map[String,String]()
+//      get("/tokens"){
+//        tokens = parse[List[Map[String,String]]](body).map(x=>x("_id")->x("token")).toMap
+//      }
 //      post("/streams",Map("name"->"stream3","nid"->nodeId,"mid"->units.head.apply("_id"))){
 //        // successful creation of stream1 within exp1
 //        body should include ("_id")
@@ -171,8 +175,9 @@
 //        streamId = idOf(body)
 //        status should equal(200)
 //      }
+//      for (token <- tokens.values)
+//        post("/data",Map("data"->generate(Map(token -> (for (i<- 1 until 100) yield (System.currentTimeMillis()/1000L+i) -> Math.random).toMap)))){ }
+//
 //    }
-//
 //  }
-//
 //}

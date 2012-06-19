@@ -8,6 +8,7 @@ import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
 import scala.Some
 import org.joda.time.DateTimeZone
+import java.io.BufferedWriter
 
 trait RestfulDataAccess {
 
@@ -68,7 +69,7 @@ trait RestfulDataAccess {
           case (Some(fromColIdx:Int),Some(toColIdx:Int)) => Some((fromColIdx,toColIdx))
           case others => None
         }
-        val chunker = new DefaultChunkFormatter(new JSONWriter(response.getWriter))
+        val chunker = new DefaultChunkFormatter(new JSONWriter2(new BufferedWriter(response.getWriter)))
         sids.filter(_ != None).groupBy(_.get._4).foreach{(sid)=> // group by timezone
           store.get(sid._2.map(_.get._1.toString),start_date,end_date,cols,sid._1,level,chunker)
         }

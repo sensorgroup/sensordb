@@ -1,6 +1,6 @@
 package au.csiro.ict
 
-import java.io.PrintWriter
+import java.io.{Writer, PrintWriter}
 import org.joda.time.DateTimeZone
 
 /**
@@ -71,26 +71,66 @@ class InMemWriter extends ChunkWriter{
   def getData = to_return
 }
 
-class JSONWriter(val output:PrintWriter) extends ChunkWriter{
-  def openWriter() =output.print("{")
+class JSONWriter(val output:Writer) extends ChunkWriter{
+  def openWriter() =output.write("{")
   var started = false;
   def insertData(sid:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
     if (started){
-      output.print(",")
+      output.write(",")
     }
     started=true
-    output.print(List(sid,ts,min,max,count,sum,sumSq).mkString("[",",","]"))
+    output.write(List(sid,ts,min,max,count,sum,sumSq).mkString("[",",","]"))
   }
 
   def insertData(sensor:String, ts:Int,value:Double)= {
     if (started){
-      output.print(",")
+      output.write(",")
     }
     started=true
     val to_write = "["+sensor+","+ts+","+value+"]";
-    output.print(to_write)
+    output.write(to_write)
   }
-  def closeWriter() = output.print("}")
+  def closeWriter() = {
+    output.write("}")
+    output.flush()
+  }
+}
+class JSONWriter2(val output:Writer) extends ChunkWriter{
+  def openWriter() =output.write("{")
+  var started = false
+  var previousSid:String = ""
+  def insertData(sid:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
+    val toAppend = List(ts,min,max,count,sum,sumSq).mkString("[",",","]")
+    if (sid != previousSid){
+      if (previousSid!="")
+        output.write("],")
+      output.write("\""+sid+"\":[")
+      output.write(toAppend)
+      previousSid = sid
+    }else {
+      output.write(",")
+      output.write(toAppend)
+    }
+  }
+
+  def insertData(sid:String, ts:Int,value:Double)= {
+    val toAppend = List(ts,value).mkString("[",",","]")
+    if (sid != previousSid){
+      if (started)
+        output.write("],")
+      output.write("\""+sid+"\":[")
+      output.write(toAppend)
+      previousSid = sid
+      started = true
+    }else {
+      output.write(",")
+      output.write(toAppend)
+    }
+  }
+  def closeWriter() = {
+    output.write("]}")
+    output.flush()
+  }
 }
 
 class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
