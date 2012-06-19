@@ -77,16 +77,16 @@ class JSONWriter(val output:PrintWriter) extends ChunkWriter{
   def insertData(sid:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
     if (started){
       output.print(",")
-      started=true
     }
+    started=true
     output.print(List(sid,ts,min,max,count,sum,sumSq).mkString("[",",","]"))
   }
 
   def insertData(sensor:String, ts:Int,value:Double)= {
     if (started){
       output.print(",")
-      started=true
     }
+    started=true
     val to_write = "["+sensor+","+ts+","+value+"]";
     output.print(to_write)
   }
