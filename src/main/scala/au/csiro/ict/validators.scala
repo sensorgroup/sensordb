@@ -185,7 +185,7 @@ object Validators {
       }
     }catch{
       case exception =>
-        exception.printStackTrace()
+//        exception.printStackTrace()
         validator.addError("An invalid Stream id")
         Set[ObjectId]()
     }

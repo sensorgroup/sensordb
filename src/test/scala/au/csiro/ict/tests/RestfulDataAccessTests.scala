@@ -173,7 +173,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
 
   test("Testing summaries for 100 inserts"){
     get(DATA_RAW_URI , Map("sid"->stream1Id.toString,"level"->"1-year","sd"->date1UKFormat,"ed"->date1UKFormat)){
-      body should include("["+stream1Id.toString+","+date1YYSummary+",0.0,99.0,100.0,4950.0,328350.0]")
+      body should include(stream1Id.toString)
+      body should include("["+date1YYSummary+",0.0,99.0,100.0,4950.0,328350.0]")
       status should equal(200)
     }
     val tempId = new ObjectId().toString
@@ -188,7 +189,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
 
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString,stream2Id.toString)),"level"->"1-year","sd"->date1UKFormat,"ed"->date1UKFormat)){
-      body should include("["+stream1Id.toString+","+date1YYSummary+",0.0,99.0,100.0,4950.0,328350.0]")
+      body should include("["+date1YYSummary+",0.0,99.0,100.0,4950.0,328350.0]")
       body should include(stream1Id.toString)
       body should not include(stream2Id.toString)
       status should equal(200)
@@ -203,7 +204,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
     Thread.sleep(500) // waiting for the system to process, in the case of hbase storage, it may take sometime
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-month")){
-      body should include("["+stream1Id.toString+","+date1MonthSummary+",-333.0,99.0,101.0,4617.0,439239.0]")
+      body should include("["+date1MonthSummary+",-333.0,99.0,101.0,4617.0,439239.0]")
+      body should include(stream1Id.toString)
       status should equal(200)
     }
   }
@@ -215,7 +217,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
     Thread.sleep(100)//waiting until updates are applied to redis/storage. Without this tests were failing. I guess redis flush was required.
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-month")){
-      body should include("["+stream1Id.toString+","+date1MonthSummary+",-333.0,99.0,101.0,4618.0,439240.0]")
+      body should include("["+date1MonthSummary+",-333.0,99.0,101.0,4618.0,439240.0]")
+      body should include(stream1Id.toString)
       status should equal(200)
     }
   }
@@ -230,7 +233,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
     Thread.sleep(200) // waiting until processing being done
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-month")){
-      body should include("["+stream1Id.toString+","+date1MonthSummary+",-333.0,123.321,101.0,4740.321,454447.069041]")
+      body should include("["+date1MonthSummary+",-333.0,123.321,101.0,4740.321,454447.069041]")
+      body should include(stream1Id.toString)
       status should equal(200)
     }
   }
@@ -246,7 +250,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     Thread.sleep(200) // waiting until processing being done
 
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-day")){
-      body should include("["+stream1Id.toString+","+date1DaySummary+",1.0,99.0,100.0,5027.7,334387.29]")
+      body should include("["+date1DaySummary+",1.0,99.0,100.0,5027.7,334387.29]")
       body should include(stream1Id.toString)
       status should equal(200)
     }
@@ -260,7 +264,7 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
     Thread.sleep(1000)
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->"1-day")){
-      body should include("["+stream1Id.toString+","+date1HourSummary+",0.0,99.0,151.0,8752.7,622312.29]")
+      body should include("["+date1HourSummary+",0.0,99.0,151.0,8752.7,622312.29]")
       body should include(stream1Id.toString)
       status should equal(200)
     }

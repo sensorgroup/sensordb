@@ -12,8 +12,8 @@
 //import org.scalatra.test.ScalatraTests._
 //
 ///**
-// * sample mock backend data for javascript testing
-// */
+//* sample mock backend data for javascript testing
+//*/
 //class SampleSetup extends ScalatraSuite with FunSuite {
 //
 //  addServlet(classOf[SensorDB], "/*")

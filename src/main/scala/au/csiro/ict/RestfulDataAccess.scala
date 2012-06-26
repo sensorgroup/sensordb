@@ -78,5 +78,9 @@ trait RestfulDataAccess {
       case others => haltMsg("Bad input, missing stream, please verify the body of your request")
     }
   }
+
+  get("/ping"){
+    "Pong"
+  }
 }
 

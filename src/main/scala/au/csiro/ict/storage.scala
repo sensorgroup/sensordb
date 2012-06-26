@@ -101,7 +101,7 @@ class JSONWriter2(val output:Writer) extends ChunkWriter{
   var started = false
   var previousSid:String = ""
   def insertData(sid:String, ts:Int,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
-    val toAppend = List(ts,min,max,count,sum,sumSq).mkString("[",",","]")
+    val toAppend = new StringBuilder("[").append(ts).append(",").append(min).append(",").append(max).append(",").append(count).append(",").append(sum).append(",").append(sumSq).append("]").toString()
     if (sid != previousSid){
       if (seenIds.contains(sid)) throw new RuntimeException("This is a bug, bad output produced ...")
       seenIds+=sid
@@ -117,7 +117,7 @@ class JSONWriter2(val output:Writer) extends ChunkWriter{
   }
 
   def insertData(sid:String, ts:Int,value:Double)= {
-    val toAppend = List(ts,value).mkString("[",",","]")
+    val toAppend = new StringBuilder("[").append(ts).append(",").append(value).append("]").toString()
     if (sid != previousSid){
       if (started)
         output.write("],")
@@ -131,7 +131,9 @@ class JSONWriter2(val output:Writer) extends ChunkWriter{
     }
   }
   def closeWriter() = {
-    output.write("]}")
+    if (started)
+      output.write("]")
+    output.write("}")
     output.flush()
   }
 }
