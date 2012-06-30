@@ -110,6 +110,7 @@ class JSONWriter2(val output:Writer) extends ChunkWriter{
       output.write("\""+sid+"\":[")
       output.write(toAppend)
       previousSid = sid
+      started=true
     }else {
       output.write(",")
       output.write(toAppend)

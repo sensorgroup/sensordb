@@ -263,6 +263,14 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			exp = _.reduce(_.difference(_.keys($scope.experiments),_.keys(seen_exps)),((sum,eid)->sum.push({e:eid});sum),filtered_rows)
 
 			$scope.filtered_rows = _.union(stream_node_exp,node_exp,exp)
+	$scope.period = -1
+	$scope.set_period = (period)->
+		if (period == $scope.period )
+			return
+		$scope.period = period
+		all_streams = _($scope.filtered_rows).map((v)->v.s).filter((v)->v isnt undefined)
+#		$resource('/data',{"sid":all_streams,}).get (session)->
+
 
 window.ExperimentCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)
@@ -272,6 +280,8 @@ window.NodeCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 
 window.StreamCreateCtrl = ($scope,$location, $routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)
+
+window.DataExplorerCtrl = ($scope) ->
 
 window.Err404Ctrl = ($scope) ->
 	$scope.url=window.location.href

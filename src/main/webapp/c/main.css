@@ -4368,3 +4368,6 @@ table.tablesorter thead tr .headerSortUp {
 .alert {
   margin-bottom: 0;
 }
+a.no_underline {
+  text-decoration: none;
+}

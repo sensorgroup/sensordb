@@ -309,7 +309,7 @@
         return apply_selection_filters(selected_stream, selected_node, selected_exp, $scope.session);
       }
     });
-    return apply_selection_filters = function(session, selected_stream, selected_node, selected_exp) {
+    apply_selection_filters = function(session, selected_stream, selected_node, selected_exp) {
       var exp, experiment_ids, experiment_names, experiments, filtered_rows, node_eids, node_exp, node_ids, node_names, nodes, seen_exps, seen_nodes, stream_names, stream_nids, stream_node_exp, streams;
       if (selected_exp || selected_node || selected_stream) {
         streams = selected_stream ? _.filter(session.streams, function(s) {
@@ -394,6 +394,19 @@
         return $scope.filtered_rows = _.union(stream_node_exp, node_exp, exp);
       }
     };
+    $scope.period = -1;
+    return $scope.set_period = function(period) {
+      var all_streams;
+      if (period === $scope.period) {
+        return;
+      }
+      $scope.period = period;
+      return all_streams = _($scope.filtered_rows).map(function(v) {
+        return v.s;
+      }).filter(function(v) {
+        return v !== void 0;
+      });
+    };
   };
   window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
     return $("body textarea").cleditor(sensordb.Utils.editor_config);
@@ -404,6 +417,7 @@
   window.StreamCreateCtrl = function($scope, $location, $routeParams, $timeout) {
     return $("body textarea").cleditor(sensordb.Utils.editor_config);
   };
+  window.DataExplorerCtrl = function($scope) {};
   window.Err404Ctrl = function($scope) {
     return $scope.url = window.location.href;
   };

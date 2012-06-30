@@ -10,7 +10,7 @@ import org.joda.time.DateTimeZone
 import com.typesafe.config.ConfigFactory
 
 class RedisPool(val host:String,val port:Int,dbIndex:Int){
-  private val pool = new JedisPool(new JedisPoolConfig(), host,port,Protocol.DEFAULT_TIMEOUT,null,dbIndex)
+  val pool = new JedisPool(new JedisPoolConfig(), host,port,Protocol.DEFAULT_TIMEOUT,null,dbIndex)
   def call[T](x:(Jedis=>T)):T={
     val jedis:Jedis = pool.getResource
     val t:T = x(jedis)

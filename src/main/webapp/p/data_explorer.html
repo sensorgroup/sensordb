@@ -1,0 +1,144 @@
+<script type="text/javascript">
+	$LAB.script("j/lib/backbone-min.js").script("j/lib/jquery-ui-1.8.21.custom.min.js").script("/j/lib/visualsearch.js").wait(function(){
+		$(function(){
+			var visualSearch = VS.init({
+				container : $('.visual_search'),
+				query     : '',
+				callbacks : {
+					search       : function(query, searchCollection) {},
+					facetMatches : function(callback) {},
+					valueMatches : function(facet, searchTerm, callback) {}
+				}
+			});
+		});
+	});
+</script>
+<script src="" type="text/javascript"></script>
+<!--[if (!IE)|(gte IE 8)]><!-->
+<link href="/c/visualsearch-datauri.css" media="screen" rel="stylesheet" type="text/css" />
+<!--<![endif]-->
+<!--[if lte IE 7]><!-->
+<link href="/c/visualsearch.css" media="screen" rel="stylesheet" type="text/css" />
+<!--<![endif]-->
+
+<div class="container data-page">
+	<div class="accordion" id="accordion2">
+		<div class="accordion-group" >
+			<div class="accordion-heading">
+				<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseOne"><b>Source Filter</b><em><small class="margin-10 muted">&#8212; Select data sources that belong to a particular experiment or node, stream</small></em></a>
+			</div>
+			<div id="collapseOne"  class="accordion-body collapse in accordion-toggle" >
+				<div class="accordion-inner">
+					<select id="experiment-selector" class="span4">
+						<option value="">All Experiments</option>
+						<option ng-repeat="e in experiment_names" value="{{e}}">{{e}}</option>
+					</select>
+					<select id="stream-selector" class="span4" >
+						<option value="">All Streams</option>
+						<option ng-repeat="s in stream_names" value="{{s}}s">{{s}}</option>
+					</select>
+					<select id="ndoe-selector" class="span4" >
+						<option value="">All Nodes</option>
+						<option ng-repeat="n in node_names" value="{{n}}">{{n}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseTwo"><b>Date Range Filter</b><em><small class="margin-10 muted">&#8212; Find data sources that have data for a given time range</small></em></a>
+			</div>
+			<div id="collapseTwo" class="accordion-body collapse" style="height: 0px; ">
+				<div class="accordion-inner">
+					<div class="span7 no-left-margin" style="width: 520px">
+						<div class="btn-group" id="month-selector" data-toggle="buttons-checkbox">
+							<a class="btn active"  ng-click="month_updated()" >Jan</a>
+							<a class="btn active"  ng-click="month_updated()" >Feb</a>
+							<a class="btn active"  ng-click="month_updated()" >Mar</a>
+							<a class="btn active"  ng-click="month_updated()" >Apr</a>
+							<a class="btn active"  ng-click="month_updated()" >May</a>
+							<a class="btn active"  ng-click="month_updated()" >Jun</a>
+							<a class="btn active"  ng-click="month_updated()" >Jul</a>
+							<a class="btn active"  ng-click="month_updated()" >Aug</a>
+							<a class="btn active"  ng-click="month_updated()" >Sep</a>
+							<a class="btn active"  ng-click="month_updated()" >Oct</a>
+							<a class="btn active"  ng-click="month_updated()" >Nov</a>
+							<a class="btn active"  ng-click="month_updated()" >Dec</a>
+						</div>
+					</div>
+					<div class="span2" style="width:80px">
+						<select id="year-selector" class="span2" >
+							<option value="-1">All years</option>
+							<option value="2005">2005</option>
+							<option value="2006">2006</option>
+							<option value="2007">2007</option>
+							<option value="2008">2008</option>
+							<option value="2009">2009</option>
+							<option value="2010">2010</option>
+							<option value="2011">2011</option>
+							<option value="2012">2012</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseThree"><b>Metadata Filter</b><em><small class="margin-10 muted">&#8212; Find data sources that are annotated with a particular metadata value</small></em></a>
+			</div>
+			<div id="collapseThree" class="accordion-body collapse">
+				<div class="accordion-inner">
+					<div class="row">
+						<div class="visual_search span11"  style="width:910px;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr/>
+	<div class="row" >
+		<h3 class="span4">Results (30 rows)</h3>
+		<div class="span3 pull-right">
+			<div class="btn-group pull-right" id="agg_period" data-toggle="buttons-radio">
+				<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>
+				<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>
+				<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>
+				<a class="btn active"  ng-click="set_agg_period('all')" >All</a>
+			</div>
+		</div>
+	</div>
+	<div class="pad-bottom-10"></div>
+
+
+	<table class="table table-bordered table-striped tablesorter" id="data-table">
+		<thead>
+		<tr>
+			<th>Experiment</th>
+			<th>Node</th>
+			<th>Stream</th>
+			<th>Count</th>
+			<th>Min</th>
+			<th>Max</th>
+			<th>StDev</th>
+			<th>Avg</th>
+			<th>Last Value</th>
+			<th>Last Timestamp</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="i in filtered_rows">
+			<td><a href="/#/data/{{user}}/{{i.e}}">{{experiments[i.e].name}}</a></td>
+			<td><a href="/#/data/{{user}}/{{i.n}}">{{nodes[i.n].name}}</a></td>
+			<td><a href="/#/data/{{user}}/{{i.s}}">{{streams[i.s].name}}</a></td>
+			<td>24,541</td>
+			<td>-10.231</td>
+			<td>43.654</td>
+			<td>3.432</td>
+			<td>17.342</td>
+			<td>19.342</td>
+			<td>25 minutes ago</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<div ng-include src="'/p/footer.html'"></div>

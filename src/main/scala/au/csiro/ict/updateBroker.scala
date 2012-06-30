@@ -14,7 +14,9 @@ case class Update(nextAggLevel:String,sid:String,ts:DateTime,sr:Option[StatResul
 
 class UpdateBroker(val staticAggregator:ActorRef) extends Actor with Logger {
   def receive = {
-    case msg@RawData(sid,value,tz) => staticAggregator ! msg
+    case msg@RawData(sid,value,tz) =>
+      staticAggregator ! msg
+
     case msg@Insert(aggLevel,sid,ts,value,previuosCalcResult) => staticAggregator !msg
     case msg@Update(aggLevel,sid,ts,previuosCalcResult) => staticAggregator !msg
     case msg@Done(sid,ts)=>  /** use this to keep track of active workers. **/
@@ -26,6 +28,7 @@ class UpdateBrokerProxy(s:Storage) extends Bootable{
   val system = ActorSystem("InputProcessingWorkersProxy", ConfigFactory.load.getConfig("InputProcessingWorkersProxy"))
 
   val worker = system.actorOf(Props(new StaticAggregator(s)), "InputProcessingWorker")
+
 
   val master = system.actorOf(Props(new UpdateBroker(worker)))
 
@@ -46,3 +49,5 @@ object UpdateBrokerBackend{
   //    println("input processing backend started, waiting for messages ... ")
   //  }
 }
+
+
