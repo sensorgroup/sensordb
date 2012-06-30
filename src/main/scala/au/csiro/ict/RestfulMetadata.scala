@@ -75,14 +75,15 @@ trait RestfulMetadata {
       .flatMap(_.getAs[MongoDBList]("metadata").getOrElse(MongoDBList()).map(x=>x.asInstanceOf[BasicDBObject].getString("name")))).toSet)
   }
 
-  get("/metadata/keys/:userid"){
-    generateMetadataKeys(Map("uid"->new ObjectId(params("userid"))))
-  }
-  get("/metadata/keys"){
-    generateMetadataKeys(Map())
-  }
-  get("/metadata/values/:key/:userid"){
-    generate(List(Experiments,Nodes,Streams).flatMap(_.find(Map("metadata.name"->params("key"),"uid"->new ObjectId(params("userid"))),Map("metadata"->1))
+  def generateMetadataKeyValues(uid:Option[ObjectId]):String=
+    generate(List(Experiments,Nodes,Streams).flatMap(_.find(Map()++uid.map("uid"->_),Map("metadata"->1))
+      .flatMap(x=>x.getAs[MongoDBList]("metadata").getOrElse(MongoDBList()).map{x=>
+      val item = x.asInstanceOf[mongodb.BasicDBObject]
+      item.get("name") ->item.get("value")
+    })).groupBy(_._1).mapValues(_.map(_._2)).toMap)
+
+  def generateMetadataValues(uid:Option[ObjectId]):String=
+    generate(List(Experiments,Nodes,Streams).flatMap(_.find(Map("metadata.name"->params("key"))++uid.map("uid"->_),Map("metadata"->1))
       .flatMap(x=>x.getAs[MongoDBList]("metadata").getOrElse(MongoDBList()).map{x=>
       val item = x.asInstanceOf[mongodb.BasicDBObject]
       if (item.get("name") == params("key"))
@@ -90,5 +91,20 @@ trait RestfulMetadata {
       else
         None
     }.filter(_ != None))).toSet)
+
+  get("/metadata/keys/:userid"){
+    generateMetadataKeys(Map("uid"->new ObjectId(params("userid"))))
+  }
+  get("/metadata/keys"){
+    generateMetadataKeys(Map())
+  }
+  get("/metadata/keyvalues"){
+    generateMetadataKeyValues(None)
+  }
+  get("/metadata/values/:key"){
+    generateMetadataValues(None)
+  }
+  get("/metadata/values/:key/:userid"){
+    generateMetadataValues(params.get("userid").map(uid=>new ObjectId(uid)))
   }
 }

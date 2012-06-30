@@ -1,13 +1,36 @@
 <script type="text/javascript">
+	var metadata = {}
+	var metadata_keys = []
+	jQuery.getJSON("/metadata/keyvalues",function(data){
+		metadata=data;
+		metadata_keys = _.keys(metadata);
+	});
 	$LAB.script("j/lib/backbone-min.js").script("j/lib/jquery-ui-1.8.21.custom.min.js").script("/j/lib/visualsearch.js").wait(function(){
 		$(function(){
 			var visualSearch = VS.init({
 				container : $('.visual_search'),
 				query     : '',
+				remainder: "Metadata",
 				callbacks : {
-					search       : function(query, searchCollection) {},
-					facetMatches : function(callback) {},
-					valueMatches : function(facet, searchTerm, callback) {}
+					search       : function(query, searchCollection) {
+//						searchCollection.forEach(function(facet){
+//							var category = facet.get("category")
+//							var value = facet.get("value")
+//							if (value == "searching..."){
+//								searchCollection.remove(facet)
+//							}
+//						});
+					},
+					facetMatches : function(callback) {callback(metadata_keys);},
+					valueMatches : function(facet, searchTerm, callback) {
+//						callback(["searching..."])
+//						jQuery.getJSON("/metadata/values/"+facet,function(json){
+//							setTimeout(function(){
+//								callback(json)
+//							},1000);
+//						});
+						callback(metadata[facet])
+					}
 				}
 			});
 		});
