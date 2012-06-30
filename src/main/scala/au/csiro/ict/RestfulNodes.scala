@@ -1,7 +1,7 @@
 package au.csiro.ict
 
 import au.csiro.ict.Cache._
-import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.query.Imports._
 import au.csiro.ict.Validators._
 import org.scalatra.ScalatraServlet
 import scala.collection.JavaConversions._

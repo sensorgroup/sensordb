@@ -2,6 +2,7 @@ package au.csiro.ict
 
 
 import au.csiro.ict.Validators._
+import com.mongodb.casbah.query.Imports._
 import org.bson.types.ObjectId
 import org.scalatra.ScalatraServlet
 import au.csiro.ict.Cache._
@@ -54,7 +55,7 @@ trait RestfulStreams {
 
   get("/tokens"){
     UserSession(session) match {
-      case Some((uid,userName))=> generate(Streams.find(MongoDBObject("uid"->uid),MongoDBObject("_id"->1,"token"->1)))
+      case Some((uid,userName))=> generate(Streams.find(Map("uid"->uid),Map("_id"->1,"token"->1)))
       case noSession => haltMsg("No session available. You need to login before calling this url")
     }
   }

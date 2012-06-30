@@ -4,8 +4,11 @@ import org.scalatra.ScalatraServlet
 import au.csiro.ict.JsonGenerator._
 import au.csiro.ict.Cache._
 import au.csiro.ict.Validators._
-import com.mongodb.casbah.commons.MongoDBObject
-import com.mongodb.DBObject
+import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.commons
+import com.mongodb
+
+//import com.mongodb.casbah.query.Imports._
 
 /**
  * Metadata key is limited to 30 characters, minimum 1, no space in the middle
@@ -25,15 +28,19 @@ trait RestfulMetadata {
       Description(params.get("value")),
       Description(params.get("description"))) match {
       case (Some((uid,userName)),Some(oid),startTs,endTs,Some(name),Some(value),description) =>
-        val toInsert = Map("value"->value.slice(0,30),"updated_at"->System.currentTimeMillis(),"updated_by"->userName) ++ startTs.map("start-ts"->_) ++ endTs.map("end-ts"->_) ++ description.map("description"-> _ )
+        val toInsert = Map("name"->name,
+          "value"->value.slice(0,30),
+          "updated_at"->System.currentTimeMillis(),
+          "updated_by"->userName) ++ startTs.map("start-ts"->_) ++ endTs.map("end-ts"->_) ++ description.map("description"-> _ )
 
-        val modify = MongoDBObject("$set"->MongoDBObject(("metadata."+name)->MongoDBObject(toInsert.toSeq :_*)))
-        val search = MongoDBObject("uid"->uid,"_id"->oid)
-        val result = Experiments.findAndModify(search,modify).orElse(Nodes.findAndModify(search,modify)).orElse(Streams.findAndModify(search,modify))
-        if (result.isDefined)
-          halt(200)
-        else
-          haltMsg("Adding meta data failed")
+        val search = Map("uid"->uid,"_id"->oid)
+        val remove = Map("$pull"->Map("metadata"->Map("name"->name)))
+        val insert = Map("$push"->Map("metadata"->Map(toInsert.toSeq :_*)))
+        List(Experiments,Nodes,Streams).foreach{x=>
+          x.update(search,remove)
+          x.update(search,insert)
+          x.update(search,Map("$set"->Map("changed"->"yes")))
+        }
       case missingParams=> haltMsg("Invalid user session")
     }
   }
@@ -44,26 +51,44 @@ trait RestfulMetadata {
       EntityId(params.get("id")),
       PatternMatch(params.get("name"),METADATA_NAME_REGEX)) match {
       case (Some((uid,userName)),Some(oid),Some(name)) =>
-        val modify = MongoDBObject("$unset"->MongoDBObject(("metadata."+name)->1))
-        val search = MongoDBObject("uid"->uid,"_id"->oid)
-        val result = Experiments.findAndModify(search,modify).orElse(Nodes.findAndModify(search,modify)).orElse(Streams.findAndModify(search,modify))
-        if (result.isDefined)
-          halt(200)
-        else
-          haltMsg("Removing a meta data item failed")
+        val remove = Map("$pull"->Map("metadata"->Map("name"->name)))
+        val search = Map("uid"->uid,"_id"->oid)
+        List(Experiments,Nodes,Streams).foreach{x=>x.update(search,remove)}
       case missingParams=> haltMsg("Missing arguments, id and name are required. This can be only called by authenticated users")
     }
   }
 
   get("/metadata/retrieve/:id"){
-    val fields = MongoDBObject("metadata"->1)
+    val fields = Map("metadata"->1)
     EntityId(params.get("id")) match {
       case Some(oid)=>
-        Experiments.findOneByID(oid,fields).orElse(Nodes.findOneByID(oid,fields)).orElse(Streams.findOneByID(oid,fields)).map(_.get("metadata")).filter(_!=null).map(_.asInstanceOf[DBObject].toMap) match {
-          case Some(result) if !result.isEmpty=>  generate(result)
+        Experiments.findOneByID(oid,fields).orElse(Nodes.findOneByID(oid,fields)).orElse(Streams.findOneByID(oid,fields)).map(_.getAs[BasicDBList]("metadata").toList) match {
+          case Some(result) if !result.isEmpty=>  generate(result.head)
           case notFound => halt(200,"{}")
         }
       case invalidId=>halt(200,"{}")
     }
+  }
+
+  def generateMetadataKeys(filter:Map[String,_]):String={
+    generate(List(Experiments,Nodes,Streams).flatMap(_.find((filter),Map("metadata"->1))
+      .flatMap(_.getAs[MongoDBList]("metadata").getOrElse(MongoDBList()).map(x=>x.asInstanceOf[BasicDBObject].getString("name")))).toSet)
+  }
+
+  get("/metadata/keys/:userid"){
+    generateMetadataKeys(Map("uid"->new ObjectId(params("userid"))))
+  }
+  get("/metadata/keys"){
+    generateMetadataKeys(Map())
+  }
+  get("/metadata/values/:key/:userid"){
+    generate(List(Experiments,Nodes,Streams).flatMap(_.find(Map("metadata.name"->params("key"),"uid"->new ObjectId(params("userid"))),Map("metadata"->1))
+      .flatMap(x=>x.getAs[MongoDBList]("metadata").getOrElse(MongoDBList()).map{x=>
+      val item = x.asInstanceOf[mongodb.BasicDBObject]
+      if (item.get("name") == params("key"))
+        Some(item.get("value"))
+      else
+        None
+    }.filter(_ != None))).toSet)
   }
 }

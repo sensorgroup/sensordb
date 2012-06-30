@@ -189,8 +189,6 @@ class StreamIdIterator(sids:Set[String],from:DateTime,to:DateTime,level:Aggregat
   override def next():(Array[Byte],DateTime,String) =
     if (periodIter.hasNext && sid !=null){
       val ts = periodIter.next()
-      println(level == OneYearLevel)
-
       (level.rowKeyAsBytes(sid,ts),ts,sid)
     } else {
       periodIter= level.createPeriod(from,to)

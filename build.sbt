@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % "7.6.0.v20120127" % "container",
   "javax.servlet" % "servlet-api" % "2.5" % "provided" ,
   "org.apache.commons" % "commons-math3" % "3.0",
-  "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
+  "org.mongodb" %% "casbah" % "2.4.0",
   "joda-time" % "joda-time" % "2.1",
   "org.joda" % "joda-convert" % "1.2" % "provided",
   "org.mindrot" % "jbcrypt" % "0.3m",
