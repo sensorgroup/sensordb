@@ -52,8 +52,8 @@ Markdown syntax `http://daringfireball.net/projects/markdown/syntax` or `http://
 ##User Access API##
 |Resource|Method|Description|
 |:-------|------|-----------|
-|/users|GET|Retrieving user profile information for all users|
-|/session|GET|Retrieving user's structural information|
+|/users|GET|Retrieving user profile information for all users
+|/session|GET|Retrieving user's structural information
 
 
 ### GET /users###
@@ -86,7 +86,7 @@ This request is used to retrieve information about experiments,nodes and streams
 
 |Parameter|Required|Default|
 |:--------|--------|-------|
-|name     | No     |Current username|
+|name     | No     |Current username  
 
 Example, if a user is not logged in, a request to /session results to
 
@@ -110,8 +110,8 @@ If a valid username is provided, the response is like
 	            "access_restriction": "0",
 	            "created_at": 1337833953909,
 	            "description": "",
-	            "metadata": [
-	                {   "name":"deployment status",
+	            "metadata": {
+	                "deployment status": {
 	                    "updated_by": "sample1",
 	                    "description": "",
 	                    "start-ts": 1330947746220,
@@ -119,19 +119,19 @@ If a valid username is provided, the response is like
 	                    "value": "Active",
 	                    "end-ts": 1336218146220
 	                },
-	                {   "name":"location",
+	                "location": {
 	                    "value": "Australia",
 	                    "updated_at": 1337833953913,
 	                    "updated_by": "sample1",
 	                    "description": ""
 	                },
-	                {   "name" : "sensor type"
+	                "sensor type": {
 	                    "value": "Arduino",
 	                    "updated_at": 1337833953917,
 	                    "updated_by": "sample1",
 	                    "description": ""
 	                }
-	            ],
+	            },
 	            "name": "yanco new setup",
 	            "picture": "",
 	            "timezone": "Australia/Sydney",
@@ -210,44 +210,43 @@ Important fields used in the response:
 
 |Field|Description|
 |:---------|-----------|
-|uid | UserId|
-|_id | id of an object|
-|mid| Measurement id from GET /measurements|
-|eid| Experiment id|
-|nid| Node Id|
-|access_restriction| applies only to experiments. 0 means experiments is publicly accessible, 1 means experiment is private and 2 means accessible only by my friends (not implemented yet)|
-|alt| applies only to nodes, double precision number,  altitude value|
-|lat| applies only to nodes, double precision number, latitude value|
-|lon| applies only to nodes, double precision number, longitude value|
+|uid | UserId
+|_id | id of an object
+|mid| Measurement id from GET /measurements
+|eid| Experiment id
+|nid| Node Id
+|access_restriction| applies only to experiments. 0 means experiments is publicly accessible, 1 means experiment is private and 2 means accessible only by my friends (not implemented yet)
+|alt| applies only to nodes, double precision number,  altitude value
+|lat| applies only to nodes, double precision number, latitude value
+|lon| applies only to nodes, double precision number, longitude value
 
 Note that any experiment, node and stream can have on or more metadata entries associated with it. Each metadata is a JSON object with the following attributes:
 
 |Field|Description|
 |:----------|-----------|
-|name | String representing the name of a metadata|
-|value | String representing the value of a metadata |
-|updated_at | The timestamp this metadata entry is created at|
-|updated_by | The username of the user who created/updated this metadata entry|
-|description| A textual description of this metadata entry |
-|start-ts| Starting timestamp for this metadata, since when this metadata is relevant|
-|end-ts| End timestamp for this metadata, until when this metadata is relevant |
+|value | String representing the value of a metadata
+|updated_at | The timestamp this metadata entry is created at
+|updated_by | The username of the user who created/updated this metadata entry
+|description| A textual description of this metadata entry
+|start-ts| Starting timestamp for this metadata, since when this metadata is relevant
+|end-ts| End timestamp for this metadata, until when this metadata is relevant
 
 ##User management API ##
 
 |Resource|Method|Description|
 |:--------|------|-----------|
-|/register|POST| Register a user to SensorDB  |
-|/login|POST|Login to SensorDB with username and password   |
-|/logout|POST|To logout from SensorDB |
-|/remove|POST|To remove a registered user and all his experiments, nodes and streams|
+|/register|POST| Register a user to SensorDB
+|/login|POST|Login to SensorDB with username and password
+|/logout|POST|To logout from SensorDB
+|/remove|POST|To remove a registered user and all his experiments, nodes and streams
 
 ###POST /remove###
 Removes a registered user and all of his experiments, nodes and streams.
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters |
-|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126).|
+|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
+|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126).
 
 ###POST /login###
 
@@ -255,8 +254,8 @@ Used to login with a username and password. Note that a user must be activated b
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters |
-|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126)|
+|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
+|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126).
 
 Once login is successful, the output of this request is equivalent of GET /session request.
 If login is not successful, an error message like below is produced:
@@ -273,12 +272,12 @@ Invalidates current user session (if there is any available). This request doesn
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters|
-|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126)  |
-|email|Yes|Must be unique  |
-|description|No|A short description about this user |
-|picture|No|A URL pointing to an image, containing a picture of this user|
-|website|No|A URL pointing to a page containing more information about this user |
+|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
+|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126)
+|email|Yes|Must be unique
+|description|No|A short description about this user
+|picture|No|A URL pointing to an image, containing a picture of this user
+|website|No|A URL pointing to a page containing more information about this user
 
 If a user is created successfully, the output of this request is equivalent of GET /session request.
 If user is not created successfully, the output contains error messages describing the problem, like below:
@@ -291,20 +290,20 @@ Note: Upon successful registration, the user is automatically logs in (no separa
 
 |Resource|Method|Description|
 |:--------|------|-----------|
-|/experiments|POST|Create a new experiment |
-|/experiments|PUT|Update and existing experiment |
-|/experiments|DELETE|Remove an existing experiment|
+|/experiments|POST|Create a new experiment
+|/experiments|PUT|Update and existing experiment
+|/experiments|DELETE|Remove an existing experiment
 
 ### POST /experiments ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)|
-|timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]  |
-|description|No|Description of this experiment, limited HTML allowed|
-|website|No|A URL for a website containing more information about this experiment  |
-|picture|No|URL pointing to a picture|
-|public_access|No|Integer value, 0 means public, 1 means private, 2 means accessible by friends (not implemented)|
+|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
+|timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]
+|description|No|Description of this experiment, limited HTML allowed
+|website|No|A URL for a website containing more information about this experiment
+|picture|No|URL pointing to a picture
+|public_access|No|Integer value, 0 means public, 1 means private, 2 means accessible by friends (not implemented)
 
 Note: To use this request, the callee must have a valid session (a logged in user).
 Note2: The user session in which this request is made, owns the experiment
@@ -315,9 +314,9 @@ Use this request to update experiment information
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|eid|Yes|experiment Id |
-|field|Yes|valid values for this field are: name, website, description, picture or access_restriction|
-|value|Yes|New value |
+|eid|Yes|experiment Id
+|field|Yes|valid values for this field are: name, website, description, picture or access_restriction
+|value|Yes|New value
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
@@ -325,7 +324,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|eid|Yes|Experiment Id to be deleted |
+|eid|Yes|Experiment Id to be deleted
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
@@ -333,9 +332,9 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Resource|Method|Description|
 |:--------|------|-----------|
-|/nodes|POST|Create a new node  |
-|/nodes|PUT|Update and existing node   |
-|/nodes|DELETE|Remove an existing node  |
+|/nodes|POST|Create a new node
+|/nodes|PUT|Update and existing node
+|/nodes|DELETE|Remove an existing node
 
 ### POST /nodes ###
 
@@ -464,9 +463,6 @@ At this stage, measurements are inserted directly (manually) into MongoDB. Look 
 |/metadata/add|GET|To Add/update a metadata entry to/of an experiment, node or stream.
 |/metadata/remove|GET|To remove a metadata entry from an experiment, node or stream.
 |/metadata/retrieve/__ObjectId__|GET|To retrieve all metadata of a given experiment, node or stream.
-|/metadata/keys| Returns all the name attribute of all metadata entiries by all users - Response is an array of String |
-|/metadata/keys/_userid_| Returns all the name attribute of all metadata entiries of a given user - Response is an array of String |
-|/metadata/keyvalues| Returns all the name and value attribute of all metadata entiries of all users - Response is an object with String (metadata name) as key and Array (all values assigned to this metadata name) |
 
 General information: In all the above methods, the _id_ parameter can refer to a stream id, a node id or an experiment id. This is possible because in SensorDB all ids are unique.
 
@@ -545,9 +541,7 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012  (End date is assumed to be in the same timezone as the experiment which holds the stream)
 |sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
 
-Important: _sd_ and _ed_ are required by _1-year_ aggregation level but they are _ignored_. _1-year_ returns all the summary information (array of arrays ) of a given stream across stream's whole lifespan (one array containing summary information per year).
-
-Response: JSON Object containing sid as key and array of arrays as value
+Response: 	JSON array
 If the aggregation level is raw, the output format is
 
 	{
@@ -561,11 +555,9 @@ In the above response, sid is stream id in string, time is an integer, presentin
 If aggregation level is not raw, the output format is
 
 	{
-		sid1:[[minTime1,maxTime1,min1,max1,count1,sum1,sumSq1],[minTime2,maxTime2,max2,count2,sum2,sumSq2],...],
-		sid2:[[minTimeA,maxTimeA,minA,maxA,countA,sumA,sumSqA],[minTimeB,maxTimeB,minB,maxB,countB,sumB,sumSqB],...],
+		sid1:[[time1,min1,max1,count1,sum1,sumSq1],[time2,min2,max2,count2,sum2,sumSq2],...],
+		sid2:[[timeA,minA,maxA,countA,sumA,sumSqA],[timeB,minB,maxB,countB,sumB,sumSqB],...],
 	}
-
-Note: The output of /data is not ordered therefore the order of output may change for each individual request.
 
 ### POST /data ###
 This request can be used for pushing sensor data into SensorDB. One or more value from one or more streams can be pushed at the same time. The total request body size must be less than 500Kb.
