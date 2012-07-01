@@ -54,11 +54,11 @@ abstract class AggregationLevel {
 
 
 object OneYearLevel extends AggregationLevel{
-  val colKeyRange = 2000 until 2020
+  val colKeyRange = 1990 until 2020
   val id="1-year"
   val shortId="_y"
   val rowIncrement = new Period().withYears(1)
-  val dateTimePattern = DateTimeFormat.forPattern("0")
+  val dateTimePattern = DateTimeFormat.forPattern("0") // zero because I needed something for dateTimePattern, 0 is just a dummy pattern as "" is not a valid pattern for Joda
   override def getCellKeyFor(ts:DateTime) = ts.getYear
   override def getChildCells(ts:DateTime) = 0 until 12
   def getCourserLevel() = None
@@ -184,14 +184,15 @@ object RawLevel extends AggregationLevel{
 class StreamIdIterator(sids:Set[String],from:DateTime,to:DateTime,level:AggregationLevel) extends Iterator[(Array[Byte],DateTime,String)] {
   override def hasNext = !sids.isEmpty && (periodIter.hasNext || sidIter.hasNext)
   var sidIter = sids.iterator
-  var periodIter = if (level == OneYearLevel) level.createPeriod(from,from) else level.createPeriod(from,to)
+  def createPeriodIterator() = if (level == OneYearLevel) level.createPeriod(from,from) else level.createPeriod(from,to)
+  var periodIter = createPeriodIterator()
   var sid:String = null
   override def next():(Array[Byte],DateTime,String) =
     if (periodIter.hasNext && sid !=null){
       val ts = periodIter.next()
       (level.rowKeyAsBytes(sid,ts),ts,sid)
     } else {
-      periodIter= level.createPeriod(from,to)
+      periodIter= createPeriodIterator()
       sid = sidIter.next()
       next()
     }
