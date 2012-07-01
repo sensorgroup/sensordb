@@ -28,11 +28,11 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
   val store = new RedisStore()
   val staticAggregator = system.actorOf(Props(new StaticAggregator(store)))
   val broker = system.actorOf(Props(new UpdateBroker(staticAggregator)))
-  val ts2012_1_1_0_0_0_0 = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
+  val ts2012_1_1_0_0_0_0 = new DateTime(2012,1,1,0,0,0,0)
   var ts2012_1_1_0_0_0_0_int = Utils.dateTimeToInt(ts2012_1_1_0_0_0_0)
-  val ts2012_1_1_18_0_0_0 = new DateTime(2012,1,1,18,0,0,0,Utils.TZ_Sydney)
+  val ts2012_1_1_18_0_0_0 = new DateTime(2012,1,1,18,0,0,0)
   val ts2012_1_1_18_0_0_0_int = Utils.dateTimeToInt(ts2012_1_1_18_0_0_0)
-  val ts2012_1_1_18_0_3_0 = new DateTime(2012,1,1,18,0,3,0,Utils.TZ_Sydney)
+  val ts2012_1_1_18_0_3_0 = new DateTime(2012,1,1,18,0,3,0)
   val ts2012_1_1_18_0_3_0_int = Utils.dateTimeToInt(ts2012_1_1_18_0_3_0)
 
   test("Static Aggregated Statistics Calculation Actor; First inserted received"){
@@ -45,7 +45,7 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
     store.drop("s1")
     var ts1Int: Int = (ts2012_1_1_0_0_0_0.getMillis / 1000L).asInstanceOf[Int]
     val sid="s1"
-    val lvl0 = RawData(sid,Map(ts1Int->Some(5)),Utils.TZ_Sydney)
+    val lvl0 = RawData(sid,Map(ts1Int->Some(5)))
     val lvl1=Insert(OneMinuteLevel.id,sid,ts2012_1_1_0_0_0_0,5,None)
     val lvl2=Insert(FiveMinuteLevel.id,sid,ts2012_1_1_0_0_0_0,5,Some(StatResult(sid,ts2012_1_1_0_0_0_0,OneMinuteLevel.id,List[Double](ts1Int,ts1Int,5,5,1.0,5,5*5))))
     val lvl3=Insert(FifteenMinuteLevel.id,sid,ts2012_1_1_0_0_0_0,5,Some(StatResult(sid,ts2012_1_1_0_0_0_0,FiveMinuteLevel.id,List[Double](ts1Int,ts1Int,5,5,1.0,5,5*5))))
@@ -80,7 +80,7 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
   test("Static Aggregated Statistics Calculation Actor; A Second insert received"){
     var ts1Int = Utils.dateTimeToInt(ts2012_1_1_18_0_0_0)
     val sid="s1"
-    val lvl0 = RawData(sid,Map(ts1Int->Some(1)),Utils.TZ_Sydney)
+    val lvl0 = RawData(sid,Map(ts1Int->Some(1)))
     val lvl1=Insert(OneMinuteLevel.id,sid,ts2012_1_1_18_0_0_0,1,None)
     val lvl2=Insert(FiveMinuteLevel.id,sid,ts2012_1_1_18_0_0_0,1,Some(StatResult(sid,ts2012_1_1_18_0_0_0,OneMinuteLevel.id,List[Double](ts1Int,ts1Int,1,1,1.0,1,1*1))))
     val lvl3=Insert(FifteenMinuteLevel.id,sid,ts2012_1_1_18_0_0_0,1,Some(StatResult(sid,ts2012_1_1_18_0_0_0,FiveMinuteLevel.id,List[Double](ts1Int,ts1Int,1,1,1.0,1,1*1))))
@@ -114,14 +114,14 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
   }
   test("Static Aggregated Statistics Calculation Actor; An update over non-existing Item received"){
     val sid="s1"
-    val lvl0 = RawData(sid,Map(Utils.dateTimeToInt(ts2012_1_1_18_0_3_0)->None),Utils.TZ_Sydney)
+    val lvl0 = RawData(sid,Map(Utils.dateTimeToInt(ts2012_1_1_18_0_3_0)->None))
     val lvl10=Done(sid,ts2012_1_1_18_0_3_0)
     staticAggregator ! lvl0
     expectMsg(lvl10)
   }
   test("Static Aggregated Statistics Calculation Actor; An update over first item received"){
     val sid="s1"
-    val lvl0 = RawData(sid,Map(ts2012_1_1_0_0_0_0_int->Some(-2.0)),Utils.TZ_Sydney)
+    val lvl0 = RawData(sid,Map(ts2012_1_1_0_0_0_0_int->Some(-2.0)))
     val lvl1=Update(OneMinuteLevel.id,sid,ts2012_1_1_0_0_0_0,None)
     val lvl2=Update(FiveMinuteLevel.id,sid,ts2012_1_1_0_0_0_0,Some(StatResult(sid,ts2012_1_1_0_0_0_0,OneMinuteLevel.id,List[Double](ts2012_1_1_0_0_0_0_int,ts2012_1_1_0_0_0_0_int,-2,-2,1.0,-2,4))))
     val lvl3=Update(FifteenMinuteLevel.id,sid,ts2012_1_1_0_0_0_0,Some(StatResult(sid,ts2012_1_1_0_0_0_0,FiveMinuteLevel.id,List[Double](ts2012_1_1_0_0_0_0_int,ts2012_1_1_0_0_0_0_int,-2,-2,1.0,-2,4))))
@@ -155,10 +155,10 @@ class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) 
   }
   ////  test("Bulk aggregation, all inserts"){
   ////    store.drop("sbulk")
-  ////    val ts1 = new DateTime(2012,1,1,0,0,0,0,Utils.TZ_Sydney)
+  ////    val ts1 = new DateTime(2012,1,1,0,0,0,0)
   ////    val rawData = (for(i<-0 until 100) yield (ts1.getMillis/1000L + i).asInstanceOf[Int] -> Some(i.toDouble)).toMap
   ////    val expectedDone = for(i<-0 until 100) yield Done("sbulk",ts1.plusSeconds(i))
-  ////    broker ! RawData("sbulk",rawData,Utils.TZ_Sydney)
+  ////    broker ! RawData("sbulk",rawData)
   ////    expectMsgAllOf(expectedDone :_*) // this test doesn't work, as reference to Sender is lost in the broker during the process hence it cant reply back
   ////  }
 }

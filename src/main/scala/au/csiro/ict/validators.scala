@@ -12,9 +12,7 @@ import Cache._
 import com.codahale.jerkson.Json._
 import scala.{Option, None}
 import scala.Predef._
-import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{DateTimeZone, DateTime}
-import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
 
 object Validators {
@@ -153,13 +151,13 @@ object Validators {
       }
     }
 
-  def PermissionCheckOnStreamIdList(streamIds:Set[ObjectId],user:Option[(ObjectId,String)])(implicit validator:Validator):Set[Option[(ObjectId,ObjectId,ObjectId,DateTimeZone)]] =
+  def PermissionCheckOnStreamIdList(streamIds:Set[ObjectId],user:Option[(ObjectId,String)])(implicit validator:Validator):Set[Option[(ObjectId,ObjectId,ObjectId)]] =
     streamIds.map{ sid =>
       NidUidFromSid(sid) match {
         case Some((ownerId,nid)) => experimentTimeZoneFromNid(nid) match {
           case Some((eid,access,tz))=> access match{
-            case EXPERIMENT_ACCESS_PUBLIC => Some((sid,nid,eid,tz))
-            case EXPERIMENT_ACCESS_PRIVATE if user.filter(_._1 ==  ownerId).isDefined => Some((sid,nid,eid,tz))
+            case EXPERIMENT_ACCESS_PUBLIC => Some((sid,nid,eid))
+            case EXPERIMENT_ACCESS_PRIVATE if user.filter(_._1 ==  ownerId).isDefined => Some((sid,nid,eid))
             case other =>
               validator.addError("Bad input, access denied, please verify the body of your request")
           }

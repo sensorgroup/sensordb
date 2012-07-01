@@ -39,7 +39,7 @@ trait RestfulDataAccess {
           if(allKeysMapped.size != packed.size)
             haltMsg("Bad request, invalid security token(s)")
           allKeysMapped.foreach { item =>
-            workersProxy.process(RawData(item._1,item._2._1,item._2._2))
+            workersProxy.process(RawData(item._1,item._2._1))
           }
 
           generate(Map("length"->packed.values.map(_.size).sum))
@@ -70,8 +70,8 @@ trait RestfulDataAccess {
           case others => None
         }
         val chunker = new DefaultChunkFormatter(new JSONWriter2(new BufferedWriter(response.getWriter)))
-        sids.filter(_ != None).groupBy(_.get._4).foreach{(sid)=> // group by timezone
-          store.get(sid._2.map(_.get._1.toString),start_date,end_date,cols,sid._1,level,chunker)
+        sids.filter(_ != None).foreach{(sid)=>
+          store.get(sid.map(_._1.toString).toSet,start_date,end_date,cols,level,chunker)
         }
         chunker.done()
 

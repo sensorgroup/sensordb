@@ -47,7 +47,7 @@ class DataStoreTests extends ScalatraSuite with FunSuite {
       val writer = new InMemWriter()
       writer.isClosed() should  be(false)
       val chunker = new DefaultChunkFormatter(writer)
-      store.get(Set("s1"), time2Int("20111"), time2Int("20112"),None,Utils.TZ_Sydney,RawLevel,chunker)
+      store.get(Set("s1"), time2Int("20111"), time2Int("20112"),None,RawLevel,chunker)
       chunker.item_count should equal(0)
       writer.isClosed() must equal(false)
       chunker.done()
@@ -55,34 +55,34 @@ class DataStoreTests extends ScalatraSuite with FunSuite {
     }
     test("Query inserting one element" ) {
       store.drop("s1")
-      store.put("s1", Map(ukDateTimeToInt("02-01-2011T00:01:15",Utils.TZ_Sydney)-> Some(-100.0)),Utils.TZ_Sydney)
-      val ts1 = ukDateTimeToInt("02-01-2011T00:01:15",Utils.TZ_Sydney)
+      store.put("s1", Map(ukDateTimeToInt("02-01-2011T00:01:15")-> Some(-100.0)))
+      val ts1 = ukDateTimeToInt("02-01-2011T00:01:15")
       val writer = new InMemWriter()
-      store.get(Set("s1"),ts1,ts1+10,None,Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer))
+      store.get(Set("s1"),ts1,ts1+10,None,RawLevel,new DefaultChunkFormatter(writer))
       writer.getData.toList should equal(List(("s1",ts1,-100.0)))
       val writer2 = new InMemWriter()
-      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),None,Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer2))
+      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),None,RawLevel,new DefaultChunkFormatter(writer2))
       writer2.getData.length should equal(1)
       val writer3 = new InMemWriter()
-      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((0,74)),Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer3))
+      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((0,74)),RawLevel,new DefaultChunkFormatter(writer3))
       writer3.getData.length should equal(0)
 
       val writer4 = new InMemWriter()
-      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((74,75)),Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer4))
+      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((74,75)),RawLevel,new DefaultChunkFormatter(writer4))
       writer4.getData.length should equal(1)
 
       val writer5 = new InMemWriter()
-      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((75,86400)),Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer5))
+      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((75,86400)),RawLevel,new DefaultChunkFormatter(writer5))
       writer5.getData.length should equal(1)
 
       val writer6 = new InMemWriter()
-      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((76,86400)),Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer6))
+      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((76,86400)),RawLevel,new DefaultChunkFormatter(writer6))
       writer6.getData.length should equal(0)
 
       store.drop("s1")
 
       val writer7 = new InMemWriter()
-      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((74,75)),Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer7))
+      store.get(Set("s1"), time2Int("20111"), time2Int("20113"),Some((74,75)),RawLevel,new DefaultChunkFormatter(writer7))
       writer7.getData.length should equal(0)
 
     }
@@ -91,33 +91,33 @@ class DataStoreTests extends ScalatraSuite with FunSuite {
       val _20111=time2Int("20112")
       val _20112=time2Int("20112")
       val _20113=time2Int("20113")
-      store.put("s1", Map(ukDateTimeToInt("02-01-2011T00:01:15",Utils.TZ_Sydney) -> Some(1.0),
-        ukDateTimeToInt("02-01-2011T00:01:16",Utils.TZ_Sydney) -> Some(2.0)),Utils.TZ_Sydney)
+      store.put("s1", Map(ukDateTimeToInt("02-01-2011T00:01:15") -> Some(1.0),
+        ukDateTimeToInt("02-01-2011T00:01:16") -> Some(2.0)))
       val writer = new InMemWriter()
 
-      store.get(Set("s1"),_20112, _20113, None, Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer))
+      store.get(Set("s1"),_20112, _20113, None, RawLevel,new DefaultChunkFormatter(writer))
       writer.getData.length  should equal(2)
       val writer2 = new InMemWriter()
-      store.get(Set("s1"), _20111, _20113, Some((0,74)), Utils.TZ_Sydney,RawLevel, new DefaultChunkFormatter(writer2))
+      store.get(Set("s1"), _20111, _20113, Some((0,74)),RawLevel, new DefaultChunkFormatter(writer2))
       writer2.getData.length  should equal(0)
 
       val writer3 = new InMemWriter()
-      store.get(Set("s1"), _20111, _20113, Some((74,75)), Utils.TZ_Sydney,RawLevel, new DefaultChunkFormatter(writer3))
+      store.get(Set("s1"), _20111, _20113, Some((74,75)),RawLevel, new DefaultChunkFormatter(writer3))
       writer3.getData.length should equal(1)
 
       val writer4 = new InMemWriter()
-      store.get(Set("s1"), _20111, _20113, Some((75,76)), Utils.TZ_Sydney,RawLevel, new DefaultChunkFormatter(writer4))
+      store.get(Set("s1"), _20111, _20113, Some((75,76)), RawLevel, new DefaultChunkFormatter(writer4))
       writer4.getData.length should equal(2)
 
       val writer5 = new InMemWriter()
-      store.get(Set("s1") ,_20111, _20113, Some((75,76)),Utils.TZ_Sydney, RawLevel, new DefaultChunkFormatter(writer5))
+      store.get(Set("s1") ,_20111, _20113, Some((75,76)), RawLevel, new DefaultChunkFormatter(writer5))
       writer5.getData.length should equal(2)
-      writer5.getData should contain(("s1",1293886875,1.0))
-      writer5.getData should contain(("s1",1293886876,2.0))
+      writer5.getData should contain(("s1",ukDateTimeToInt("02-01-2011T00:01:15"),1.0))
+      writer5.getData should contain(("s1",ukDateTimeToInt("02-01-2011T00:01:16") ,2.0))
 
       val writer6 = new InMemWriter()
-      store.get(Set("s1"), _20111, _20113,Some((76,100)), Utils.TZ_Sydney,RawLevel,new DefaultChunkFormatter(writer6))
+      store.get(Set("s1"), _20111, _20113,Some((76,100)), RawLevel,new DefaultChunkFormatter(writer6))
       writer6.getData.length should equal(1)
-      writer6.getData should contain(("s1",1293886876,2.0))
+      writer6.getData should contain(("s1",ukDateTimeToInt("02-01-2011T00:01:16") ,2.0))
     }
 }

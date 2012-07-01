@@ -17,10 +17,10 @@ class RedisStore extends Storage {
     jedis.call(j=>j.hset(row,col,value))
   }
 
-  def put(streamId: String, values: Map[Int, Option[Double]],tz:DateTimeZone) {
+  def put(streamId: String, values: Map[Int, Option[Double]]) {
 
     values.foreach{v=>
-      val row = RawLevel.rowColKey(streamId,new DateTime(v._1*1000L,tz))
+      val row = RawLevel.rowColKey(streamId,new DateTime(v._1*1000L))
       if (v._2.isDefined){
         jedis.call{jedis=>jedis.hset(row._1,row._2,Bytes.toBytes(v._2.get))}
       }
@@ -28,13 +28,13 @@ class RedisStore extends Storage {
         jedis.call{jedis=>jedis.hdel(row._1,row._2)}
     }
   }
-  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],tz:DateTimeZone,level:AggregationLevel,chunker:ChunkFormatter){
-    val fromDateTime = new DateTime(fromTime*1000L).withZone(tz)
-    val toDateTime = new DateTime(toTime*1000L).withZone(tz)
+  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter){
+    val fromDateTime = new DateTime(fromTime*1000L)
+    val toDateTime = new DateTime(toTime*1000L)
     val period = new StreamIdIterator(streamIds,fromDateTime,toDateTime,level)
     while (period.hasNext){
       val (row,ts,sid)=period.next()
-      var current = ts.withZone(tz).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
+      var current = ts.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
       val currentInTs = (current.getMillis/1000L).asInstanceOf[Int]
       val data =  jedis.call{jedis=>jedis.hgetAll(row)}
       if (data !=null && !data.isEmpty){

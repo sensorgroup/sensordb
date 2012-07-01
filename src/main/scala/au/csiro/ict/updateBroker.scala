@@ -3,18 +3,18 @@ package au.csiro.ict
 import akka.actor._
 import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.DateTime
 
 case class StatResult(streamId:String,ts:DateTime,aggLeve:String,stats:List[Double])
 trait SDBMsg
 case class Done(sid:String,ts:DateTime) extends SDBMsg
-case class RawData(sid:String,value:Map[Int,Option[Double]],tz:DateTimeZone) extends SDBMsg
+case class RawData(sid:String,value:Map[Int,Option[Double]]) extends SDBMsg
 case class Insert(aggLevel:String,sid:String,ts:DateTime,value:Double,sr:Option[StatResult]) extends SDBMsg
 case class Update(nextAggLevel:String,sid:String,ts:DateTime,sr:Option[StatResult]) extends SDBMsg
 
 class UpdateBroker(val staticAggregator:ActorRef) extends Actor with Logger {
   def receive = {
-    case msg@RawData(sid,value,tz) =>
+    case msg@RawData(sid,value) =>
       staticAggregator ! msg
 
     case msg@Insert(aggLevel,sid,ts,value,previuosCalcResult) => staticAggregator !msg

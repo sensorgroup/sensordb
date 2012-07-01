@@ -1,22 +1,16 @@
 package au.csiro.ict
 
-import java.io.{Writer, PrintWriter}
-import org.joda.time.DateTimeZone
+import java.io.Writer
 
-/**
- * Storage class is Timezone aware, this means:
- * When you call set, timestamp should be in milliseconds from EPOCH in local Timezone. A separate Timezone parameter can be provided to correctly create buckets
- * When retrieving data, timestamp should be in milliseconds from EPOCH in local Timezone.
- */
 trait Storage {
   def getPrefixed(prefix:String):Iterable[Array[Byte]]
 
-  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],tz:DateTimeZone,level:AggregationLevel,chunker:ChunkFormatter):Unit
+  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter):Unit
   def get(row:Array[Byte],column:Array[Byte]):Option[Array[Byte]]
   def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[Array[Byte]]
 
   def put(row: Array[Byte], col:Array[Byte],value:Array[Byte]):Unit
-  def put(streamId: String, values: Map[Int, Option[Double]],tz:DateTimeZone):Unit
+  def put(streamId: String, values: Map[Int, Option[Double]]):Unit
 
   def drop(streamId:String)
   def close()

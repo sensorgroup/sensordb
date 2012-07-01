@@ -7,12 +7,12 @@ import akka.actor.{Props, ActorSystem}
 import akka.dispatch.Await
 import akka.testkit.{TestProbe, TestActorRef, TestKit}
 import au.csiro.ict._
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{ DateTime}
 
 class AggregationTest extends ScalatraSuite with FunSuite with BeforeAndAfterAll {
 
   test("Check if child cells are generated correctly") {
-    val ts1 = new DateTime(2010,2,6,12,43,54,123,Utils.TZ_Sydney)
+    val ts1 = new DateTime(2010,2,6,12,43,54,123)
     OneMinuteLevel.getChildCells(ts1).length must equal(60)
     OneMinuteLevel.getChildCells(ts1) must contain(RawLevel.getCellKeyFor(ts1))
     for (i<-12*60*60+43*60 until 12*60*60+44*60 )

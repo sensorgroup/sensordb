@@ -34,16 +34,16 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   val stream2Id = addStream("stream2",user2Id,node2Id,measurementId,"","","",Some(token2)).get
   val stream3Id = addStream("stream3",user2Id,node3Id,measurementId,"","","",Some(token3)).get
   val date1UKFormat = "30-01-2010"
-  val date1 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:20",Utils.TZ_Sydney)
-  val date2 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:21",Utils.TZ_Sydney)
-  val date3 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:22",Utils.TZ_Sydney)
-  val date4 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T20:15:00",Utils.TZ_Sydney)
-  val date1YYSummary = (new DateTime(date1*1000L).withZone(Utils.TZ_Sydney).withDayOfYear(1).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
-  val date1MonthSummary = (new DateTime(date1*1000L).withZone(Utils.TZ_Sydney).withDayOfMonth(1).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
-  val date1HourSummary = (new DateTime(date1*1000L).withZone(Utils.TZ_Sydney).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
-  val date1DaySummary = (new DateTime(date1*1000L).withZone(Utils.TZ_Sydney).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
-  val date1MinSummaryA = (new DateTime(date1*1000L).withZone(Utils.TZ_Sydney).withSecondOfMinute(0).withMillisOfSecond(0).getMillis/1000L).asInstanceOf[Int]
-  val date1MinSummaryB = (new DateTime((date1+60)*1000L).withZone(Utils.TZ_Sydney).withSecondOfMinute(0).withMillisOfSecond(0).getMillis/1000L).asInstanceOf[Int]
+  val date1 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:20")
+  val date2 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:21")
+  val date3 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T07:15:22")
+  val date4 = SDBTestHelpers.ukDateTimeToInt(date1UKFormat+"T20:15:00")
+  val date1YYSummary = (new DateTime(date1*1000L).withDayOfYear(1).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+  val date1MonthSummary = (new DateTime(date1*1000L).withDayOfMonth(1).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+  val date1HourSummary = (new DateTime(date1*1000L).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+  val date1DaySummary = (new DateTime(date1*1000L).withMillisOfDay(0).getMillis/1000L).asInstanceOf[Int]
+  val date1MinSummaryA = (new DateTime(date1*1000L).withSecondOfMinute(0).withMillisOfSecond(0).getMillis/1000L).asInstanceOf[Int]
+  val date1MinSummaryB = (new DateTime((date1+60)*1000L).withSecondOfMinute(0).withMillisOfSecond(0).getMillis/1000L).asInstanceOf[Int]
 
   test("Check the stream2 to be empty") {
     get(DATA_RAW_URI,Map("level"->"raw","sid"->stream2Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030","st"->"0","et"->"86399")){

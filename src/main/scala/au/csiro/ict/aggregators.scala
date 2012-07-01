@@ -258,11 +258,11 @@ class StaticAggregator(val store:Storage) extends Actor{
       else
         sender ! Done(sid,ts)
 
-    case RawData(sid,data,tz)=>
-      store.put(sid,data,tz)
+    case RawData(sid,data)=>
+      store.put(sid,data)
       Cache.stat_time_idx.call{redis=>
         data.foreach{item =>
-          val ts =new DateTime(item._1*1000L,tz)
+          val ts =new DateTime(item._1*1000L)
           val rowKey = RawLevel.rowColKey(sid,ts)
           item._2 match{
             case Some(value)=>

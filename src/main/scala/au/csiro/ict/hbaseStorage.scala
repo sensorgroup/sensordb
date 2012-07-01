@@ -35,8 +35,8 @@ class HbaseStorage extends Storage {
     }.toSeq
   }
 
-  def put(s: String, values: Map[Int, Option[Double]],tz:DateTimeZone) = values.foreach{item=>
-    val time = new DateTime(item._1*1000L,tz)
+  def put(s: String, values: Map[Int, Option[Double]]) = values.foreach{item=>
+    val time = new DateTime(item._1*1000L)
     val put = new Put(RawLevel.rowKeyAsBytes(s,time))
     put.add(data,RawLevel.getCellKeyForAsByte(time),item._2.map(Bytes.toBytes).getOrElse(null))
     hbase.put(put)
@@ -51,10 +51,10 @@ class HbaseStorage extends Storage {
 
   override def close() = hbase.close()
 
-  def get(streamIds: Set[String], fromTime: Int, toTime: Int, columns: Option[(Int, Int)], tz: DateTimeZone, level: AggregationLevel, chunker: ChunkFormatter) {
-    val fromDateTime = new DateTime(fromTime*1000L).withZone(tz)
-    val toDateTime = new DateTime(toTime*1000L).withZone(tz)
-    val parser = level.dateTimePattern.withZone(tz)
+  def get(streamIds: Set[String], fromTime: Int, toTime: Int, columns: Option[(Int, Int)], level: AggregationLevel, chunker: ChunkFormatter) {
+    val fromDateTime = new DateTime(fromTime*1000L)
+    val toDateTime = new DateTime(toTime*1000L)
+    val parser = level.dateTimePattern
     streamIds.foreach{sid=>
       val scan = new Scan(level.rowKeyAsBytes(sid,fromDateTime),level.rowKeyAsBytes(sid,level.nextRowTimeStamp(toDateTime))).addFamily(data).setMaxVersions(1)
 
