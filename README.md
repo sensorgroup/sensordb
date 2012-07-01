@@ -52,8 +52,8 @@ Markdown syntax `http://daringfireball.net/projects/markdown/syntax` or `http://
 ##User Access API##
 |Resource|Method|Description|
 |:-------|------|-----------|
-|/users|GET|Retrieving user profile information for all users
-|/session|GET|Retrieving user's structural information
+|/users|GET|Retrieving user profile information for all users|
+|/session|GET|Retrieving user's structural information|
 
 
 ### GET /users###
@@ -86,7 +86,7 @@ This request is used to retrieve information about experiments,nodes and streams
 
 |Parameter|Required|Default|
 |:--------|--------|-------|
-|name     | No     |Current username  
+|name     | No     |Current username|
 
 Example, if a user is not logged in, a request to /session results to
 
@@ -210,44 +210,44 @@ Important fields used in the response:
 
 |Field|Description|
 |:---------|-----------|
-|uid | UserId
-|_id | id of an object
-|mid| Measurement id from GET /measurements
-|eid| Experiment id
-|nid| Node Id
-|access_restriction| applies only to experiments. 0 means experiments is publicly accessible, 1 means experiment is private and 2 means accessible only by my friends (not implemented yet)
-|alt| applies only to nodes, double precision number,  altitude value
-|lat| applies only to nodes, double precision number, latitude value
-|lon| applies only to nodes, double precision number, longitude value
+|uid | UserId|
+|_id | id of an object|
+|mid| Measurement id from GET /measurements|
+|eid| Experiment id|
+|nid| Node Id|
+|access_restriction| applies only to experiments. 0 means experiments is publicly accessible, 1 means experiment is private and 2 means accessible only by my friends (not implemented yet)|
+|alt| applies only to nodes, double precision number,  altitude value|
+|lat| applies only to nodes, double precision number, latitude value|
+|lon| applies only to nodes, double precision number, longitude value|
 
 Note that any experiment, node and stream can have on or more metadata entries associated with it. Each metadata is a JSON object with the following attributes:
 
 |Field|Description|
 |:----------|-----------|
-|name | String representing the name of a metadata
-|value | String representing the value of a metadata
-|updated_at | The timestamp this metadata entry is created at
-|updated_by | The username of the user who created/updated this metadata entry
-|description| A textual description of this metadata entry
-|start-ts| Starting timestamp for this metadata, since when this metadata is relevant
-|end-ts| End timestamp for this metadata, until when this metadata is relevant
+|name | String representing the name of a metadata|
+|value | String representing the value of a metadata |
+|updated_at | The timestamp this metadata entry is created at|
+|updated_by | The username of the user who created/updated this metadata entry|
+|description| A textual description of this metadata entry |
+|start-ts| Starting timestamp for this metadata, since when this metadata is relevant|
+|end-ts| End timestamp for this metadata, until when this metadata is relevant |
 
 ##User management API ##
 
 |Resource|Method|Description|
 |:--------|------|-----------|
-|/register|POST| Register a user to SensorDB
-|/login|POST|Login to SensorDB with username and password
-|/logout|POST|To logout from SensorDB
-|/remove|POST|To remove a registered user and all his experiments, nodes and streams
+|/register|POST| Register a user to SensorDB  |
+|/login|POST|Login to SensorDB with username and password   |
+|/logout|POST|To logout from SensorDB |
+|/remove|POST|To remove a registered user and all his experiments, nodes and streams|
 
 ###POST /remove###
 Removes a registered user and all of his experiments, nodes and streams.
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
-|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126).
+|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters |
+|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126).|
 
 ###POST /login###
 
@@ -255,8 +255,8 @@ Used to login with a username and password. Note that a user must be activated b
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
-|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126).
+|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters |
+|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126)|
 
 Once login is successful, the output of this request is equivalent of GET /session request.
 If login is not successful, an error message like below is produced:
@@ -273,12 +273,12 @@ Invalidates current user session (if there is any available). This request doesn
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters
-|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126)
-|email|Yes|Must be unique
-|description|No|A short description about this user
-|picture|No|A URL pointing to an image, containing a picture of this user
-|website|No|A URL pointing to a page containing more information about this user
+|name|Yes|Username, must be unique, 3 to 30 alphanumeric characters|
+|password|Yes|Must consist of 6 or more and less than 30 characters. The characters should be printable ascii characters (ascii code 32 to 126)  |
+|email|Yes|Must be unique  |
+|description|No|A short description about this user |
+|picture|No|A URL pointing to an image, containing a picture of this user|
+|website|No|A URL pointing to a page containing more information about this user |
 
 If a user is created successfully, the output of this request is equivalent of GET /session request.
 If user is not created successfully, the output contains error messages describing the problem, like below:
@@ -291,20 +291,20 @@ Note: Upon successful registration, the user is automatically logs in (no separa
 
 |Resource|Method|Description|
 |:--------|------|-----------|
-|/experiments|POST|Create a new experiment
-|/experiments|PUT|Update and existing experiment
-|/experiments|DELETE|Remove an existing experiment
+|/experiments|POST|Create a new experiment |
+|/experiments|PUT|Update and existing experiment |
+|/experiments|DELETE|Remove an existing experiment|
 
 ### POST /experiments ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
-|timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]
-|description|No|Description of this experiment, limited HTML allowed
-|website|No|A URL for a website containing more information about this experiment
-|picture|No|URL pointing to a picture
-|public_access|No|Integer value, 0 means public, 1 means private, 2 means accessible by friends (not implemented)
+|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)|
+|timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]  |
+|description|No|Description of this experiment, limited HTML allowed|
+|website|No|A URL for a website containing more information about this experiment  |
+|picture|No|URL pointing to a picture|
+|public_access|No|Integer value, 0 means public, 1 means private, 2 means accessible by friends (not implemented)|
 
 Note: To use this request, the callee must have a valid session (a logged in user).
 Note2: The user session in which this request is made, owns the experiment
@@ -315,9 +315,9 @@ Use this request to update experiment information
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|eid|Yes|experiment Id
-|field|Yes|valid values for this field are: name, website, description, picture or access_restriction
-|value|Yes|New value
+|eid|Yes|experiment Id |
+|field|Yes|valid values for this field are: name, website, description, picture or access_restriction|
+|value|Yes|New value |
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
@@ -325,7 +325,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|eid|Yes|Experiment Id to be deleted
+|eid|Yes|Experiment Id to be deleted |
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
@@ -333,9 +333,9 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Resource|Method|Description|
 |:--------|------|-----------|
-|/nodes|POST|Create a new node
-|/nodes|PUT|Update and existing node
-|/nodes|DELETE|Remove an existing node
+|/nodes|POST|Create a new node  |
+|/nodes|PUT|Update and existing node   |
+|/nodes|DELETE|Remove an existing node  |
 
 ### POST /nodes ###
 
