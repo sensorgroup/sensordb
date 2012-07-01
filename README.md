@@ -110,8 +110,8 @@ If a valid username is provided, the response is like
 	            "access_restriction": "0",
 	            "created_at": 1337833953909,
 	            "description": "",
-	            "metadata": {
-	                "deployment status": {
+	            "metadata": [
+	                {   "name":"deployment status",
 	                    "updated_by": "sample1",
 	                    "description": "",
 	                    "start-ts": 1330947746220,
@@ -119,19 +119,19 @@ If a valid username is provided, the response is like
 	                    "value": "Active",
 	                    "end-ts": 1336218146220
 	                },
-	                "location": {
+	                {   "name":"location",
 	                    "value": "Australia",
 	                    "updated_at": 1337833953913,
 	                    "updated_by": "sample1",
 	                    "description": ""
 	                },
-	                "sensor type": {
+	                {   "name" : "sensor type"
 	                    "value": "Arduino",
 	                    "updated_at": 1337833953917,
 	                    "updated_by": "sample1",
 	                    "description": ""
 	                }
-	            },
+	            ],
 	            "name": "yanco new setup",
 	            "picture": "",
 	            "timezone": "Australia/Sydney",
@@ -224,6 +224,7 @@ Note that any experiment, node and stream can have on or more metadata entries a
 
 |Field|Description|
 |:----------|-----------|
+|name | String representing the name of a metadata
 |value | String representing the value of a metadata
 |updated_at | The timestamp this metadata entry is created at
 |updated_by | The username of the user who created/updated this metadata entry
@@ -298,7 +299,7 @@ Note: Upon successful registration, the user is automatically logs in (no separa
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric)
+|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
 |timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]
 |description|No|Description of this experiment, limited HTML allowed
 |website|No|A URL for a website containing more information about this experiment
@@ -320,7 +321,7 @@ Use this request to update experiment information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
-### DELETE /experiments ###
+### DELETE /experiments?eid=_eid_ ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -340,7 +341,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of the node, must be unique within a experiment, 3 to 30 characters (alphanumeric)
+|name|Yes|Name of the node, must be unique within a experiment, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
 |eid|Yes| Experiment Id which this node belongs to
 |description|No|Description of this experiment, limited HTML is allowed
 |website|No|A URL for a website containing more information about this experiment
@@ -364,7 +365,7 @@ Use this request to update node information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this node.
 
-### DELETE /nodes ###
+### DELETE /nodes=?nid=_nid_ ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -386,7 +387,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of the stream, must be unique within a node, 3 to 30 characters (alphanumeric)
+|name|Yes|Name of the stream, must be unique within a node, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
 |nid|Yes|Parent node id
 |description|No|Description of this stream, limited HTML is allowed
 |website|No|A URL for a website containing more information about this stream
@@ -408,7 +409,7 @@ Use this request to update stream information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this stream.
 
-### DELETE /streams ###
+### DELETE /streams?sid=_sid_ ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -463,6 +464,9 @@ At this stage, measurements are inserted directly (manually) into MongoDB. Look 
 |/metadata/add|GET|To Add/update a metadata entry to/of an experiment, node or stream.
 |/metadata/remove|GET|To remove a metadata entry from an experiment, node or stream.
 |/metadata/retrieve/__ObjectId__|GET|To retrieve all metadata of a given experiment, node or stream.
+|/metadata/keys| Returns all the name attribute of all metadata entiries by all users - Response is an array of String |
+|/metadata/keys/_userid_| Returns all the name attribute of all metadata entiries of a given user - Response is an array of String |
+|/metadata/keyvalues| Returns all the name and value attribute of all metadata entiries of all users - Response is an object with String (metadata name) as key and Array (all values assigned to this metadata name) |
 
 General information: In all the above methods, the _id_ parameter can refer to a stream id, a node id or an experiment id. This is possible because in SensorDB all ids are unique.
 
@@ -537,36 +541,31 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |Parameter|Required|Default|Description|Format|
 |---------|--------|-------|-----------|------|
 |level|no|raw|Aggregation level|level is text and can be set to one of the following values: raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
-|sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012
-|ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012
-|sid|yes||stream id(s)| sid _or_ [sid1,sid2,sid3,...]
+|sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012 (Start date is assumed to be in the same timezone as the experiment which holds the stream)
+|ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012  (End date is assumed to be in the same timezone as the experiment which holds the stream)
+|sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
 
-Response: 	JSON array
+Important: _sd_ and _ed_ are required by _1-year_ aggregation level but they are _ignored_. _1-year_ returns all the summary information (array of arrays ) of a given stream across stream's whole lifespan (one array containing summary information per year).
+
+Response: JSON Object containing sid as key and array of arrays as value
 If the aggregation level is raw, the output format is
 
-	[
-		[sid1,time1,value1],
-		[sid1,time2,value2],
-		[sid1,time3,value3],
-		...,
-		[sid2,timeA,valueA],
-		[sid2,timeB,valueB],
-		[sid2,timeC,valueC]
-	]
+	{
+		sid1:[[time1,value1],[time2,value2],...],
+		sid2:[[time1,value1],[time2,value2],...],
+		...
+	}
 
 In the above response, sid is stream id in string, time is an integer, presenting number of seconds since epoch (timezone aware) and value is a double precision number.
 
 If aggregation level is not raw, the output format is
 
-	[
-		[sid1,time1,[min1,max1,count1,sum1,sumSq1]],
-		[sid1,time2,[min2,max2,count2,sum2,sumSq2]],
-		[sid1,time3,[min3,max3,count3,sum3,sumSq3]],
-		...,
-		[sid2,timeA,[minA,maxA,countA,sumA,sumSqA]],
-		[sid2,timeB,[minB,maxB,countB,sumB,sumSqB]],
-		[sid2,timeC,[minC,maxC,countC,sumC,sumSqC]]
-	]
+	{
+		sid1:[[minTime1,maxTime1,min1,max1,count1,sum1,sumSq1],[minTime2,maxTime2,max2,count2,sum2,sumSq2],...],
+		sid2:[[minTimeA,maxTimeA,minA,maxA,countA,sumA,sumSqA],[minTimeB,maxTimeB,minB,maxB,countB,sumB,sumSqB],...],
+	}
+
+Note: The output of /data is not ordered therefore the order of output may change for each individual request.
 
 ### POST /data ###
 This request can be used for pushing sensor data into SensorDB. One or more value from one or more streams can be pushed at the same time. The total request body size must be less than 500Kb.
@@ -601,3 +600,15 @@ SensorDB is using MongoDB for structural data storage (information about user, s
 All SensorDB configurations can be found at `src/main/resources/application.conf`
 
 SensorDB's logging configuration is specified using `logback.xml` at `src/main/resources/logback.xml`
+
+## SensorDB expects the underlying server to have an accurate time ##
+
+1. Configure timezone using `sudo dpkg-reconfigure tzdata`
+1. Install NTPD `sudo apt-get install ntp`
+1. Add ntp servers to NTPD `echo "server ntp.ubuntu.com" > /etc/ntp.conf`
+1. Add ntp servers to NTPD `echo "server pool.ntp.org" > /etc/ntp.conf`
+
+Note: You may need to reconfigure your firewall settings as NTP uses port 123/UDP. Here is how to configure a firewall to allow NTP in Linux
+
+	iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+	iptables -A INPUT -p udp --sport 123 -j ACCEPT
