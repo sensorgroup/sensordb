@@ -298,7 +298,7 @@ Note: Upon successful registration, the user is automatically logs in (no separa
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
+|name|Yes|Name of this experiment, must be unique per user, 3 to 30 characters (alphanumeric)
 |timezone|Yes|Timezone of this experiment, valid timezone values are listed (here)[https://raw.github.com/alisalehi/sensordb/master/timezones.txt]
 |description|No|Description of this experiment, limited HTML allowed
 |website|No|A URL for a website containing more information about this experiment
@@ -320,7 +320,7 @@ Use this request to update experiment information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this experiment.
 
-### DELETE /experiments?eid=_eid_ ###
+### DELETE /experiments ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -340,7 +340,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of the node, must be unique within a experiment, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
+|name|Yes|Name of the node, must be unique within a experiment, 3 to 30 characters (alphanumeric)
 |eid|Yes| Experiment Id which this node belongs to
 |description|No|Description of this experiment, limited HTML is allowed
 |website|No|A URL for a website containing more information about this experiment
@@ -364,7 +364,7 @@ Use this request to update node information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this node.
 
-### DELETE /nodes=?nid=_nid_ ###
+### DELETE /nodes ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -386,7 +386,7 @@ Note: To use this request, the callee must have a valid session (a logged in use
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
-|name|Yes|Name of the stream, must be unique within a node, 3 to 30 characters (alphanumeric with space, dot, underscore and hyphen)
+|name|Yes|Name of the stream, must be unique within a node, 3 to 30 characters (alphanumeric)
 |nid|Yes|Parent node id
 |description|No|Description of this stream, limited HTML is allowed
 |website|No|A URL for a website containing more information about this stream
@@ -408,7 +408,7 @@ Use this request to update stream information
 
 Note: To use this request, the callee must have a valid session (a logged in user) and should own this stream.
 
-### DELETE /streams?sid=_sid_ ###
+### DELETE /streams ###
 
 |Parameter|Required|Description|
 |---------|--------|-----------|
@@ -539,25 +539,34 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |level|no|raw|Aggregation level|level is text and can be set to one of the following values: raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
 |sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012
 |ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012
-|sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
+|sid|yes||stream id(s)| sid _or_ [sid1,sid2,sid3,...]
 
 Response: 	JSON array
 If the aggregation level is raw, the output format is
 
-	{
-		sid1:[[time1,value1],[time2,value2],...],
-		sid2:[[time1,value1],[time2,value2],...],
-		...
-	}
+	[
+		[sid1,time1,value1],
+		[sid1,time2,value2],
+		[sid1,time3,value3],
+		...,
+		[sid2,timeA,valueA],
+		[sid2,timeB,valueB],
+		[sid2,timeC,valueC]
+	]
 
 In the above response, sid is stream id in string, time is an integer, presenting number of seconds since epoch (timezone aware) and value is a double precision number.
 
 If aggregation level is not raw, the output format is
 
-	{
-		sid1:[[time1,min1,max1,count1,sum1,sumSq1],[time2,min2,max2,count2,sum2,sumSq2],...],
-		sid2:[[timeA,minA,maxA,countA,sumA,sumSqA],[timeB,minB,maxB,countB,sumB,sumSqB],...],
-	}
+	[
+		[sid1,time1,[min1,max1,count1,sum1,sumSq1]],
+		[sid1,time2,[min2,max2,count2,sum2,sumSq2]],
+		[sid1,time3,[min3,max3,count3,sum3,sumSq3]],
+		...,
+		[sid2,timeA,[minA,maxA,countA,sumA,sumSqA]],
+		[sid2,timeB,[minB,maxB,countB,sumB,sumSqB]],
+		[sid2,timeC,[minC,maxC,countC,sumC,sumSqC]]
+	]
 
 ### POST /data ###
 This request can be used for pushing sensor data into SensorDB. One or more value from one or more streams can be pushed at the same time. The total request body size must be less than 500Kb.
