@@ -7,6 +7,10 @@ db.users.ensureIndex({"name":1,"active":1});
 //db.nodes.ensureIndex({"token":1},{unique:true,dropDups:true});
 db.streams.ensureIndex({"token":1},{unique:true,dropDups:true});
 
+db.streams.ensureIndex({"metadata.name":1});
+db.nodes.ensureIndex({"metadata.name":1});
+db.experiments.ensureIndex({"metadata.name":1});
+
 db.experiments.ensureIndex({"user_id":1},{});
 db.nodes.ensureIndex({"user_id":1},{});
 db.streams.ensureIndex({"user_id":1},{});

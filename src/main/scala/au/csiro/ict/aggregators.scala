@@ -199,13 +199,13 @@ class StreamIdIterator(sids:Set[String],from:DateTime,to:DateTime,level:Aggregat
 }
 
 object StatAggHelpers{
-  val INITIAL_STAT = List(Double.MaxValue,Double.MinValue,0.0,0.0,0.0)
-  def updateStats(v:Double,min:Double,max:Double,count:Double,sum:Double,sum2:Double):List[Double]=
-    List(if (v < min) v else min,if (v > max) v else max,count + 1,sum+v,sum2+v*v)
+  val INITIAL_STAT = List(Double.MaxValue,Double.MinValue,Double.MaxValue,Double.MinValue,0.0,0.0,0.0)
+  def updateStats(v:Double,vTs:Double,minTs:Double,maxTs:Double, min:Double,max:Double,count:Double,sum:Double,sum2:Double):List[Double]=
+    List(if(vTs < minTs) vTs else minTs, if(vTs > maxTs) vTs else maxTs, if (v < min) v else min,if (v > max) v else max,count + 1,sum+v,sum2+v*v)
   def mergeStats(s1:List[Double],s2:List[Double]):List[Double]={
-    val List(min1,max1,count1,sum1,sumSq1) = s1
-    val List(min2,max2,count2,sum2,sumSq2) = s2
-    List(if (min1 < min2) min1 else min2,if (max1 > max2) max1 else max2,count1+count2,sum1+sum2,sumSq1+sumSq2)
+    val List(minTs1,maxTs1,min1,max1,count1,sum1,sumSq1) = s1
+    val List(minTs2,maxTs2,min2,max2,count2,sum2,sumSq2) = s2
+    List(if(minTs1 < minTs2) minTs1 else minTs2 ,if(maxTs1 > maxTs2) maxTs1 else maxTs2 ,if (min1 < min2) min1 else min2,if (max1 > max2) max1 else max2,count1+count2,sum1+sum2,sumSq1+sumSq2)
   }
 }
 class StaticAggregator(val store:Storage) extends Actor{
@@ -215,8 +215,8 @@ class StaticAggregator(val store:Storage) extends Actor{
     case Insert(lvl,sid,ts,value,_)=>
       val aggLevel = AggregationLevel(lvl).get
       val row = aggLevel.rowColKey(sid,ts)
-      val List(min,max,count,sum,sumSq) = store.get(row._1,row._2).map((x:Array[Byte])=>parse[List[Double]](Bytes.toString(x))).getOrElse(INITIAL_STAT)
-      var stats: List[Double] = updateStats(value, min, max, count, sum, sumSq)
+      val List(minTs,maxTs,min,max,count,sum,sumSq) = store.get(row._1,row._2).map((x:Array[Byte])=>parse[List[Double]](Bytes.toString(x))).getOrElse(INITIAL_STAT)
+      var stats: List[Double] = updateStats(value,(ts.getMillis/1000L).asInstanceOf[Double], minTs,maxTs,min, max, count, sum, sumSq)
       store.put(row._1,row._2,Bytes.toBytes(generate(stats)))
       if (aggLevel.getCourserLevel().isDefined)
         sender ! Insert(aggLevel.getCourserLevel().get.id,sid,ts,value,Some(StatResult(sid,ts,aggLevel.id,stats)))
@@ -224,6 +224,7 @@ class StaticAggregator(val store:Storage) extends Actor{
         sender ! Done(sid,ts)
 
     case Update(lvl,sid,ts,_) =>
+      val tsInSec = (ts.getMillis/1000L).asInstanceOf[Int]
       val aggLevel = AggregationLevel(lvl).get
       // TODO: Update should use coprocessors in HBase
       val previousRow = aggLevel.getFinerLevel().get.rowKeyAsBytes(sid,ts)
@@ -231,14 +232,22 @@ class StaticAggregator(val store:Storage) extends Actor{
       val stats = aggLevel match {
         case OneMinuteLevel=>
           val stats = new SummaryStatistics()
-          store.get(previousRow,childCells).filter(x=> x!=null && x.length>0 ).foreach{x=>
-            stats.addValue(Bytes.toDouble(x))
+          var minTs = Double.MaxValue
+          var maxTs = Double.MinValue
+          val timestampConversionHelper:(Int=>Int) = aggLevel.getFinerLevel().get.colIndexToTimestamp(ts.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0),Utils.dateTimeToInt(ts.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)),_)
+          store.get(previousRow,childCells).zip(childCells).filter(x=> x._1!=null && x._1.length>0 ).foreach{x=>
+            //Getting timestamps from raw entries and calculating minTs, maxTs
+            val localTs = timestampConversionHelper(Bytes.toInt(x._2))
+            if (localTs > maxTs) maxTs=localTs
+            if (localTs < minTs) minTs=localTs
+            stats.addValue(Bytes.toDouble(x._1))
           }
           if (stats.getN==0)
             StatAggHelpers.INITIAL_STAT
           else{
-            List[Double](stats.getMin,stats.getMax,stats.getN,stats.getSum,stats.getSumsq)
+            List[Double](minTs,maxTs,stats.getMin,stats.getMax,stats.getN,stats.getSum,stats.getSumsq)
           }
+
         case otherLvls=>
           store.get(previousRow,childCells).filter(_!=null).map(x=> parse[List[Double]](Bytes.toString(x))).foldLeft(INITIAL_STAT)((sum,item)=>mergeStats(sum,item))
       }

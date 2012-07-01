@@ -110,8 +110,8 @@ If a valid username is provided, the response is like
 	            "access_restriction": "0",
 	            "created_at": 1337833953909,
 	            "description": "",
-	            "metadata": {
-	                "deployment status": {
+	            "metadata": [
+	                {   "name":"deployment status",
 	                    "updated_by": "sample1",
 	                    "description": "",
 	                    "start-ts": 1330947746220,
@@ -119,19 +119,19 @@ If a valid username is provided, the response is like
 	                    "value": "Active",
 	                    "end-ts": 1336218146220
 	                },
-	                "location": {
+	                {   "name":"location",
 	                    "value": "Australia",
 	                    "updated_at": 1337833953913,
 	                    "updated_by": "sample1",
 	                    "description": ""
 	                },
-	                "sensor type": {
+	                {   "name" : "sensor type"
 	                    "value": "Arduino",
 	                    "updated_at": 1337833953917,
 	                    "updated_by": "sample1",
 	                    "description": ""
 	                }
-	            },
+	            ],
 	            "name": "yanco new setup",
 	            "picture": "",
 	            "timezone": "Australia/Sydney",
@@ -224,6 +224,7 @@ Note that any experiment, node and stream can have on or more metadata entries a
 
 |Field|Description|
 |:----------|-----------|
+|name | String representing the name of a metadata
 |value | String representing the value of a metadata
 |updated_at | The timestamp this metadata entry is created at
 |updated_by | The username of the user who created/updated this metadata entry
@@ -463,6 +464,9 @@ At this stage, measurements are inserted directly (manually) into MongoDB. Look 
 |/metadata/add|GET|To Add/update a metadata entry to/of an experiment, node or stream.
 |/metadata/remove|GET|To remove a metadata entry from an experiment, node or stream.
 |/metadata/retrieve/__ObjectId__|GET|To retrieve all metadata of a given experiment, node or stream.
+|/metadata/keys| Returns all the name attribute of all metadata entiries by all users - Response is an array of String |
+|/metadata/keys/_userid_| Returns all the name attribute of all metadata entiries of a given user - Response is an array of String |
+|/metadata/keyvalues| Returns all the name and value attribute of all metadata entiries of all users - Response is an object with String (metadata name) as key and Array (all values assigned to this metadata name) |
 
 General information: In all the above methods, the _id_ parameter can refer to a stream id, a node id or an experiment id. This is possible because in SensorDB all ids are unique.
 
@@ -541,7 +545,9 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012  (End date is assumed to be in the same timezone as the experiment which holds the stream)
 |sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
 
-Response: 	JSON array
+Important: _sd_ and _ed_ are required by _1-year_ aggregation level but they are _ignored_. _1-year_ returns all the summary information (array of arrays ) of a given stream across stream's whole lifespan (one array containing summary information per year).
+
+Response: JSON Object containing sid as key and array of arrays as value
 If the aggregation level is raw, the output format is
 
 	{
@@ -555,8 +561,8 @@ In the above response, sid is stream id in string, time is an integer, presentin
 If aggregation level is not raw, the output format is
 
 	{
-		sid1:[[time1,min1,max1,count1,sum1,sumSq1],[time2,min2,max2,count2,sum2,sumSq2],...],
-		sid2:[[timeA,minA,maxA,countA,sumA,sumSqA],[timeB,minB,maxB,countB,sumB,sumSqB],...],
+		sid1:[[minTime1,maxTime1,min1,max1,count1,sum1,sumSq1],[minTime2,maxTime2,max2,count2,sum2,sumSq2],...],
+		sid2:[[minTimeA,maxTimeA,minA,maxA,countA,sumA,sumSqA],[minTimeB,maxTimeB,minB,maxB,countB,sumB,sumSqB],...],
 	}
 
 Note: The output of /data is not ordered therefore the order of output may change for each individual request.
