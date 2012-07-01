@@ -589,6 +589,11 @@ Example data value:
 Response:
 An integer, confirming the total number of stream elements, (timestamp,value) pairs, sent received through this request.
 
+### Data Timezone management in SensorDB
+When posting a sensor data, the timestamp should be presented in local UTC timezone adjusted to local time of the experiment. For instance, if data captured in 7:00 PM 12/23/2012 in Sydney, user should use time in second for 7:00 PM 12/23/2012 in UTC.
+During data retrival (GET /data), data is presented in UTC timezone. To bring the data to exact timezone, you need to use experiment's timezone field to adjust UTC time to experiment's local timezone.
+
+
 ##SensorDB, Storage, Cache and Queue Configuration##
 
 SensorDB is using Akka for creating distributed actors with persistent message queues.
