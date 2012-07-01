@@ -537,8 +537,8 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |Parameter|Required|Default|Description|Format|
 |---------|--------|-------|-----------|------|
 |level|no|raw|Aggregation level|level is text and can be set to one of the following values: raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
-|sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012 (Start date is assumed to be in the same timezone as the experiment which holds the stream)
-|ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012  (End date is assumed to be in the same timezone as the experiment which holds the stream)
+|sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012
+|ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012
 |sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
 
 Response: 	JSON array
@@ -592,16 +592,3 @@ SensorDB is using MongoDB for structural data storage (information about user, s
 All SensorDB configurations can be found at `src/main/resources/application.conf`
 
 SensorDB's logging configuration is specified using `logback.xml` at `src/main/resources/logback.xml`
-
-## SensorDB expects the underlying server to have an accurate time ##
-
-1. Configure timezone using `sudo dpkg-reconfigure tzdata`
-1. Install NTPD `sudo apt-get install ntp`
-1. Add ntp servers to NTPD `echo "server ntp.ubuntu.com" > /etc/ntp.conf`
-1. Add ntp servers to NTPD `echo "server pool.ntp.org" > /etc/ntp.conf`
-
-Note: You may need to reconfigure your firewall settings as NTP uses port 123/UDP. Here is how to configure a firewall to allow NTP in Linux
-
-	iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
-	iptables -A INPUT -p udp --sport 123 -j ACCEPT
-
