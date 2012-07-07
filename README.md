@@ -561,8 +561,8 @@ In the above response, sid is stream id in string, time is an integer, presentin
 If aggregation level is not raw, the output format is
 
 	{
-		sid1:[[minTime1,maxTime1,min1,max1,count1,sum1,sumSq1],[minTime2,maxTime2,max2,count2,sum2,sumSq2],...],
-		sid2:[[minTimeA,maxTimeA,minA,maxA,countA,sumA,sumSqA],[minTimeB,maxTimeB,minB,maxB,countB,sumB,sumSqB],...],
+		sid1:[[minTime1,maxTime1,minTs1Value,maxTs1Value,min1,max1,count1,sum1,sumSq1],[minTime2,maxTime2,minTs2Value,maxTs2Value,min2,max2,count2,sum2,sumSq2],...],
+		sid2:[[minTimeA,maxTimeA,minTsAValue,maxTsAValue,minA,maxA,countA,sumA,sumSqA],[minTimeB,maxTimeB,minTsBValue,maxTsBValue,minB,maxB,countB,sumB,sumSqB],...],
 	}
 
 Note: The output of /data is not ordered therefore the order of output may change for each individual request.
