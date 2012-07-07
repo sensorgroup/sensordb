@@ -44,7 +44,7 @@
 <link href="/c/visualsearch.css" media="screen" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
 
-<div class="container data-page">
+<div class="container data-page ng-cloak">
 	<div class="accordion" id="accordion2">
 		<div class="accordion-group" >
 			<div class="accordion-heading">
@@ -52,18 +52,23 @@
 			</div>
 			<div id="collapseOne"  class="accordion-body collapse in accordion-toggle" >
 				<div class="accordion-inner">
-					<select id="experiment-selector" class="span4">
-						<option value="">All Experiments</option>
+					<select class="span3" ng-change="apply_filters()" ng-model="experiment_selector">
+						<option selected value="">All Experiments</option>
 						<option ng-repeat="e in experiment_names" value="{{e}}">{{e}}</option>
 					</select>
-					<select id="stream-selector" class="span4" >
-						<option value="">All Streams</option>
-						<option ng-repeat="s in stream_names" value="{{s}}s">{{s}}</option>
-					</select>
-					<select id="ndoe-selector" class="span4" >
-						<option value="">All Nodes</option>
+					<select class="span3" ng-change="apply_filters()" ng-model="node_selector">
+						<option selected value="">All Nodes</option>
 						<option ng-repeat="n in node_names" value="{{n}}">{{n}}</option>
 					</select>
+					<select class="span3" ng-change="apply_filters()" ng-model="stream_selector">
+						<option selected value="">All Streams</option>
+						<option ng-repeat="s in stream_names" value="{{s}}">{{s}}</option>
+					</select>
+					<select class="span3" ng-change="apply_filters()" ng-model="measurement_selector" >
+						<option selected value="">All Measurements</option>
+						<option ng-repeat="m in measurements" value="{{m._id}}">{{m.name}}</option>
+					</select>
+
 				</div>
 			</div>
 		</div>
@@ -123,15 +128,15 @@
 	</div>
 	<hr/>
 	<div class="row" >
-		<h3 class="span4">Results (30 rows)</h3>
-		<div class="span3 pull-right">
-			<div class="btn-group pull-right" id="agg_period" data-toggle="buttons-radio">
-				<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>
-				<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>
-				<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>
-				<a class="btn active"  ng-click="set_agg_period('all')" >All</a>
-			</div>
-		</div>
+		<h3 class="span4" >Streams ({{filtering_results.s.length}} rows)</h3>
+		<!--<div class="span3 pull-right">-->
+			<!--<div class="btn-group pull-right" id="agg_period" data-toggle="buttons-radio">-->
+				<!--<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>-->
+				<!--<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>-->
+				<!--<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>-->
+				<!--<a class="btn active"  ng-click="set_agg_period('all')" >All</a>-->
+			<!--</div>-->
+		<!--</div>-->
 	</div>
 	<div class="pad-bottom-10"></div>
 
@@ -145,24 +150,24 @@
 			<th>Count</th>
 			<th>Min</th>
 			<th>Max</th>
-			<th>StDev</th>
 			<th>Avg</th>
+			<th>StDev</th>
 			<th>Last Value</th>
 			<th>Last Timestamp</th>
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="i in filtered_rows">
-			<td><a href="/#/data/{{user}}/{{i.e}}">{{experiments[i.e].name}}</a></td>
-			<td><a href="/#/data/{{user}}/{{i.n}}">{{nodes[i.n].name}}</a></td>
-			<td><a href="/#/data/{{user}}/{{i.s}}">{{streams[i.s].name}}</a></td>
-			<td>24,541</td>
-			<td>-10.231</td>
-			<td>43.654</td>
-			<td>3.432</td>
-			<td>17.342</td>
-			<td>19.342</td>
-			<td>25 minutes ago</td>
+		<tr ng-repeat="i in filtering_results.s">
+			<td><a href="/#/data/{{user}}/{{nodes[streams[i].nid].eid}}">{{experiments[nodes[streams[i].nid].eid].name}}</a></td>
+			<td><a href="/#/data/{{user}}/{{streams[i].nid}}">{{nodes[streams[i].nid].name}}</a></td>
+			<td><a href="/#/data/{{user}}/{{i}}">{{streams[i].name}}</a></td>
+			<td>{{filtering_results.data[i][6] || 0 | number:0}}</td>
+			<td>{{filtering_results.data[i][4] || 0 | number:3}}</td>
+			<td>{{filtering_results.data[i][5] || 0 | number:3}}</td>
+			<td>{{((filtering_results.data[i][7]/filtering_results.data[i][6]) || 0 | number:3)}}</td>
+			<td>{{(calc_std(filtering_results.data[i][7],filtering_results.data[i][8],filtering_results.data[i][6]) || 0 | number:3) }}</td><!--   s = square root of[(sum of Xsquared -((sum of X)*(sum of X)/N))/(N-1)] -->
+			<td>{{filtering_results.data[i][3] || 0 | number:3}}</td>
+			<td>{{(filtering_results.data[i][1] && (filtering_results.data[i][1] - local_tz_offset)*1000 | date:'dd MMM yyyy HH:mm:ss') || "-"}}</td>
 		</tr>
 		</tbody>
 	</table>

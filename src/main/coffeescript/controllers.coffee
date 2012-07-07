@@ -70,6 +70,7 @@ class SDB
 			@elem.find(".caption").show()
 
 	class @Utils
+		@calc_std = (sum,sumSq,count)-> Math.sqrt((sumSq - sum*sum/count) / (count-1)) #square root of[(sum of Xsquared -((sum of X)*(sum of X)/N))/(N-1)]
 		@editor_config=
 			width:'700px'
 			height:250
@@ -116,7 +117,7 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			xaxis:
 				mode: 'time'
 				localTimezone: false
-#			yaxes: [{position:"left",axisLabel: "Unit1",axisLabelUseCanvas: true},{position:"right"}]
+			#			yaxes: [{position:"left",axisLabel: "Unit1",axisLabelUseCanvas: true},{position:"right"}]
 			grid:
 				show: true
 				borderWidth:1
@@ -154,29 +155,11 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 	$resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)
 		$scope.session = session
-		$scope.experiments = _.reduce(session.experiments,((sum,item)->
-			sum[item._id]=item
-			sum
-		),{})
-		$scope.nodes = _.reduce(session.nodes,(
-			(sum,item)->
-				sum[item._id]=item
-				sum
-		),{})
-		$scope.streams = _.reduce(session.streams,((sum,item)->
-			sum[item._id]=item
-			sum
-		),{})
-
-		$scope.experiment_names = _.sortBy(_.map(session.experiments,(e)->e.name),(x)->x)
-		$scope.node_names = _.sortBy(_.uniq(_.map(session.nodes,(n)->n.name)),(x)->x)
-		$scope.stream_names = _.sortBy(_.uniq(_.map(session.streams,(s)->s.name)),(x)->x)
-
 		selection_id = $routeParams.selection_id
 		if(selection_id)
-			$scope.selection_stream = $scope.streams[selection_id]
-			$scope.selection_node = $scope.nodes[selection_id]
-			$scope.selection_experiment = $scope.experiments[selection_id]
+			$scope.selection_stream = _.find($scope.session.streams, (s)->s._id is selection_id)
+			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is selection_id)
+			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is selection_id)
 			node_ids = {}
 			$scope.selection_experiment_nodes = _.reduce(session.nodes,((sum,v)->
 				if v.eid is selection_id
@@ -209,68 +192,16 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.selection_nid = undefined
 			$scope.selection_eid = selection_id
 
-		apply_selection_filters($scope.session)
 	$("body").on "click",(e)->
 		src = $(e.srcElement)
 		if src.attr("id") is "show_hide_metadata"
 			$scope.hide_metadata = !$scope.hide_metadata
 
-	$(".filter-selector").on 'click' , (e)->
-		src = $(e.srcElement)
-		newSelection = src.text()
-		parent = src.parents(".btn-group").find(".btn-label")
-		oldSelection = parent.text()
-		if (oldSelection isnt newSelection)
-			parent.text(newSelection)
-			selected_stream = _.filter([$("#stream-filter .btn-label").text()],(i)->i isnt "All Streams")[0]
-			selected_node = _.filter([$("#node-filter .btn-label").text()],(i)->i isnt "All Nodes")[0]
-			selected_exp = _.filter([$("#experiment-filter .btn-label").text()],(i)-> i isnt "Choose an Experiment")[0]
-			apply_selection_filters(selected_stream,selected_node,selected_exp,$scope.session)
-
-	apply_selection_filters = (session,selected_stream,selected_node,selected_exp)->
-		if (selected_exp || selected_node || selected_stream)
-			streams = if selected_stream then (_.filter session.streams,(s)-> s.name is selected_stream) else session.streams
-			stream_nids = _.map streams,(s)->s.nid
-			nodes = if selected_node then (_.filter session.nodes,(n)-> n.name is selected_node) else (if selected_stream then _.filter(session.nodes,(n)-> _.indexOf(stream_nids,n._id)>=0) else session.nodes)
-			node_eids = _.map nodes,(n)->n.eid
-			experiments = if selected_exp then (_.filter session.experiments,(e)-> e.name is selected_exp) else  _.filter session.experiments,(e)-> _.indexOf(node_eids,e._id)>=0
-			experiment_ids = _.map experiments,(i)->i._id
-			nodes = _.filter nodes, (n)-> _.indexOf(experiment_ids,n.eid)>=0
-			node_ids = _.map nodes, (n)->n._id
-			streams = _.filter streams, (s)-> _.indexOf(node_ids,s.nid)>=0
-			experiment_names = _.sortBy(_.map(experiments,(e)->e.name),(x)->x)
-			node_names = _.sortBy(_.uniq(_.map(nodes,(n)->n.name)),(x)->x)
-			stream_names = _.sortBy(_.uniq(_.map(streams,(s)->s.name)),(x)->x)
-		else
-			seen_nodes = {}
-			seen_exps = {}
-			filtered_rows = []
-			stream_node_exp = _.reduce($scope.streams,((sum,v)->
-				exp_id = $scope.nodes[v.nid].eid
-				sum.push({s:v._id,n:v.nid,e:exp_id})
-				seen_nodes[v.nid] = 1
-				seen_exps[exp_id] = 1
-				sum
-			),filtered_rows)
-
-			node_exp = _.reduce(_.difference( _.keys($scope.nodes),_.keys(seen_nodes))||[],((sum,v)->
-				node = $scope.nodes[v]
-				seen_exps[node.eid]=1
-				seen_nodes[node._id]=1
-				sum.push({n:node._id,e:node.eid})
-				sum
-			),filtered_rows)
-			exp = _.reduce(_.difference(_.keys($scope.experiments),_.keys(seen_exps)),((sum,eid)->sum.push({e:eid});sum),filtered_rows)
-
-			$scope.filtered_rows = _.union(stream_node_exp,node_exp,exp)
 	$scope.period = -1
 	$scope.set_period = (period)->
 		if (period == $scope.period )
 			return
 		$scope.period = period
-		all_streams = _($scope.filtered_rows).map((v)->v.s).filter((v)->v isnt undefined)
-#		$resource('/data',{"sid":all_streams,}).get (session)->
-
 
 window.ExperimentCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)
@@ -281,7 +212,104 @@ window.NodeCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 window.StreamCreateCtrl = ($scope,$location, $routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)
 
-window.DataExplorerCtrl = ($scope) ->
+window.DataExplorerCtrl = ($scope,$routeParams,$resource,$rootScope) ->
+	$scope.user = user = $routeParams['username']
+	$scope.calc_std = sensordb.Utils.calc_std
+	$scope.local_tz_offset = (new Date()).getTimezoneOffset()*60
+	$resource('/measurements').query (measurements)->
+		$scope.measurements =  _.reduce(measurements,((sum,item)->
+			sum[item._id]=item
+			sum
+		),{})
+
+	$resource('/session',(if user then {'user':user} else {})).get (session)->
+		$rootScope.$broadcast(SDB.SESSION_INFO,session)
+		$scope.session = session
+		$scope.experiment_names = _.sortBy(_.map(session.experiments,(e)->e.name),(x)->x)
+		$scope.node_names = _.sortBy(_.uniq(_.map(session.nodes,(n)->n.name)),(x)->x)
+		$scope.stream_names = _.sortBy(_.uniq(_.map(session.streams,(s)->s.name)),(x)->x)
+
+		$scope.experiments = _.reduce(session.experiments,((sum,item)->
+			sum[item._id]=item
+			sum
+		),{})
+		$scope.nodes = _.reduce(session.nodes,((sum,item)->
+			sum[item._id]=item
+			sum
+		),{})
+		$scope.streams = _.reduce(session.streams,((sum,item)->
+			sum[item._id]=item
+			sum
+		),{})
+		$scope.apply_filters()
+
+
+
+	$scope.apply_filters = ()->
+		source_filter = apply_source_filter()
+		filtering_results = source_filter
+		# Shoud I use Lscache ? not sure as I need to then make sure in-browser cache invalidated when a new entry available !
+		if (source_filter.s?.length > 0)
+			$resource("/data",{sid:JSON.stringify(source_filter.s),level:"1-year",sd:"5-1-2010",ed:"5-1-2010"}).get (summaries)->
+				summaries = _.reduce(summaries,(summary,values,key)->
+					summary[key] =
+						if(values.length>1)
+							minTs = values[0][0]
+							maxTs = values[values.length-1][1]
+							minTsVal = values[0][2]
+							maxTsVal = values[values.length-1][3]
+							min =  _.reduce(values,((sum,num)-> Math.min(sum,num[4])),values[0][4])
+							max =  _.reduce(values,((sum,num)-> Math.max(sum,num[5])),values[0][5])
+							count = _.reduce(values,((sum,num)->sum+num[6]),0)
+							total = _.reduce(values,((sum,num)->sum+num[7]),0)
+							sumSq = _.reduce(values,((sum,num)->sum+num[8]),0)
+							[minTs,maxTs,minTsVal,maxTsVal,min,max,count,total,sumSq]
+						else
+							values[0]
+					 summary
+				,{})
+				console.log(summaries)
+				filtering_results.data = summaries
+				$scope.filtering_results=filtering_results
+		else
+			$scope.filtering_results=filtering_results
+
+	apply_source_filter = ()->
+		# Select experiments based on their names, return experiment.id as array
+		experiments_tmp = _.map((if $scope.experiment_selector != undefined && $scope.experiment_selector !=""
+			_.filter $scope.session.experiments,(item) -> item.name is $scope.experiment_selector
+		else
+			$scope.session.experiments)
+			,(e)->e._id)
+		# Select nodes based on their names
+		nodes_tmp = if $scope.node_selector != undefined && $scope.node_selector !=""
+			_.filter $scope.session.nodes,(item) -> item.name is $scope.node_selector
+		else
+			$scope.session.nodes
+		# Select streams based on their names
+		streams_tmp = if ($scope.stream_selector != undefined && $scope.stream_selector !="" )
+			_.filter $scope.session.streams,(item) -> item.name is $scope.stream_selector
+		else
+			$scope.session.streams
+		# Select streams based on the measurement type
+		streams_tmp = if ($scope.measurement_selector != undefined && $scope.measurement_selector !="" )
+			_.filter streams_tmp,(item) -> item.mid is $scope.measurement_selector
+		else
+			streams_tmp
+		# Select only nodes that a belonging to the selected experiment(s)
+		nodes_tmp = _.filter(nodes_tmp,(n)-> _.include(experiments_tmp,n.eid))
+		# Select only nodes that a belonging to the selected streams(s)
+		stream_node_ids = _.map(streams_tmp,(s)->s.nid)
+		nodes_tmp = _.filter nodes_tmp,(n)-> _.include(stream_node_ids,n._id)
+		# Select only streams that a belonging to the selected nodes(s)
+		nodes_tmp_id = _.map nodes_tmp,(n)->n._id
+		streams_tmp = _.filter(streams_tmp,(s)-> _.include(nodes_tmp_id,s.nid))
+		# Select only experiments that a belonging to the selected nodes(s)
+		nodes_tmp_eid = _.map nodes_tmp,(n)->n.eid
+		experiments_tmp = _.filter(experiments_tmp,(e)-> _.include(nodes_tmp_eid,e))
+		{e:experiments_tmp,n: _.map(nodes_tmp,(n)->n._id),s:_.map(streams_tmp,(s)->s._id)}
+
+# Join the experiments, nodes and streams using outer join
 
 window.Err404Ctrl = ($scope) ->
 	$scope.url=window.location.href
