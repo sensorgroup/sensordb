@@ -107,6 +107,9 @@
     })();
     return this.Utils = (function() {
       function Utils() {}
+      Utils.calc_std = function(sum, sumSq, count) {
+        return Math.sqrt((sumSq - sum * sum / count) / (count - 1));
+      };
       Utils.editor_config = {
         width: '700px',
         height: 250,
@@ -139,7 +142,7 @@
   };
   window.AnalysisCtrl = function($scope, $location, $routeParams) {};
   window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
-    var apply_selection_filters, user;
+    var user;
     $scope.plot_data_stream_chart = function() {
       var elem, end_date, options, place_holder, plot, start_date, to_plot;
       options = {
@@ -212,18 +215,94 @@
       var node_ids, selection_id;
       $rootScope.$broadcast(SDB.SESSION_INFO, session);
       $scope.session = session;
-      $scope.experiments = _.reduce(session.experiments, (function(sum, item) {
+      selection_id = $routeParams.selection_id;
+      if (selection_id) {
+        $scope.selection_stream = _.find($scope.session.streams, function(s) {
+          return s._id === selection_id;
+        });
+        $scope.selection_node = _.find($scope.session.nodes, function(n) {
+          return n._id === selection_id;
+        });
+        $scope.selection_experiment = _.find($scope.session.experiments, function(e) {
+          return e._id === selection_id;
+        });
+      }
+      if ($scope.selection_stream) {
+        $scope.selection_node = _.find($scope.session.nodes, function(n) {
+          return n._id === $scope.selection_stream.nid;
+        });
+        $scope.selection_experiment = _.find($scope.session.experiments, function(e) {
+          return e._id === $scope.selection_node.eid;
+        });
+      }
+      if ($scope.selection_node) {
+        $scope.selection_experiment = _.find($scope.session.experiments, function(e) {
+          return e._id === $scope.selection_node.eid;
+        });
+        $scope.selection_node_streams = _.reduce(session.streams, (function(sum, v) {
+          if (v.nid === selection_id) {
+            sum += 1;
+          }
+          return sum;
+        }), 0);
+      }
+      if ($scope.selection_experiment) {
+        node_ids = {};
+        $scope.selection_experiment_nodes = _.reduce(session.nodes, (function(sum, v) {
+          if (v.eid === selection_id) {
+            sum += 1;
+            node_ids[v._id] = 1;
+          }
+          return sum;
+        }), 0);
+        return $scope.selection_experiment_streams = _.reduce(session.streams, (function(sum, v) {
+          if (node_ids[v.nid]) {
+            sum += 1;
+          }
+          return sum;
+        }), 0);
+      }
+    });
+    $("body").on("click", function(e) {
+      var src;
+      src = $(e.srcElement);
+      if (src.attr("id") === "show_hide_metadata") {
+        return $scope.hide_metadata = !$scope.hide_metadata;
+      }
+    });
+    $scope.period = -1;
+    return $scope.set_period = function(period) {
+      if (period === $scope.period) {
+        return;
+      }
+      return $scope.period = period;
+    };
+  };
+  window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
+    return $("body textarea").cleditor(sensordb.Utils.editor_config);
+  };
+  window.NodeCreateCtrl = function($scope, $location, $routeParams, $timeout) {
+    return $("body textarea").cleditor(sensordb.Utils.editor_config);
+  };
+  window.StreamCreateCtrl = function($scope, $location, $routeParams, $timeout) {
+    return $("body textarea").cleditor(sensordb.Utils.editor_config);
+  };
+  window.DataExplorerCtrl = function($scope, $routeParams, $resource, $rootScope) {
+    var apply_source_filter, user;
+    $scope.user = user = $routeParams['username'];
+    $scope.calc_std = sensordb.Utils.calc_std;
+    $scope.local_tz_offset = (new Date()).getTimezoneOffset() * 60;
+    $resource('/measurements').query(function(measurements) {
+      return $scope.measurements = _.reduce(measurements, (function(sum, item) {
         sum[item._id] = item;
         return sum;
       }), {});
-      $scope.nodes = _.reduce(session.nodes, (function(sum, item) {
-        sum[item._id] = item;
-        return sum;
-      }), {});
-      $scope.streams = _.reduce(session.streams, (function(sum, item) {
-        sum[item._id] = item;
-        return sum;
-      }), {});
+    });
+    $resource('/session', (user ? {
+      'user': user
+    } : {})).get(function(session) {
+      $rootScope.$broadcast(SDB.SESSION_INFO, session);
+      $scope.session = session;
       $scope.experiment_names = _.sortBy(_.map(session.experiments, function(e) {
         return e.name;
       }), function(x) {
@@ -239,185 +318,102 @@
       })), function(x) {
         return x;
       });
-      selection_id = $routeParams.selection_id;
-      if (selection_id) {
-        $scope.selection_stream = $scope.streams[selection_id];
-        $scope.selection_node = $scope.nodes[selection_id];
-        $scope.selection_experiment = $scope.experiments[selection_id];
-        node_ids = {};
-        $scope.selection_experiment_nodes = _.reduce(session.nodes, (function(sum, v) {
-          if (v.eid === selection_id) {
-            sum += 1;
-            node_ids[v._id] = 1;
-          }
-          return sum;
-        }), 0);
-        $scope.selection_experiment_streams = _.reduce(session.streams, (function(sum, v) {
-          if (node_ids[v.nid]) {
-            sum += 1;
-          }
-          return sum;
-        }), 0);
-      }
-      if ($scope.selection_stream) {
-        $scope.selection_sid = selection_id;
-        $scope.selection_nid = $scope.selection_stream.nid;
-        $scope.selection_eid = $scope.nodes[$scope.selection_nid].eid;
-      }
-      if ($scope.selection_node) {
-        $scope.selection_sid = void 0;
-        $scope.selection_nid = selection_id;
-        $scope.selection_eid = $scope.selection_node.eid;
-        $scope.selection_node_streams = _.reduce(session.streams, (function(sum, v) {
-          if (v.nid === selection_id) {
-            sum += 1;
-          }
-          return sum;
-        }), 0);
-      }
-      if ($scope.selection_experiment) {
-        $scope.selection_sid = void 0;
-        $scope.selection_nid = void 0;
-        $scope.selection_eid = selection_id;
-      }
-      return apply_selection_filters($scope.session);
+      $scope.experiments = _.reduce(session.experiments, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+      $scope.nodes = _.reduce(session.nodes, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+      $scope.streams = _.reduce(session.streams, (function(sum, item) {
+        sum[item._id] = item;
+        return sum;
+      }), {});
+      return $scope.apply_filters();
     });
-    $("body").on("click", function(e) {
-      var src;
-      src = $(e.srcElement);
-      if (src.attr("id") === "show_hide_metadata") {
-        return $scope.hide_metadata = !$scope.hide_metadata;
-      }
-    });
-    $(".filter-selector").on('click', function(e) {
-      var newSelection, oldSelection, parent, selected_exp, selected_node, selected_stream, src;
-      src = $(e.srcElement);
-      newSelection = src.text();
-      parent = src.parents(".btn-group").find(".btn-label");
-      oldSelection = parent.text();
-      if (oldSelection !== newSelection) {
-        parent.text(newSelection);
-        selected_stream = _.filter([$("#stream-filter .btn-label").text()], function(i) {
-          return i !== "All Streams";
-        })[0];
-        selected_node = _.filter([$("#node-filter .btn-label").text()], function(i) {
-          return i !== "All Nodes";
-        })[0];
-        selected_exp = _.filter([$("#experiment-filter .btn-label").text()], function(i) {
-          return i !== "Choose an Experiment";
-        })[0];
-        return apply_selection_filters(selected_stream, selected_node, selected_exp, $scope.session);
-      }
-    });
-    apply_selection_filters = function(session, selected_stream, selected_node, selected_exp) {
-      var exp, experiment_ids, experiment_names, experiments, filtered_rows, node_eids, node_exp, node_ids, node_names, nodes, seen_exps, seen_nodes, stream_names, stream_nids, stream_node_exp, streams;
-      if (selected_exp || selected_node || selected_stream) {
-        streams = selected_stream ? _.filter(session.streams, function(s) {
-          return s.name === selected_stream;
-        }) : session.streams;
-        stream_nids = _.map(streams, function(s) {
-          return s.nid;
-        });
-        nodes = selected_node ? _.filter(session.nodes, function(n) {
-          return n.name === selected_node;
-        }) : (selected_stream ? _.filter(session.nodes, function(n) {
-          return _.indexOf(stream_nids, n._id) >= 0;
-        }) : session.nodes);
-        node_eids = _.map(nodes, function(n) {
-          return n.eid;
-        });
-        experiments = selected_exp ? _.filter(session.experiments, function(e) {
-          return e.name === selected_exp;
-        }) : _.filter(session.experiments, function(e) {
-          return _.indexOf(node_eids, e._id) >= 0;
-        });
-        experiment_ids = _.map(experiments, function(i) {
-          return i._id;
-        });
-        nodes = _.filter(nodes, function(n) {
-          return _.indexOf(experiment_ids, n.eid) >= 0;
-        });
-        node_ids = _.map(nodes, function(n) {
-          return n._id;
-        });
-        streams = _.filter(streams, function(s) {
-          return _.indexOf(node_ids, s.nid) >= 0;
-        });
-        experiment_names = _.sortBy(_.map(experiments, function(e) {
-          return e.name;
-        }), function(x) {
-          return x;
-        });
-        node_names = _.sortBy(_.uniq(_.map(nodes, function(n) {
-          return n.name;
-        })), function(x) {
-          return x;
-        });
-        return stream_names = _.sortBy(_.uniq(_.map(streams, function(s) {
-          return s.name;
-        })), function(x) {
-          return x;
+    $scope.apply_filters = function() {
+      var filtering_results, source_filter, _ref;
+      source_filter = apply_source_filter();
+      filtering_results = source_filter;
+      if (((_ref = source_filter.s) != null ? _ref.length : void 0) > 0) {
+        return $resource("/data", {
+          sid: JSON.stringify(source_filter.s),
+          level: "1-year",
+          sd: "5-1-2010",
+          ed: "5-1-2010"
+        }).get(function(summaries) {
+          summaries = _.reduce(summaries, function(summary, values, key) {
+            var count, max, maxTs, maxTsVal, min, minTs, minTsVal, sumSq, total;
+            summary[key] = values.length > 1 ? (minTs = values[0][0], maxTs = values[values.length - 1][1], minTsVal = values[0][2], maxTsVal = values[values.length - 1][3], min = _.reduce(values, (function(sum, num) {
+              return Math.min(sum, num[4]);
+            }), values[0][4]), max = _.reduce(values, (function(sum, num) {
+              return Math.max(sum, num[5]);
+            }), values[0][5]), count = _.reduce(values, (function(sum, num) {
+              return sum + num[6];
+            }), 0), total = _.reduce(values, (function(sum, num) {
+              return sum + num[7];
+            }), 0), sumSq = _.reduce(values, (function(sum, num) {
+              return sum + num[8];
+            }), 0), [minTs, maxTs, minTsVal, maxTsVal, min, max, count, total, sumSq]) : values[0];
+            return summary;
+          }, {});
+          console.log(summaries);
+          filtering_results.data = summaries;
+          return $scope.filtering_results = filtering_results;
         });
       } else {
-        seen_nodes = {};
-        seen_exps = {};
-        filtered_rows = [];
-        stream_node_exp = _.reduce($scope.streams, (function(sum, v) {
-          var exp_id;
-          exp_id = $scope.nodes[v.nid].eid;
-          sum.push({
-            s: v._id,
-            n: v.nid,
-            e: exp_id
-          });
-          seen_nodes[v.nid] = 1;
-          seen_exps[exp_id] = 1;
-          return sum;
-        }), filtered_rows);
-        node_exp = _.reduce(_.difference(_.keys($scope.nodes), _.keys(seen_nodes)) || [], (function(sum, v) {
-          var node;
-          node = $scope.nodes[v];
-          seen_exps[node.eid] = 1;
-          seen_nodes[node._id] = 1;
-          sum.push({
-            n: node._id,
-            e: node.eid
-          });
-          return sum;
-        }), filtered_rows);
-        exp = _.reduce(_.difference(_.keys($scope.experiments), _.keys(seen_exps)), (function(sum, eid) {
-          sum.push({
-            e: eid
-          });
-          return sum;
-        }), filtered_rows);
-        return $scope.filtered_rows = _.union(stream_node_exp, node_exp, exp);
+        return $scope.filtering_results = filtering_results;
       }
     };
-    $scope.period = -1;
-    return $scope.set_period = function(period) {
-      var all_streams;
-      if (period === $scope.period) {
-        return;
-      }
-      $scope.period = period;
-      return all_streams = _($scope.filtered_rows).map(function(v) {
-        return v.s;
-      }).filter(function(v) {
-        return v !== void 0;
+    return apply_source_filter = function() {
+      var experiments_tmp, nodes_tmp, nodes_tmp_eid, nodes_tmp_id, stream_node_ids, streams_tmp;
+      experiments_tmp = _.map(($scope.experiment_selector !== void 0 && $scope.experiment_selector !== "" ? _.filter($scope.session.experiments, function(item) {
+        return item.name === $scope.experiment_selector;
+      }) : $scope.session.experiments), function(e) {
+        return e._id;
       });
+      nodes_tmp = $scope.node_selector !== void 0 && $scope.node_selector !== "" ? _.filter($scope.session.nodes, function(item) {
+        return item.name === $scope.node_selector;
+      }) : $scope.session.nodes;
+      streams_tmp = $scope.stream_selector !== void 0 && $scope.stream_selector !== "" ? _.filter($scope.session.streams, function(item) {
+        return item.name === $scope.stream_selector;
+      }) : $scope.session.streams;
+      streams_tmp = $scope.measurement_selector !== void 0 && $scope.measurement_selector !== "" ? _.filter(streams_tmp, function(item) {
+        return item.mid === $scope.measurement_selector;
+      }) : streams_tmp;
+      nodes_tmp = _.filter(nodes_tmp, function(n) {
+        return _.include(experiments_tmp, n.eid);
+      });
+      stream_node_ids = _.map(streams_tmp, function(s) {
+        return s.nid;
+      });
+      nodes_tmp = _.filter(nodes_tmp, function(n) {
+        return _.include(stream_node_ids, n._id);
+      });
+      nodes_tmp_id = _.map(nodes_tmp, function(n) {
+        return n._id;
+      });
+      streams_tmp = _.filter(streams_tmp, function(s) {
+        return _.include(nodes_tmp_id, s.nid);
+      });
+      nodes_tmp_eid = _.map(nodes_tmp, function(n) {
+        return n.eid;
+      });
+      experiments_tmp = _.filter(experiments_tmp, function(e) {
+        return _.include(nodes_tmp_eid, e);
+      });
+      return {
+        e: experiments_tmp,
+        n: _.map(nodes_tmp, function(n) {
+          return n._id;
+        }),
+        s: _.map(streams_tmp, function(s) {
+          return s._id;
+        })
+      };
     };
   };
-  window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
-    return $("body textarea").cleditor(sensordb.Utils.editor_config);
-  };
-  window.NodeCreateCtrl = function($scope, $location, $routeParams, $timeout) {
-    return $("body textarea").cleditor(sensordb.Utils.editor_config);
-  };
-  window.StreamCreateCtrl = function($scope, $location, $routeParams, $timeout) {
-    return $("body textarea").cleditor(sensordb.Utils.editor_config);
-  };
-  window.DataExplorerCtrl = function($scope) {};
   window.Err404Ctrl = function($scope) {
     return $scope.url = window.location.href;
   };

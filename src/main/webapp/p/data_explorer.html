@@ -144,7 +144,7 @@
 		</div>
 	</div>
 	<hr/>
-	<div ng-show="filtering_results">
+	<div ng-show="filtering_results" ng-cloak>
 		<div class="row" >
 			<h3 class="span4" >Streams ({{filtering_results.s.length}} rows)</h3>
 			<!--<div class="span3 pull-right">-->
@@ -157,7 +157,7 @@
 			<!--</div>-->
 		</div>
 		<div class="pad-bottom-10"></div>
-		<table class="table table-bordered table-striped tablesorter" ng-show="filtering_results" id="data-table">
+		<table class="table table-bordered table-striped tablesorter " ng-show="filtering_results" id="data-table">
 			<thead>
 			<tr>
 				<th>Experiment</th>
