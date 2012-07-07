@@ -1,4 +1,4 @@
-<div class="description" ng-show="selection_node">
+<div class="description" ng-show="selection_node && !selection_stream">
 	<div class="row">
 		<div class="span9">
 			<p>{{selection_node.description || "This node hasn't provided a description"}}</p>
@@ -7,11 +7,11 @@
 		<div class="span3">
 			<table class="table table-bordered" id="properties">
 				<tbody>
-				<tr><td>Owner</td><td><a href="#/data/{{user}}">{{user}}</a></td></tr>
+				<tr><td>Owner</td><td><a href="#/explore/{{user}}">{{user}}</a></td></tr>
 				<tr><td>Streams</td><td>{{selection_node_streams}}</td></tr>
-				<tr><td>Latitude</td><td>{{selection_node.lat || "N/A"}}</td></tr>
-				<tr><td>Longitude</td><td>{{selection_node.lon || "N/A"}}</td></tr>
-				<tr><td>Altitude</td><td>{{selection_node.alt || "N/A"}}</td></tr>
+				<tr><td>Latitude</td><td>{{selection_node.lat || "-"}}</td></tr>
+				<tr><td>Longitude</td><td>{{selection_node.lon || "-"}}</td></tr>
+				<tr><td>Altitude</td><td>{{selection_node.alt || "-"}}</td></tr>
 				</tbody>
 			</table>
 		</div>

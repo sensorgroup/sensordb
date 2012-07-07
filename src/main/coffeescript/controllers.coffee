@@ -160,6 +160,20 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.selection_stream = _.find($scope.session.streams, (s)->s._id is selection_id)
 			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is selection_id)
 			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is selection_id)
+
+		if ($scope.selection_stream)
+			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is $scope.selection_stream.nid)
+			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
+
+		if ($scope.selection_node)
+			$scope.selection_experiment =  _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
+			$scope.selection_node_streams = _.reduce(session.streams,((sum,v)->
+				if v.nid is selection_id
+					sum+=1
+				sum
+			),0)
+		if ($scope.selection_experiment)
+			# This is used to show number of nodes per experiment, if the selection is an experiment - used by data_page_experiment
 			node_ids = {}
 			$scope.selection_experiment_nodes = _.reduce(session.nodes,((sum,v)->
 				if v.eid is selection_id
@@ -167,30 +181,12 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 					node_ids[v._id]=1
 				sum
 			),0)
+			# This is used to show number of streams per experiment, used by data_page_experiment
 			$scope.selection_experiment_streams = _.reduce(session.streams,((sum,v)->
 				if node_ids[v.nid]
 					sum+=1
 				sum
 			),0)
-
-
-		if ($scope.selection_stream)
-			$scope.selection_sid = selection_id
-			$scope.selection_nid = $scope.selection_stream.nid
-			$scope.selection_eid = $scope.nodes[$scope.selection_nid].eid
-		if ($scope.selection_node)
-			$scope.selection_sid = undefined
-			$scope.selection_nid = selection_id
-			$scope.selection_eid = $scope.selection_node.eid
-			$scope.selection_node_streams = _.reduce(session.streams,((sum,v)->
-				if v.nid is selection_id
-					sum+=1
-				sum
-			),0)
-		if ($scope.selection_experiment)
-			$scope.selection_sid = undefined
-			$scope.selection_nid = undefined
-			$scope.selection_eid = selection_id
 
 	$("body").on "click",(e)->
 		src = $(e.srcElement)

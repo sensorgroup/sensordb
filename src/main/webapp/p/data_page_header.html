@@ -10,7 +10,7 @@
 					<label class="control-label" >Experiment</label>
 					<div class="controls">
 						<select id="experiment" class="span4">
-							<option ng-repeat="e in experiment_names">{{e}}</option>
+							<option ng-repeat="e in session.experiments">{{e.name}}</option>
 						</select>
 					</div>
 				</div>
@@ -19,7 +19,7 @@
 					<div class="controls">
 						<select id="node" class="span4">
 							<option>All Nodes</option>
-							<option ng-repeat="n in node_names">{{n}}</option>
+							<option ng-repeat="n in session.nodes">{{n.name}}</option>
 						</select>
 					</div>
 
@@ -29,7 +29,7 @@
 					<div class="controls">
 						<select id="stream" class="span4">
 							<option>All Streams</option>
-							<option ng-repeat="s in stream_names">{{s}}</option>
+							<option ng-repeat="s in session.streams">{{s.name}}</option>
 						</select>
 					</div>
 				</div>
@@ -164,5 +164,5 @@
 			<li><a href="#" data-toggle="modal" data-target="#remove-selection-modal"><i class="icon-trash"></i> Remove</a></li>
 		</ul>
 	</div><!-- /btn-group -->
-	<h3 class="pad-bottom-10 "><a href="#/data/{{user}}">{{user}}</a><span ng-show="selection_eid"> &raquo; <a href="#/data/{{user}}/{{selection_eid}}" >{{experiments[selection_eid].name}}</a></span><span ng-show="selection_nid"> &raquo; <a href="#/data/{{user}}/{{selection_nid}}">{{nodes[selection_nid].name}}</a></span><span ng-show="selection_sid"> &raquo; <a href="#/data/{{user}}/{{selection_sid}}">{{streams[selection_sid].name}}</a></span></h3>
+	<h3 class="pad-bottom-10 "><a href="#/explore/{{user}}">{{user}}</a><span ng-show="selection_experiment._id"> &raquo; <a href="#/data/{{user}}/{{selection_experiment._id}}" >{{selection_experiment.name}}</a></span><span ng-show="selection_node"> &raquo; <a href="#/data/{{user}}/{{selection_node._id}}">{{selection_node.name}}</a></span><span ng-show="selection_stream"> &raquo; <a href="#/data/{{user}}/{{selection_stream._id}}">{{selection_stream.name}}</a></span></h3>
 </div>

@@ -44,7 +44,7 @@
 <link href="/c/visualsearch.css" media="screen" rel="stylesheet" type="text/css" />
 <!--<![endif]-->
 
-<div class="container data-page ng-cloak">
+<div class="container data-page">
 	<div class="accordion" id="accordion2">
 		<div class="accordion-group" >
 			<div class="accordion-heading">
@@ -74,7 +74,7 @@
 		</div>
 		<div class="accordion-group">
 			<div class="accordion-heading">
-				<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseTwo"><b>Date Range Filter</b><em><small class="margin-10 muted">&#8212; Find data sources that have data for a given time range</small></em></a>
+				<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseTwo"><b>Date Range Filter</b><em><small class="margin-10 muted">&#8212; Find data sources that have data for a given date range</small></em></a>
 			</div>
 			<div id="collapseTwo" class="accordion-body collapse" style="height: 0px; ">
 				<div class="accordion-inner">
@@ -112,7 +112,24 @@
 					</div>
 				</div>
 			</div>
+		</div><div class="accordion-group">
+		<div class="accordion-heading">
+			<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseHourly"><b>Time of Day Filter</b><em><small class="margin-10 muted">&#8212; Find data sources that have data for a given time range</small></em></a>
 		</div>
+		<div id="collapseHourly" class="accordion-body collapse" style="height: 0px; ">
+			<div class="accordion-inner">
+				<div class="span7 no-left-margin">
+
+				</div>
+				<div class="span2">
+
+				</div>
+				<div class="span1">
+					<a class="btn">Reset</a>
+				</div>
+			</div>
+		</div>
+	</div>
 		<div class="accordion-group">
 			<div class="accordion-heading">
 				<a class="accordion-toggle no_underline" data-toggle="collapse"  href="#collapseThree"><b>Metadata Filter</b><em><small class="margin-10 muted">&#8212; Find data sources that are annotated with a particular metadata value</small></em></a>
@@ -127,49 +144,49 @@
 		</div>
 	</div>
 	<hr/>
-	<div class="row" >
-		<h3 class="span4" >Streams ({{filtering_results.s.length}} rows)</h3>
-		<!--<div class="span3 pull-right">-->
+	<div ng-show="filtering_results">
+		<div class="row" >
+			<h3 class="span4" >Streams ({{filtering_results.s.length}} rows)</h3>
+			<!--<div class="span3 pull-right">-->
 			<!--<div class="btn-group pull-right" id="agg_period" data-toggle="buttons-radio">-->
-				<!--<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>-->
-				<!--<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>-->
-				<!--<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>-->
-				<!--<a class="btn active"  ng-click="set_agg_period('all')" >All</a>-->
+			<!--<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>-->
+			<!--<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>-->
+			<!--<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>-->
+			<!--<a class="btn active"  ng-click="set_agg_period('all')" >All</a>-->
 			<!--</div>-->
-		<!--</div>-->
+			<!--</div>-->
+		</div>
+		<div class="pad-bottom-10"></div>
+		<table class="table table-bordered table-striped tablesorter" ng-show="filtering_results" id="data-table">
+			<thead>
+			<tr>
+				<th>Experiment</th>
+				<th>Node</th>
+				<th>Stream</th>
+				<th>Count</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Avg</th>
+				<th>StDev</th>
+				<th>Last Value</th>
+				<th>Last Timestamp</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="i in filtering_results.s">
+				<td><a href="/#/data/{{user}}/{{nodes[streams[i].nid].eid}}">{{experiments[nodes[streams[i].nid].eid].name}}</a></td>
+				<td><a href="/#/data/{{user}}/{{streams[i].nid}}">{{nodes[streams[i].nid].name}}</a></td>
+				<td><a href="/#/data/{{user}}/{{i}}">{{streams[i].name}}</a></td>
+				<td>{{filtering_results.data[i][6] || 0 | number:0}}</td>
+				<td>{{filtering_results.data[i][4] || 0 | number:3}}</td>
+				<td>{{filtering_results.data[i][5] || 0 | number:3}}</td>
+				<td>{{((filtering_results.data[i][7]/filtering_results.data[i][6]) || 0 | number:3)}}</td>
+				<td>{{(calc_std(filtering_results.data[i][7],filtering_results.data[i][8],filtering_results.data[i][6]) || 0 | number:3) }}</td><!--   s = square root of[(sum of Xsquared -((sum of X)*(sum of X)/N))/(N-1)] -->
+				<td>{{filtering_results.data[i][3] || 0 | number:3}}</td>
+				<td>{{(filtering_results.data[i][1] && (filtering_results.data[i][1] - local_tz_offset)*1000 | date:'dd MMM yyyy HH:mm:ss') || "-"}}</td>
+			</tr>
+			</tbody>
+		</table>
 	</div>
-	<div class="pad-bottom-10"></div>
-
-
-	<table class="table table-bordered table-striped tablesorter" id="data-table">
-		<thead>
-		<tr>
-			<th>Experiment</th>
-			<th>Node</th>
-			<th>Stream</th>
-			<th>Count</th>
-			<th>Min</th>
-			<th>Max</th>
-			<th>Avg</th>
-			<th>StDev</th>
-			<th>Last Value</th>
-			<th>Last Timestamp</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="i in filtering_results.s">
-			<td><a href="/#/data/{{user}}/{{nodes[streams[i].nid].eid}}">{{experiments[nodes[streams[i].nid].eid].name}}</a></td>
-			<td><a href="/#/data/{{user}}/{{streams[i].nid}}">{{nodes[streams[i].nid].name}}</a></td>
-			<td><a href="/#/data/{{user}}/{{i}}">{{streams[i].name}}</a></td>
-			<td>{{filtering_results.data[i][6] || 0 | number:0}}</td>
-			<td>{{filtering_results.data[i][4] || 0 | number:3}}</td>
-			<td>{{filtering_results.data[i][5] || 0 | number:3}}</td>
-			<td>{{((filtering_results.data[i][7]/filtering_results.data[i][6]) || 0 | number:3)}}</td>
-			<td>{{(calc_std(filtering_results.data[i][7],filtering_results.data[i][8],filtering_results.data[i][6]) || 0 | number:3) }}</td><!--   s = square root of[(sum of Xsquared -((sum of X)*(sum of X)/N))/(N-1)] -->
-			<td>{{filtering_results.data[i][3] || 0 | number:3}}</td>
-			<td>{{(filtering_results.data[i][1] && (filtering_results.data[i][1] - local_tz_offset)*1000 | date:'dd MMM yyyy HH:mm:ss') || "-"}}</td>
-		</tr>
-		</tbody>
-	</table>
 </div>
 <div ng-include src="'/p/footer.html'"></div>
