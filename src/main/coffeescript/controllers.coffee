@@ -109,6 +109,8 @@ window.HomeCtrl = ($scope, $location,$routeParams,$cookies,$resource,$timeout) -
 window.AnalysisCtrl = ($scope, $location,$routeParams) ->
 
 window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
+	$scope.local_tz_offset = (new Date()).getTimezoneOffset()*60*1000
+
 	$scope.plot_data_stream_chart = ->
 		options =
 			series:
@@ -143,7 +145,6 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 		elem.find(".caption").show()
 	user = $routeParams['username']
 
-
 	$scope.hide_metadata = false
 	$scope.user = user
 	$resource('/measurements').query (measurements)->
@@ -160,11 +161,14 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.selection_stream = _.find($scope.session.streams, (s)->s._id is selection_id)
 			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is selection_id)
 			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is selection_id)
-
+		# Things to set if a STREAM is selected, used by data_page_stream.html
 		if ($scope.selection_stream)
 			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is $scope.selection_stream.nid)
 			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
+			$resource("/data",{sid:selection_id,level:"1-day"}).get (data)->
+				$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
 
+		# Things to set if a NODE is selected, used by data_page_node.html
 		if ($scope.selection_node)
 			$scope.selection_experiment =  _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
 			$scope.selection_node_streams = _.reduce(session.streams,((sum,v)->
@@ -172,6 +176,7 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 					sum+=1
 				sum
 			),0)
+		# Things to set if an EXPERIMENT is selected, used by data_page_experiment.html
 		if ($scope.selection_experiment)
 			# This is used to show number of nodes per experiment, if the selection is an experiment - used by data_page_experiment
 			node_ids = {}

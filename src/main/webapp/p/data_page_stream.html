@@ -20,5 +20,46 @@
 			</table>
 		</div>
 	</div>
-	<!--<hr/>-->
+	<hr/>
+	<div class="row">
+		<div class="span12">
+			<div class="btn-group" id="agg_period" data-toggle="buttons-radio">
+				<a class="btn"  ng-click="set_agg_period('raw')">Raw</a>
+				<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>
+				<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>
+				<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>
+				<a class="btn active"  ng-click="set_agg_period('yearly')" >Yearly</a>
+			</div>
+		</div>
+	</div>
+	<div class="pad-bottom-10"></div>
+	<div class="row">
+		<div class="span12">
+			<table class="table table-bordered table-striped tablesorter">
+				<thead>
+				<tr>
+					<th>Timestamp</th>
+					<th>Count</th>
+					<th>Min</th>
+					<th>Max</th>
+					<th>Avg</th>
+					<th>StDev</th>
+					<th>Latest Value</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="d in data">
+					<td>{{(d[i][1] && (d[i][1] - local_tz_offset)*1000 | date:'dd MMM yyyy HH:mm:ss') || "-"}}</td>
+					<td>{{d[i][6] || 0 | number:0}}</td>
+					<td>{{d[i][4] || 0 | number:3}}</td>
+					<td>{{d[i][5] || 0 | number:3}}</td>
+					<td>{{((d[i][7]/d[i][6]) || 0 | number:3)}}</td>
+					<td>{{(calc_std(d[i][7],d[i][8],d[i][6]) || 0 | number:3) }}</td>
+					<td>{{d[i][3] || 0 | number:3}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
 </div>
