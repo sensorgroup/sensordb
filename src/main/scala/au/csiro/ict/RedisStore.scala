@@ -45,8 +45,8 @@ class RedisStore extends Storage {
               if (level == RawLevel)
                 chunker.insert(sid,level.colIndexToTimestamp(current,currentInTs,key),Bytes.toDouble(kv._2))
               else{
-                val List(minTs,maxTs,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(kv._2))
-                chunker.insert(sid,minTs,maxTs, min,max,count,sum,sumSq)
+                val List(minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(kv._2))
+                chunker.insert(sid,minTs,maxTs, minTsValue,maxTsValue,min,max,count,sum,sumSq)
               }
             }
           }

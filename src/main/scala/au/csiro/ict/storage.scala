@@ -20,7 +20,7 @@ trait Storage {
 trait ChunkFormatter{
   def done()
   def insert(sensor:String, ts:Int, value:Double):ChunkFormatter
-  def insert(sensor:String,minTs:Double,maxTs:Double, min:Double,max:Double,count:Double,sum:Double,sumSq:Double):ChunkFormatter
+  def insert(sensor:String,minTs:Double,maxTs:Double, minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double):ChunkFormatter
 }
 
 trait ChunkWriter {
@@ -30,9 +30,9 @@ trait ChunkWriter {
   }
   var isOpenValue = false
 
-  def insert(sensor:String, minTs:Double,maxTs:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double){
+  def insert(sensor:String, minTs:Double,maxTs:Double,minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double){
     if (isClosed()|| !isOpened()) throw new RuntimeException("Bad state exception.")
-    insertData(sensor,minTs,maxTs,min,max,count,sum,sumSq)
+    insertData(sensor,minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq)
   }
   def insert(sensor:String, ts:Int,value:Double){
     if (isClosed()|| !isOpened()) throw new RuntimeException("Bad state exception.")
@@ -46,7 +46,7 @@ trait ChunkWriter {
   protected def openWriter()
   protected def closeWriter()
   protected def insertData(sensor:String, ts:Int,value:Double)
-  protected def insertData(sensor:String, minTs:Double,maxTs:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)
+  protected def insertData(sensor:String, minTs:Double,maxTs:Double,minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)
   var isClosedValue = false
   def isClosed() = isClosedValue
   def isOpened() = isOpenValue
@@ -57,7 +57,7 @@ class InMemWriter extends ChunkWriter{
   var to_return = List[(String,Int,Double)]()
   var to_return_stat = List[(String,Double,Double,Double,Double,Double,Double,Double)]()
   def insertData(sensor:String, ts:Int,value:Double)= to_return::=(sensor,ts,value)
-  def insertData(sensor:String, minTs:Double,maxTs:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= to_return_stat::=(sensor,minTs,maxTs,min,max,count,sum,sumSq)
+  def insertData(sensor:String, minTs:Double,maxTs:Double,minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= to_return_stat::=(sensor,minTs,maxTs,min,max,count,sum,sumSq)
   def closeWriter() = {}
   /*
   The return result is verse order of put calls.
@@ -68,12 +68,12 @@ class InMemWriter extends ChunkWriter{
 class JSONWriter(val output:Writer) extends ChunkWriter{
   def openWriter() =output.write("{")
   var started = false;
-  def insertData(sid:String, minTs:Double,maxTs:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
+  def insertData(sid:String, minTs:Double,maxTs:Double,minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
     if (started){
       output.write(",")
     }
     started=true
-    output.write(List(sid,minTs,maxTs,min,max,count,sum,sumSq).mkString("[",",","]"))
+    output.write(List(sid,minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq).mkString("[",",","]"))
   }
 
   def insertData(sensor:String, ts:Int,value:Double)= {
@@ -94,8 +94,8 @@ class JSONWriter2(val output:Writer) extends ChunkWriter{
   def openWriter() =output.write("{")
   var started = false
   var previousSid:String = ""
-  def insertData(sid:String,minTs:Double,maxTs:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
-    val toAppend = new StringBuilder("[").append(minTs.asInstanceOf[Long]).append(",").append(maxTs.asInstanceOf[Long]).append(",").append(min).append(",").append(max).append(",").append(count).append(",").append(sum).append(",").append(sumSq).append("]").toString()
+  def insertData(sid:String,minTs:Double,maxTs:Double,minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
+    val toAppend = new StringBuilder("[").append(minTs.asInstanceOf[Long]).append(",").append(maxTs.asInstanceOf[Long]).append(",").append(minTsValue).append(",").append(maxTsValue).append(",").append(min).append(",").append(max).append(",").append(count).append(",").append(sum).append(",").append(sumSq).append("]").toString()
     if (sid != previousSid){
       if (seenIds.contains(sid)) throw new RuntimeException("This is a bug, bad output produced ...")
       seenIds+=sid
@@ -142,9 +142,9 @@ class DefaultChunkFormatter(val writer:ChunkWriter) extends ChunkFormatter{
     this
   }
 
-  def insert(sensor: String, minTs: Double,maxTs:Double, min: Double, max: Double, count: Double, sum: Double, sumSq: Double):DefaultChunkFormatter = {
+  def insert(sensor: String, minTs: Double,maxTs:Double, minTsValue:Double,maxTsValue:Double,min: Double, max: Double, count: Double, sum: Double, sumSq: Double):DefaultChunkFormatter = {
     item_count+=1
-    writer.insert(sensor,minTs,maxTs,min,max,count,sum,sumSq)
+    writer.insert(sensor,minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq)
     this
   }
 

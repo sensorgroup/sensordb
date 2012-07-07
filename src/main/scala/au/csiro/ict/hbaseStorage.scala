@@ -71,8 +71,8 @@ class HbaseStorage extends Storage {
               if (level == RawLevel)
                 chunker.insert(sid,level.colIndexToTimestamp(current,currentInTs,key),Bytes.toDouble(value))
               else{
-                val List(minTs,maxTs,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(value))
-                chunker.insert(sid,minTs,maxTs ,min,max,count,sum,sumSq) // level.colIndexToTimestamp(current,currentInTs,key)
+                val List(minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(value))
+                chunker.insert(sid,minTs,maxTs ,minTsValue,maxTsValue,min,max,count,sum,sumSq) // level.colIndexToTimestamp(current,currentInTs,key)
 
               }
             }
