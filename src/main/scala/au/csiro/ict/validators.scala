@@ -202,16 +202,20 @@ object Validators {
   /**
    * Received UK date format and if it is valid, return its value in seconds
    */
-  def DateParam(v:Option[String])(implicit validator:Validator):Option[Int]=v.flatMap(x=>
+  def DateParam(v:Option[String],endOfDay:Boolean)(implicit validator:Validator):Option[DateTime]=v.flatMap(x=>
     try {
-      Some((Utils.ukDateFormat.parseDateTime(x).getMillis/1000L).asInstanceOf[Int])
+      Some(Utils.ukDateFormat.parseDateTime(x)).map(x=>
+        if (endOfDay)
+          x.plusDays(1).minusMillis(1)
+        else
+          x
+      )
     } catch {
-      case err =>None
+      case err =>
+        validator.addError("Invalid date parameter")
+        None
     }
-  ).orElse{
-    validator.addError("Invalid date parameter")
-    None
-  }
+  )
   def DateTimeParam(v:Option[String])(implicit validator:Validator):Option[DateTime]=v.flatMap(x=>
     try {
       Some(Utils.ukDateFormat.parseDateTime(x))

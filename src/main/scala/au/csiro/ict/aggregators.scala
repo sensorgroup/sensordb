@@ -13,6 +13,12 @@ object AggregationLevel {
   val ShortLevels:Map[String,AggregationLevel]  = Levels.values.map(x=>x.shortId->x).toMap
   def apply(levelNameInString:String) = Levels.get(levelNameInString)
   private val rowToTsSplitRex = ("""([a-z0-9A-Z]+)"""+Levels.values.map(_.shortId).mkString("(","|",")")+"""(\d+)""").r
+
+  /**
+   *
+   * @param rowKey
+   * @return (StreamId, Level, TimeStamp)
+   */
   def rowToTs(rowKey:String):(String,AggregationLevel,String)={
     rowKey match {
       case rowToTsSplitRex(sid,agg,ts)=>
@@ -181,22 +187,6 @@ object RawLevel extends AggregationLevel{
   def getChildCells(ts:DateTime) = 0 until 0
 }
 
-class StreamIdIterator(sids:Set[String],from:DateTime,to:DateTime,level:AggregationLevel) extends Iterator[(Array[Byte],DateTime,String)] {
-  override def hasNext = !sids.isEmpty && (periodIter.hasNext || sidIter.hasNext)
-  var sidIter = sids.iterator
-  def createPeriodIterator() = if (level == OneYearLevel) level.createPeriod(from,from) else level.createPeriod(from,to)
-  var periodIter = createPeriodIterator()
-  var sid:String = null
-  override def next():(Array[Byte],DateTime,String) =
-    if (periodIter.hasNext && sid !=null){
-      val ts = periodIter.next()
-      (level.rowKeyAsBytes(sid,ts),ts,sid)
-    } else {
-      periodIter= createPeriodIterator()
-      sid = sidIter.next()
-      next()
-    }
-}
 
 object StatAggHelpers{
   val INITIAL_STAT = List(Double.MaxValue,Double.MinValue,0,0,Double.MaxValue,Double.MinValue,0.0,0.0,0.0)

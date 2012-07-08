@@ -51,6 +51,10 @@ class HbaseStorage extends Storage {
 
   override def close() = hbase.close()
 
+  def get(streamIds:Set[String],from:Option[DateTime],to:Option[DateTime],columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter){
+    throw new RuntimeException("Not implemented !")
+  }
+
   def get(streamIds: Set[String], fromTime: Int, toTime: Int, columns: Option[(Int, Int)], level: AggregationLevel, chunker: ChunkFormatter) {
     val fromDateTime = new DateTime(fromTime*1000L)
     val toDateTime = new DateTime(toTime*1000L)

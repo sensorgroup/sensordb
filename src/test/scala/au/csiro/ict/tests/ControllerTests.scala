@@ -5,8 +5,7 @@ import org.scalatra.test.scalatest.ScalatraSuite
 import com.codahale.jerkson.Json._
 import java.util.LinkedHashMap
 import org.bson.types.ObjectId
-import org.joda.time.DateTime
-import au.csiro.ict.{StreamIdIterator=>StorageIdGenerator,Utils, Cache, SensorDB}
+import au.csiro.ict.{Cache, SensorDB}
 
 class ControllerTests extends ScalatraSuite with FunSuite{
   addServlet(classOf[SensorDB], "/*")

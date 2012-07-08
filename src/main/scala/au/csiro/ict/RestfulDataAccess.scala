@@ -7,7 +7,6 @@ import au.csiro.ict.JsonGenerator.generate
 import au.csiro.ict.Validators._
 import au.csiro.ict.Cache._
 import scala.Some
-import org.joda.time.DateTimeZone
 import java.io.BufferedWriter
 
 trait RestfulDataAccess {
@@ -62,8 +61,8 @@ trait RestfulDataAccess {
     * level (optional, default is raw)=> Level is text and can be raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
     */
     val user_session = UserSession(session)
-    (AggregationLevelParam(params.get("level")),PermissionCheckOnStreamIdList(EntityIdList(params.get("sid")),user_session),DateParam(params.get("sd")),DateParam(params.get("ed"))) match {
-      case (levelOption,sids,Some(start_date),Some(end_date)) if !sids.isEmpty=>
+    (AggregationLevelParam(params.get("level")),PermissionCheckOnStreamIdList(EntityIdList(params.get("sid")),user_session),DateParam(params.get("sd"),false),DateParam(params.get("ed"),false)) match {
+      case (levelOption,sids,start_date,end_date) if !sids.isEmpty && errors.errors.isEmpty=>
         val level = levelOption.getOrElse(RawLevel)
         val cols = (CellKeyParam(IntParam(params.get("st")),level),CellKeyParam(IntParam(params.get("et")),level)) match {
           case (Some(fromColIdx:Int),Some(toColIdx:Int)) => Some((fromColIdx,toColIdx))

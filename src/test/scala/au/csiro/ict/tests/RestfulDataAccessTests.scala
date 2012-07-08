@@ -54,8 +54,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
   test("Check the stream3 to be not accessible as it belong to a private experiment, no data pushed out at any aggregation levels") {
     for(lvl <- AggregationLevel.Levels.keys)
       get(DATA_RAW_URI,Map("level"->lvl,"sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
-        body should include("{}")
-        status should equal(200)
+        body should include("error")
+        status should equal(400)
       }
   }
 
@@ -108,7 +108,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
 
   test("Check the stream3 to be not accessible as it belong to a private experiment") {
     get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
-      body should include("{}")
+      body should include("error")
+      status should equal (400)
     }
   }
 
@@ -118,11 +119,13 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
         status should equal (200)
       }
       get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
-        body should include("{}")
+        body should include("error")
+        status should equal (400)
       }
       post("/logout")()
       get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
-        body should include("{}")
+        body should include("error")
+        status should equal (400)
       }
     }
   }
@@ -133,11 +136,14 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
         status should equal (200)
       }
       get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
-        body should not include("{}")
+        body should not include("{}") // User 2 logs in and has access to stream3
+        body should not include("error")
+        status should equal (200)
       }
       post("/logout")()
       get(DATA_RAW_URI,Map("sid"->stream3Id.toString,"sd"->"30-1-2000","ed"->"28-12-2030")){
-        body should include("{}")
+        body should include("error")
+        status should equal (400)
       }
     }
   }
@@ -179,13 +185,13 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     }
     val tempId = new ObjectId().toString
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString,tempId)),"sd"->date1UKFormat,"ed"->date1UKFormat)){ // non-existing stream id
-      body should include(stream1Id.toString)
+      body should include("error")
       body should not include(tempId)
-      status should equal(200)
+      status should equal(400)
     }
     get(DATA_RAW_URI , Map("sid"->generate(Set(new ObjectId().toString)),"sd"->date1UKFormat,"ed"->date1UKFormat)){ //non-existing stream id
-      body should include("{}")
-      status should equal(200)
+      body should include("error")
+      status should equal(400)
     }
 
     get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString,stream2Id.toString)),"level"->"1-year","sd"->date1UKFormat,"ed"->date1UKFormat)){
@@ -279,8 +285,8 @@ class RestfulDataAccessTests extends ScalatraSuite with FunSuite with BeforeAndA
     delUser(user2Id)
     for(lvl <- AggregationLevel.Levels.keys)
       get(DATA_RAW_URI , Map("sid"->generate(Set(stream1Id.toString)),"sd"->date1UKFormat,"ed"->date1UKFormat,"level"->lvl)){
-        body should include("{}")
-        status should equal(200)
+        body should include("error") // Users are deleted, their data is also not accessible
+        status should equal(400)
       }
     store.getPrefixed(stream1Id.toString).size must equal(0)
     post(DATA_RAW_URI,Map("data"->generate(Map(token1->Map((date1).toString-> 1.0 ))))){

@@ -541,11 +541,9 @@ This request is for downloading raw or aggregated sensor data from one or more s
 |Parameter|Required|Default|Description|Format|
 |---------|--------|-------|-----------|------|
 |level|no|raw|Aggregation level|level is text and can be set to one of the following values: raw, 1-minute, 5-minute, 15-minute, 1-hour, 3-hour, 6-hour, 1-day, 1-month, 1-year
-|sd|yes||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012 (Start date is assumed to be in the same timezone as the experiment which holds the stream)
-|ed|yes||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012  (End date is assumed to be in the same timezone as the experiment which holds the stream)
+|sd|no||Start Date|Date in the UK format, e.g., 30-01-2012 for 30th of Jan, 2012 (Start date is in UTC)
+|ed|no||End Date| Date in the UK format, e.g., 20-12-2012 for 20th of Dec, 2012  (End date is in UTC)
 |sid|yes||stream id(s)| sid _or_ ["sid1","sid2","sid3",...]
-
-Important: _sd_ and _ed_ are required by _1-year_ aggregation level but they are _ignored_. _1-year_ returns all the summary information (array of arrays ) of a given stream across stream's whole lifespan (one array containing summary information per year).
 
 Response: JSON Object containing sid as key and array of arrays as value
 If the aggregation level is raw, the output format is

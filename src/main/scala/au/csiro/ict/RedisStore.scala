@@ -2,12 +2,12 @@ package au.csiro.ict
 
 import redis.clients.jedis.Jedis
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import org.apache.hadoop.hbase.util.Bytes
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.DateTime
 import com.codahale.jerkson.Json._
 
 class RedisStore extends Storage {
-
   private val jedis = new RedisPool(Cache.SensorDBConf.getString("data-store.redis.host"),Cache.SensorDBConf.getInt("data-store.redis.port"),Cache.REDIS_STORE)
   def getPrefixed(prefix: String):Iterable[Array[Byte]] = {
     jedis.call(j=>j.keys(prefix+"*").map(Bytes.toBytes).toSeq)
@@ -28,32 +28,78 @@ class RedisStore extends Storage {
         jedis.call{jedis=>jedis.hdel(row._1,row._2)}
     }
   }
-  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter){
-    val fromDateTime = new DateTime(fromTime*1000L)
-    val toDateTime = new DateTime(toTime*1000L)
-    val period = new StreamIdIterator(streamIds,fromDateTime,toDateTime,level)
-    while (period.hasNext){
-      val (row,ts,sid)=period.next()
-      var current = ts.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
-      val currentInTs = (current.getMillis/1000L).asInstanceOf[Int]
-      val data =  jedis.call{jedis=>jedis.hgetAll(row)}
-      if (data !=null && !data.isEmpty){
-        data.iterator.foreach{kv:(Array[Byte],Array[Byte])=>
-          if (kv._2 != null){
-            val key =Bytes.toInt(kv._1)
-            if (columns.isEmpty || (columns.get._1 <= key && columns.get._2 >= key)) {
-              if (level == RawLevel)
-                chunker.insert(sid,level.colIndexToTimestamp(current,currentInTs,key),Bytes.toDouble(kv._2))
-              else{
-                val List(minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(kv._2))
-                chunker.insert(sid,minTs,maxTs, minTsValue,maxTsValue,min,max,count,sum,sumSq)
-              }
-            }
+
+
+  def get(streamIds:Set[String],from:Option[DateTime],to:Option[DateTime],columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter){
+    streamIds.iterator.flatMap{sid=>
+      val prefix = sid+level.shortId+"*"
+      val fromKey = from.map(x=>level.rowKeyAsBytes(sid,x)).getOrElse(null)
+      val toKey =  to.map(x=>level.rowKeyAsBytes(sid,x)).getOrElse(null)
+      jedis.call(_.keys(Bytes.toBytes(prefix))).filter{row_key=>
+        if (fromKey == null && toKey == null)
+          true
+        else if (fromKey != null && toKey != null)
+          Bytes.compareTo(row_key,fromKey) >=0 && Bytes.compareTo(row_key,toKey) <=0
+        else if (fromKey != null)
+          Bytes.compareTo(row_key,fromKey) >=0
+        else
+          Bytes.compareTo(toKey,row_key) <=0
+      }
+    }.foreach{rowKey=>
+      val value = jedis.call(_.hgetAll(rowKey))
+      if (value != null){
+        val (sid,lvl,ts) = AggregationLevel.rowToTs(Bytes.toString(rowKey))
+        val tsInDT = lvl.dateTimePattern.parseDateTime(ts)
+        value.filterKeys{k=>
+          columns.isEmpty || {
+            val colIdx = Bytes.toInt(k)
+            (columns.get._1 <= colIdx && columns.get._2 >= colIdx)
+          }
+        }.foreach{kv=>
+          if (level == RawLevel)
+            chunker.insert(sid,level.colIndexToTimestamp(tsInDT,Utils.dateTimeToInt(tsInDT),Bytes.toInt(kv._1)),Bytes.toDouble(kv._2))
+          else{
+            val List(minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(kv._2))
+            chunker.insert(sid,minTs,maxTs, minTsValue,maxTsValue,min,max,count,sum,sumSq)
           }
         }
       }
     }
   }
+
+  //    while (period.hasNext){
+  //      val (row,ts,sid)=period.next()
+  //      var current = ts.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
+  //      val currentInTs = (current.getMillis/1000L).asInstanceOf[Int]
+  //      val data =  jedis.call{jedis=>jedis.hgetAll(row)}
+  //      if (data !=null && !data.isEmpty){
+  //        data.iterator.foreach{kv:(Array[Byte],Array[Byte])=>
+  //        }
+  //      }
+  //    }
+  //  }
+  //  def get(streamIds:Set[String],columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter) {
+  //    for (sid <- streamIds){
+  //      val keys = Bytes.toBytes(sid+level.shortId+"*")
+  //      jedis.call{_.mget(keys)}.map{ key=>
+  //        val (sid,lvl,ts) = AggregationLevel.rowToTs(Bytes.toString(key))
+  //        jedis.call{_.hgetAll(keys)}.foreach{kv:(Array[Byte],Array[Byte]) =>
+  //          if (kv._2 != null){
+  //            val colIdx = Bytes.toInt(kv._1)
+  //            val current = level.dateTimePattern.parseDateTime(ts)
+  //            if (columns.isEmpty || (columns.get._1 <= colIdx && columns.get._2 >= colIdx)) {
+  //              if (level == RawLevel){
+  //                chunker.insert(sid,level.colIndexToTimestamp(current,Utils.dateTimeToInt(current),colIdx),Bytes.toDouble(kv._2))
+  //              }else{
+  //                val List(minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(kv._2))
+  //                chunker.insert(sid,minTs,maxTs, minTsValue,maxTsValue,min,max,count,sum,sumSq)
+  //              }
+  //            }
+  //          }
+  //        }
+  //      }
+  //    }
+  //  }
 
   def get(row:Array[Byte],col:Array[Byte]):Option[Array[Byte]] = {
     jedis.call{jedis=>jedis.hget(row,col)} match {
@@ -65,7 +111,7 @@ class RedisStore extends Storage {
   def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[Array[Byte]]= jedis.call{jedis=>jedis.hmget(row,cols :_*)}
 
   def drop(streamId: String) {
-      getPrefixed(streamId).foreach((x)=>jedis.call{jedis=>jedis.del(x)})
+    getPrefixed(streamId).foreach((x)=>jedis.call{jedis=>jedis.del(x)})
   }
 
   def close() {

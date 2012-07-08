@@ -4,20 +4,18 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTimeZone, DateTime}
 
 object Utils {
-  val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD")
-  val yyyyFormat = DateTimeFormat.forPattern("yyyy");
-  val yyyyWWFormat = DateTimeFormat.forPattern("yyyyww");
-  val yyyyMMFormat = DateTimeFormat.forPattern("yyyyMM");
-  val yyyyDDDFormat = DateTimeFormat.forPattern("yyyyDDD");
-  val yyyyDDDHHFormat = DateTimeFormat.forPattern("yyyyDDDHH");
-  val yyyyDDDHHMMFormat = DateTimeFormat.forPattern("yyyyDDDHHmm");
-  val ukDateTimeFormat = DateTimeFormat.forPattern("dd-MM-yyyy'T'HH:mm:ss")
-  val ukDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
-  val TimeParser = DateTimeFormat.forPattern("HH:mm:ss")
+  val TIMESTAMP_YYYYD_FORMAT = DateTimeFormat.forPattern("yyyyD").withZoneUTC()
+  val yyyyFormat = DateTimeFormat.forPattern("yyyy").withZoneUTC()
+  val yyyyWWFormat = DateTimeFormat.forPattern("yyyyww").withZoneUTC()
+  val yyyyMMFormat = DateTimeFormat.forPattern("yyyyMM").withZoneUTC()
+  val yyyyDDDFormat = DateTimeFormat.forPattern("yyyyDDD").withZoneUTC()
+  val yyyyDDDHHFormat = DateTimeFormat.forPattern("yyyyDDDHH").withZoneUTC()
+  val yyyyDDDHHMMFormat = DateTimeFormat.forPattern("yyyyDDDHHmm").withZoneUTC()
+  val ukDateTimeFormat = DateTimeFormat.forPattern("dd-MM-yyyy'T'HH:mm:ss").withZoneUTC()
+  val ukDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy").withZoneUTC()
+  val TimeParser = DateTimeFormat.forPattern("HH:mm:ss").withZoneUTC()
   val zoneUTC = DateTimeZone.UTC
   val SEPARATOR = '$'
-  val TZ_Sydney = DateTimeZone.forID("Australia/Sydney")
-  val TZ_Sydney_ID = "Australia/Sydney"
   def uuid() = java.util.UUID.randomUUID().toString
   DateTimeZone.setDefault(zoneUTC)
   def generateRowKey(sensor:String, tsInSeconds:Int) = sensor+"$"+Utils.yyyyDDDFormat.print(tsInSeconds*1000L)

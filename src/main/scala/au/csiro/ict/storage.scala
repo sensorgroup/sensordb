@@ -1,14 +1,14 @@
 package au.csiro.ict
 
 import java.io.Writer
+import org.joda.time.DateTime
 
 trait Storage {
   def getPrefixed(prefix:String):Iterable[Array[Byte]]
 
-  def get(streamIds:Set[String],fromTime:Int,toTime:Int,columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter):Unit
+  def get(streamIds:Set[String],from:Option[DateTime],to:Option[DateTime],columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter)
   def get(row:Array[Byte],column:Array[Byte]):Option[Array[Byte]]
   def get(row: Array[Byte], cols:Seq[Array[Byte]]):Seq[Array[Byte]]
-
   def put(row: Array[Byte], col:Array[Byte],value:Array[Byte]):Unit
   def put(streamId: String, values: Map[Int, Option[Double]]):Unit
 
@@ -65,30 +65,6 @@ class InMemWriter extends ChunkWriter{
   def getData = to_return
 }
 
-class JSONWriter(val output:Writer) extends ChunkWriter{
-  def openWriter() =output.write("{")
-  var started = false;
-  def insertData(sid:String, minTs:Double,maxTs:Double,minTsValue:Double,maxTsValue:Double,min:Double,max:Double,count:Double,sum:Double,sumSq:Double)= {
-    if (started){
-      output.write(",")
-    }
-    started=true
-    output.write(List(sid,minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq).mkString("[",",","]"))
-  }
-
-  def insertData(sensor:String, ts:Int,value:Double)= {
-    if (started){
-      output.write(",")
-    }
-    started=true
-    val to_write = "["+sensor+","+ts+","+value+"]";
-    output.write(to_write)
-  }
-  def closeWriter() = {
-    output.write("}")
-    output.flush()
-  }
-}
 class JSONWriter2(val output:Writer) extends ChunkWriter{
   var seenIds = Set[String]()
   def openWriter() =output.write("{")

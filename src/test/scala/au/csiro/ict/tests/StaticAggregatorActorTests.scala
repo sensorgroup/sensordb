@@ -15,12 +15,13 @@ import akka.testkit.TestKit
 import akka.testkit.ImplicitSender
 import org.scalatra.test.scalatest.ScalatraSuite
 import au.csiro.ict._
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeZone, DateTime}
 
 class StaticAggregatorActorTests(_system: ActorSystem) extends TestKit(_system) with  ScalatraSuite with ImplicitSender with FunSuite with BeforeAndAfterAll   {
 
   def this() = this(ActorSystem())
 
+  DateTimeZone.setDefault(Utils.zoneUTC)
   override def afterAll {
     system.shutdown()
   }
