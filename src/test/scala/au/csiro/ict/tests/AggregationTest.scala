@@ -2,9 +2,7 @@ package au.csiro.ict.tests
 
 import org.scalatest.{FunSuite, BeforeAndAfterAll}
 import org.scalatra.test.scalatest.ScalatraSuite
-import org.apache.hadoop.hbase.util.Bytes
 import akka.actor.{Props, ActorSystem}
-import akka.dispatch.Await
 import akka.testkit.{TestProbe, TestActorRef, TestKit}
 import au.csiro.ict._
 import org.joda.time.{ DateTime}

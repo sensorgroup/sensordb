@@ -73,7 +73,7 @@ class SDB
 		@calc_std = (sum,sumSq,count)-> Math.sqrt((sumSq - sum*sum/count) / (count-1)) #square root of[(sum of Xsquared -((sum of X)*(sum of X)/N))/(N-1)]
 		@editor_config=
 			width:'700px'
-			height:250
+			height:"250px"
 			controls:"bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " +
 			"indent | alignleft center alignright justify | undo redo | " +
 			"image link unlink | cut copy paste | source",
@@ -121,32 +121,23 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			xaxis:
 				mode: 'time'
 				localTimezone: false
-			#			yaxes: [{position:"left",axisLabel: "Unit1",axisLabelUseCanvas: true},{position:"right"}]
 			grid:
 				show: true
 				borderWidth:1
 				borderColor:"#ccc"
 			selection:
 				mode: "xy"
-		to_plot= [{shadowSize:2,data: [[-373597200000, 315.71], [-370918800000, 317.45], [-368326800000, 317.50]],yaxis: 1}]
-		elem = $("#stream-chart")
-		place_holder = elem.find('.flot')
+		to_plot= [{shadowSize:0,data: (if $scope.agg_period is "raw" then _.map($scope.data,(d)->[(d[0] - 2*$scope.local_tz_offset)*1000,d[1]]) else _.map($scope.data,(d)->[((d[0]+d[1]) / 2)*1000,d[7] / d[6]])),yaxis: 1}]
+		place_holder = $('#flot')
 		place_holder.unbind("plotselected").bind "plotselected", (event,ranges)=>
 			plot = $.plot(place_holder,to_plot,($.extend(true, {}, options,{xaxis:{min: ranges.xaxis.from,max: ranges.xaxis.to},yaxis:{min: (if ranges.yaxis is undefined then 0 else ranges.yaxis.from),max: (if ranges.yaxis is undefined then 0 else ranges.yaxis.to)}})))
-			elem.find(".caption .reset-zoom").unbind("click").click => $scope.plot_data_stream_chart()
-			start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0))
-			end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0))
-			elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format()) # Todo: Timezones adjusted
-			elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format()) # Todo: Timezones adjusted
+			$scope.plot_from = ranges.xaxis.from
+			$scope.plot_to = ranges.xaxis.to
+			$scope.$apply()
 
 		plot = $.plot(place_holder, to_plot, options)
-		start_date = plot.getAxes()['xaxis']['min']
-		end_date = plot.getAxes()['xaxis']['max']
-		elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format())
-		elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format())
-		elem.find(".caption").show()
-	user = $routeParams['username']
 
+	user = $routeParams['username']
 	$scope.hide_metadata = false
 	$scope.user = user
 	$resource('/measurements').query (measurements)->
@@ -165,6 +156,9 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 				when "1-month" then 'MMMM yyyy'
 				when "1-year" then 'yyyy'
 			$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
+			$scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset)*1000
+			$scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length-1][if period is "raw" then 0 else 1] - $scope.local_tz_offset)*1000
+			$scope.plot_data_stream_chart()
 
 	$resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)

@@ -112,7 +112,7 @@
       };
       Utils.editor_config = {
         width: '700px',
-        height: 250,
+        height: "250px",
         controls: "bold italic underline strikethrough subscript superscript | color highlight | bullets numbering | outdent " + "indent | alignleft center alignright justify | undo redo | " + "image link unlink | cut copy paste | source",
         colors: "FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " + "CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " + "BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C " + "999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C " + "666 900 C60 C93 990 090 399 33F 60C 939 " + "333 600 930 963 660 060 366 009 339 636 " + "000 300 630 633 330 030 033 006 309 303",
         fonts: "Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," + "Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana",
@@ -147,7 +147,7 @@
     $scope.calc_std = sensordb.Utils.calc_std;
     selection_id = $routeParams.selection_id;
     $scope.plot_data_stream_chart = function() {
-      var elem, end_date, options, place_holder, plot, start_date, to_plot;
+      var options, place_holder, plot, to_plot;
       options = {
         series: {
           lines: {
@@ -169,15 +169,18 @@
       };
       to_plot = [
         {
-          shadowSize: 2,
-          data: [[-373597200000, 315.71], [-370918800000, 317.45], [-368326800000, 317.50]],
+          shadowSize: 0,
+          data: ($scope.agg_period === "raw" ? _.map($scope.data, function(d) {
+            return [(d[0] - 2 * $scope.local_tz_offset) * 1000, d[1]];
+          }) : _.map($scope.data, function(d) {
+            return [((d[0] + d[1]) / 2) * 1000, d[7] / d[6]];
+          })),
           yaxis: 1
         }
       ];
-      elem = $("#stream-chart");
-      place_holder = elem.find('.flot');
+      place_holder = $('#flot');
       place_holder.unbind("plotselected").bind("plotselected", __bind(function(event, ranges) {
-        var end_date, plot, start_date;
+        var plot;
         plot = $.plot(place_holder, to_plot, $.extend(true, {}, options, {
           xaxis: {
             min: ranges.xaxis.from,
@@ -188,20 +191,11 @@
             max: (ranges.yaxis === void 0 ? 0 : ranges.yaxis.to)
           }
         }));
-        elem.find(".caption .reset-zoom").unbind("click").click(__bind(function() {
-          return $scope.plot_data_stream_chart();
-        }, this));
-        start_date = parseInt((plot.getAxes()['xaxis']['min']).toFixed(0));
-        end_date = parseInt((plot.getAxes()['xaxis']['max']).toFixed(0));
-        elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
-        return elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
+        $scope.plot_from = ranges.xaxis.from;
+        $scope.plot_to = ranges.xaxis.to;
+        return $scope.$apply();
       }, this));
-      plot = $.plot(place_holder, to_plot, options);
-      start_date = plot.getAxes()['xaxis']['min'];
-      end_date = plot.getAxes()['xaxis']['max'];
-      elem.find(".caption .from_timestamp").html(new Date(start_date).utc_format());
-      elem.find(".caption .to_timestamp").html(new Date(end_date).utc_format());
-      return elem.find(".caption").show();
+      return plot = $.plot(place_holder, to_plot, options);
     };
     user = $routeParams['username'];
     $scope.hide_metadata = false;
@@ -232,9 +226,12 @@
               return 'yyyy';
           }
         })();
-        return $scope.data = _.sortBy(data[selection_id], function(d) {
+        $scope.data = _.sortBy(data[selection_id], function(d) {
           return d[0];
         });
+        $scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset) * 1000;
+        $scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length - 1][period === "raw" ? 0 : 1] - $scope.local_tz_offset) * 1000;
+        return $scope.plot_data_stream_chart();
       });
     };
     $resource('/session', (user ? {

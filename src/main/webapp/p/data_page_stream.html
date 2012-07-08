@@ -1,10 +1,22 @@
-<div class="description" ng-show="selection_stream">
+<div class="description" ng-show="selection_stream" ng-cloak>
 	<div class="row">
-		<div class="span9" id="stream-chart">
+		<div class="span9" id="stream-chart" ng-show="data.length >1" >
 			<div class="row caption">
-				<p class="center span9">Plot for <strong><span class="from_timestamp">12/2/2003</span></strong> until <strong><span class="to_timestamp">10/3/2009</span></strong><a class="reset-zoom btn pull-right">Reset Zoom</a></p>
+				<div class="offset2 span5">
+					<p class="center" >Plot for <strong>{{plot_from | date:table_time_format}}</strong> until <strong>{{plot_to | date:table_time_format}}</strong></p>
+				</div>
+				<div class="span2">
+					<a class="btn pull-right" ng-click="plot_data_stream_chart()">Reset Zoom</a>
+				</div>
 			</div>
-			<div class="flot" style="height:210px;width:700px;"></div>
+			<div class="row">
+				<div id="flot" class="span9" style="height:210px;"></div>
+			</div>
+		</div>
+		<div class="span9" ng-show="data.length <=1">
+			<div class="row caption">
+				<div class="span10"><h4 class="center">Not enough data available to plot a chart</h4></div>
+			</div>
 		</div>
 		<div class="span3">
 			<table class="table table-bordered" id="properties">
@@ -12,10 +24,10 @@
 				<tr><td>Owner</td><td><a href="#/explore/{{user}}">{{user}}</a></td></tr>
 				<tr><td>Timezone</td><td>{{selection_experiment.timezone}}</td></tr>
 				<tr><td>Measurement</td><td><a href="{{measurements[selection_stream.mid].website}}">{{measurements[selection_stream.mid].name}}</a></td></tr>
-				<tr><td>Data Items</td><td>492</td></tr>
-				<tr><td>Data Items</td><td>492</td></tr>
+				<tr><td>Data Items</td><td>{{data.length}}</td></tr>
 				<tr><td>Website</td><td><a href="{{selection_stream.website}}" ng-show="selection_stream.website">Here <i class="icon-share"></i></a><span ng-hide="selection_stream.website">-</span></td></tr>
-				<tr><td>Updated</td><td>135 minutes ago</td></tr>
+				<tr><td>Update Date</td><td>{{(last_updated | date:'dd MMM yyyy') || "-"}}</td></tr>
+				<tr><td>Update Time</td><td>{{(last_updated | date:'HH:mm:ss') || "-"}}</td></tr>
 				</tbody>
 			</table>
 		</div>
@@ -81,5 +93,4 @@
 			</table>
 		</div>
 	</div>
-
 </div>
