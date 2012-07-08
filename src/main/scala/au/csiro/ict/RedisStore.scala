@@ -67,40 +67,6 @@ class RedisStore extends Storage {
     }
   }
 
-  //    while (period.hasNext){
-  //      val (row,ts,sid)=period.next()
-  //      var current = ts.withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0)
-  //      val currentInTs = (current.getMillis/1000L).asInstanceOf[Int]
-  //      val data =  jedis.call{jedis=>jedis.hgetAll(row)}
-  //      if (data !=null && !data.isEmpty){
-  //        data.iterator.foreach{kv:(Array[Byte],Array[Byte])=>
-  //        }
-  //      }
-  //    }
-  //  }
-  //  def get(streamIds:Set[String],columns:Option[(Int,Int)],level:AggregationLevel,chunker:ChunkFormatter) {
-  //    for (sid <- streamIds){
-  //      val keys = Bytes.toBytes(sid+level.shortId+"*")
-  //      jedis.call{_.mget(keys)}.map{ key=>
-  //        val (sid,lvl,ts) = AggregationLevel.rowToTs(Bytes.toString(key))
-  //        jedis.call{_.hgetAll(keys)}.foreach{kv:(Array[Byte],Array[Byte]) =>
-  //          if (kv._2 != null){
-  //            val colIdx = Bytes.toInt(kv._1)
-  //            val current = level.dateTimePattern.parseDateTime(ts)
-  //            if (columns.isEmpty || (columns.get._1 <= colIdx && columns.get._2 >= colIdx)) {
-  //              if (level == RawLevel){
-  //                chunker.insert(sid,level.colIndexToTimestamp(current,Utils.dateTimeToInt(current),colIdx),Bytes.toDouble(kv._2))
-  //              }else{
-  //                val List(minTs,maxTs,minTsValue,maxTsValue,min,max,count,sum,sumSq) = parse[List[Double]](Bytes.toString(kv._2))
-  //                chunker.insert(sid,minTs,maxTs, minTsValue,maxTsValue,min,max,count,sum,sumSq)
-  //              }
-  //            }
-  //          }
-  //        }
-  //      }
-  //    }
-  //  }
-
   def get(row:Array[Byte],col:Array[Byte]):Option[Array[Byte]] = {
     jedis.call{jedis=>jedis.hget(row,col)} match {
       case null => None

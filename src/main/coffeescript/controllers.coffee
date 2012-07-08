@@ -109,7 +109,9 @@ window.HomeCtrl = ($scope, $location,$routeParams,$cookies,$resource,$timeout) -
 window.AnalysisCtrl = ($scope, $location,$routeParams) ->
 
 window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
-	$scope.local_tz_offset = (new Date()).getTimezoneOffset()*60*1000
+	$scope.local_tz_offset = (new Date()).getTimezoneOffset()*60
+	$scope.calc_std = sensordb.Utils.calc_std
+	selection_id = $routeParams.selection_id
 
 	$scope.plot_data_stream_chart = ->
 		options =
@@ -153,10 +155,20 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			sum
 		),{})
 
+	$scope.set_agg_period = (period) ->
+		$resource("/data",{sid:selection_id,level:period}).get (data)->
+			$scope.agg_period = period
+			$scope.table_time_format = switch period
+				when "raw" then 'dd MMM yyyy - HH:mm:ss'
+				when "1-hour" then 'dd MMM yyyy - HHa'
+				when "1-day" then 'dd MMM yyyy'
+				when "1-month" then 'MMMM yyyy'
+				when "1-year" then 'yyyy'
+			$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
+
 	$resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)
 		$scope.session = session
-		selection_id = $routeParams.selection_id
 		if(selection_id)
 			$scope.selection_stream = _.find($scope.session.streams, (s)->s._id is selection_id)
 			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is selection_id)
@@ -165,9 +177,7 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 		if ($scope.selection_stream)
 			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is $scope.selection_stream.nid)
 			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
-			$resource("/data",{sid:selection_id,level:"1-day"}).get (data)->
-				$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
-
+			$scope.set_agg_period("1-day")
 		# Things to set if a NODE is selected, used by data_page_node.html
 		if ($scope.selection_node)
 			$scope.selection_experiment =  _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
@@ -244,14 +254,12 @@ window.DataExplorerCtrl = ($scope,$routeParams,$resource,$rootScope) ->
 		),{})
 		$scope.apply_filters()
 
-
-
 	$scope.apply_filters = ()->
 		source_filter = apply_source_filter()
 		filtering_results = source_filter
 		# Shoud I use Lscache ? not sure as I need to then make sure in-browser cache invalidated when a new entry available !
 		if (source_filter.s?.length > 0)
-			$resource("/data",{sid:JSON.stringify(source_filter.s),level:"1-year",sd:"5-1-2010",ed:"5-1-2010"}).get (summaries)->
+			$resource("/data",{sid:JSON.stringify(source_filter.s),level:"1-year"}).get (summaries)->
 				summaries = _.reduce(summaries,(summary,values,key)->
 					summary[key] =
 						if(values.length>1)

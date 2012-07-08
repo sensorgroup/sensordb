@@ -142,7 +142,10 @@
   };
   window.AnalysisCtrl = function($scope, $location, $routeParams) {};
   window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
-    var user;
+    var selection_id, user;
+    $scope.local_tz_offset = (new Date()).getTimezoneOffset() * 60;
+    $scope.calc_std = sensordb.Utils.calc_std;
+    selection_id = $routeParams.selection_id;
     $scope.plot_data_stream_chart = function() {
       var elem, end_date, options, place_holder, plot, start_date, to_plot;
       options = {
@@ -209,13 +212,37 @@
         return sum;
       }), {});
     });
+    $scope.set_agg_period = function(period) {
+      return $resource("/data", {
+        sid: selection_id,
+        level: period
+      }).get(function(data) {
+        $scope.agg_period = period;
+        $scope.table_time_format = (function() {
+          switch (period) {
+            case "raw":
+              return 'dd MMM yyyy - HH:mm:ss';
+            case "1-hour":
+              return 'dd MMM yyyy - HHa';
+            case "1-day":
+              return 'dd MMM yyyy';
+            case "1-month":
+              return 'MMMM yyyy';
+            case "1-year":
+              return 'yyyy';
+          }
+        })();
+        return $scope.data = _.sortBy(data[selection_id], function(d) {
+          return d[0];
+        });
+      });
+    };
     $resource('/session', (user ? {
       'user': user
     } : {})).get(function(session) {
-      var node_ids, selection_id;
+      var node_ids;
       $rootScope.$broadcast(SDB.SESSION_INFO, session);
       $scope.session = session;
-      selection_id = $routeParams.selection_id;
       if (selection_id) {
         $scope.selection_stream = _.find($scope.session.streams, function(s) {
           return s._id === selection_id;
@@ -234,6 +261,7 @@
         $scope.selection_experiment = _.find($scope.session.experiments, function(e) {
           return e._id === $scope.selection_node.eid;
         });
+        $scope.set_agg_period("1-day");
       }
       if ($scope.selection_node) {
         $scope.selection_experiment = _.find($scope.session.experiments, function(e) {
@@ -339,9 +367,7 @@
       if (((_ref = source_filter.s) != null ? _ref.length : void 0) > 0) {
         return $resource("/data", {
           sid: JSON.stringify(source_filter.s),
-          level: "1-year",
-          sd: "5-1-2010",
-          ed: "5-1-2010"
+          level: "1-year"
         }).get(function(summaries) {
           summaries = _.reduce(summaries, function(summary, values, key) {
             var count, max, maxTs, maxTsVal, min, minTs, minTsVal, sumSq, total;

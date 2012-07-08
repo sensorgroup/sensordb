@@ -22,20 +22,20 @@
 	</div>
 	<hr/>
 	<div class="row">
-		<div class="span12">
+		<div class="offset4 span4">
 			<div class="btn-group" id="agg_period" data-toggle="buttons-radio">
 				<a class="btn"  ng-click="set_agg_period('raw')">Raw</a>
-				<a class="btn"  ng-click="set_agg_period('hourly')">Hourly</a>
-				<a class="btn"  ng-click="set_agg_period('daily')" >Daily</a>
-				<a class="btn"  ng-click="set_agg_period('monthly')" >Monthly</a>
-				<a class="btn active"  ng-click="set_agg_period('yearly')" >Yearly</a>
+				<a class="btn"  ng-click="set_agg_period('1-hour')">Hourly</a>
+				<a class="btn active"  ng-click="set_agg_period('1-day')" >Daily</a>
+				<a class="btn"  ng-click="set_agg_period('1-month')" >Monthly</a>
+				<a class="btn"  ng-click="set_agg_period('1-year')" >Yearly</a>
 			</div>
 		</div>
 	</div>
 	<div class="pad-bottom-10"></div>
 	<div class="row">
 		<div class="span12">
-			<table class="table table-bordered table-striped tablesorter">
+			<table class="table table-bordered table-striped tablesorter" ng-show="agg_period != 'raw' ">
 				<thead>
 				<tr>
 					<th>Timestamp</th>
@@ -49,13 +49,33 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="d in data">
-					<td>{{(d[i][1] && (d[i][1] - local_tz_offset)*1000 | date:'dd MMM yyyy HH:mm:ss') || "-"}}</td>
-					<td>{{d[i][6] || 0 | number:0}}</td>
-					<td>{{d[i][4] || 0 | number:3}}</td>
-					<td>{{d[i][5] || 0 | number:3}}</td>
-					<td>{{((d[i][7]/d[i][6]) || 0 | number:3)}}</td>
-					<td>{{(calc_std(d[i][7],d[i][8],d[i][6]) || 0 | number:3) }}</td>
-					<td>{{d[i][3] || 0 | number:3}}</td>
+					<td>{{(d[1] && (d[1] - local_tz_offset)*1000 | date:table_time_format) || "-"}}</td>
+					<td>{{d[6] || 0 | number:0}}</td>
+					<td>{{d[4] || 0 | number:3}}</td>
+					<td>{{d[5] || 0 | number:3}}</td>
+					<td>{{((d[7]/d[6]) || 0 | number:3)}}</td>
+					<td>{{(calc_std(d[7],d[8],d[6]) || 0 | number:3) }}</td>
+					<td>{{d[3] || 0 | number:3}}</td>
+				</tr>
+				<tr ng-show="data.length == 0">
+					<td colspan="7" style="text-align: center;"><em>Empty</em></td>
+				</tr>
+				</tbody>
+			</table>
+			<table class="table table-bordered table-striped tablesorter" ng-show="agg_period == 'raw' ">
+				<thead>
+				<tr>
+					<th class="span6">Timestamp</th>
+					<th class="span6">Value</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="d in data">
+					<td>{{(d[0] && (d[0] - local_tz_offset)*1000 | date:'dd MMM yyyy - HH:mm:ss') || "-"}}</td>
+					<td>{{d[1] || 0 | number:3}}</td>
+				</tr>
+				<tr ng-show="data.length == 0">
+					<td colspan="7" style="text-align: center;"><em>Empty</em></td>
 				</tr>
 				</tbody>
 			</table>
