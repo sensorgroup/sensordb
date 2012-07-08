@@ -1,7 +1,9 @@
+
 <div class="description" ng-show="selection_stream" ng-cloak>
-	<div class="row">
-		<div class="span9" id="stream-chart" ng-show="data.length >1" >
-			<div class="row caption">
+
+	<div class="row" style="height: 240px;">
+		<div class="span9" id="stream-chart" ng-show="data.length >1 && plot_data_stream_chart()" ng-clack>
+			<div class="row">
 				<div class="offset2 span5">
 					<p class="center" >Plot for <strong>{{plot_from | date:table_time_format}}</strong> until <strong>{{plot_to | date:table_time_format}}</strong></p>
 				</div>
@@ -10,87 +12,89 @@
 				</div>
 			</div>
 			<div class="row">
-				<div id="flot" class="span9" style="height:210px;"></div>
+				<div id="flot" class="span9" style="height:225px;"></div>
 			</div>
-		</div>
+		</div> <!-- When removing this line flot break-->
+
 		<div class="span9" ng-show="data.length <=1">
 			<div class="row caption">
 				<div class="span10"><h4 class="center">Not enough data available to plot a chart</h4></div>
-			</div>
+				</div>
 		</div>
-		<div class="span3">
-			<table class="table table-bordered" id="properties">
-				<tbody>
-				<tr><td>Owner</td><td><a href="#/explore/{{user}}">{{user}}</a></td></tr>
-				<tr><td>Timezone</td><td>{{selection_experiment.timezone}}</td></tr>
-				<tr><td>Measurement</td><td><a href="{{measurements[selection_stream.mid].website}}">{{measurements[selection_stream.mid].name}}</a></td></tr>
-				<tr><td>Data Items</td><td>{{data.length}}</td></tr>
-				<tr><td>Website</td><td><a href="{{selection_stream.website}}" ng-show="selection_stream.website">Here <i class="icon-share"></i></a><span ng-hide="selection_stream.website">-</span></td></tr>
-				<tr><td>Update Date</td><td>{{(last_updated | date:'dd MMM yyyy') || "-"}}</td></tr>
-				<tr><td>Update Time</td><td>{{(last_updated | date:'HH:mm:ss') || "-"}}</td></tr>
-				</tbody>
-			</table>
+	<div class="span3 pull-right">
+		<table class="table table-bordered" id="properties">
+			<tbody>
+			<tr><td>Owner</td><td><a href="#/explore/{{user}}">{{user}}</a></td></tr>
+			<tr><td>Timezone</td><td>{{selection_experiment.timezone}}</td></tr>
+			<tr><td>Measurement</td><td><a href="{{measurements[selection_stream.mid].website}}">{{measurements[selection_stream.mid].name}}</a></td></tr>
+			<tr><td>Data Items</td><td>{{data.length}}</td></tr>
+			<tr><td>Website</td><td><a href="{{selection_stream.website}}" ng-show="selection_stream.website">Here <i class="icon-share"></i></a><span ng-hide="selection_stream.website">-</span></td></tr>
+			<tr><td>Update Date</td><td>{{(last_updated | date:'dd MMM yyyy') || "-"}}</td></tr>
+			<tr><td>Update Time</td><td>{{(last_updated | date:'HH:mm:ss') || "-"}}</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="pad-bottom-10"></div>
+<hr/>
+<div class="row">
+	<div class="offset4 span4">
+		<div class="btn-group" id="agg_period" data-toggle="buttons-radio">
+			<a class="btn"  ng-click="set_agg_period('raw')">Raw</a>
+			<a class="btn"  ng-click="set_agg_period('1-hour')">Hourly</a>
+			<a class="btn active"  ng-click="set_agg_period('1-day')" >Daily</a>
+			<a class="btn"  ng-click="set_agg_period('1-month')" >Monthly</a>
+			<a class="btn"  ng-click="set_agg_period('1-year')" >Yearly</a>
 		</div>
 	</div>
-	<hr/>
-	<div class="row">
-		<div class="offset4 span4">
-			<div class="btn-group" id="agg_period" data-toggle="buttons-radio">
-				<a class="btn"  ng-click="set_agg_period('raw')">Raw</a>
-				<a class="btn"  ng-click="set_agg_period('1-hour')">Hourly</a>
-				<a class="btn active"  ng-click="set_agg_period('1-day')" >Daily</a>
-				<a class="btn"  ng-click="set_agg_period('1-month')" >Monthly</a>
-				<a class="btn"  ng-click="set_agg_period('1-year')" >Yearly</a>
-			</div>
-		</div>
+</div>
+<div class="pad-bottom-10"></div>
+<div class="row">
+	<div class="span12">
+		<table class="table table-bordered table-striped tablesorter" ng-show="agg_period != 'raw' ">
+			<thead>
+			<tr>
+				<th>Timestamp</th>
+				<th>Count</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>Avg</th>
+				<th>StDev</th>
+				<th>Latest Value</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="d in data">
+				<td>{{(d[1] && (d[1] - local_tz_offset)*1000 | date:table_time_format) || "-"}}</td>
+				<td>{{d[6] || 0 | number:0}}</td>
+				<td>{{d[4] || 0 | number:3}}</td>
+				<td>{{d[5] || 0 | number:3}}</td>
+				<td>{{((d[7]/d[6]) || 0 | number:3)}}</td>
+				<td>{{(calc_std(d[7],d[8],d[6]) || 0 | number:3) }}</td>
+				<td>{{d[3] || 0 | number:3}}</td>
+			</tr>
+			<tr ng-show="data.length == 0">
+				<td colspan="7" style="text-align: center;"><em>Empty</em></td>
+			</tr>
+			</tbody>
+		</table>
+		<table class="table table-bordered table-striped tablesorter" ng-show="agg_period == 'raw' ">
+			<thead>
+			<tr>
+				<th class="span6">Timestamp</th>
+				<th class="span6">Value</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="d in data">
+				<td>{{(d[0] && (d[0] - local_tz_offset)*1000 | date:'dd MMM yyyy - HH:mm:ss') || "-"}}</td>
+				<td>{{d[1] || 0 | number:3}}</td>
+			</tr>
+			<tr ng-show="data.length == 0">
+				<td colspan="7" style="text-align: center;"><em>Empty</em></td>
+			</tr>
+			</tbody>
+		</table>
 	</div>
-	<div class="pad-bottom-10"></div>
-	<div class="row">
-		<div class="span12">
-			<table class="table table-bordered table-striped tablesorter" ng-show="agg_period != 'raw' ">
-				<thead>
-				<tr>
-					<th>Timestamp</th>
-					<th>Count</th>
-					<th>Min</th>
-					<th>Max</th>
-					<th>Avg</th>
-					<th>StDev</th>
-					<th>Latest Value</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="d in data">
-					<td>{{(d[1] && (d[1] - local_tz_offset)*1000 | date:table_time_format) || "-"}}</td>
-					<td>{{d[6] || 0 | number:0}}</td>
-					<td>{{d[4] || 0 | number:3}}</td>
-					<td>{{d[5] || 0 | number:3}}</td>
-					<td>{{((d[7]/d[6]) || 0 | number:3)}}</td>
-					<td>{{(calc_std(d[7],d[8],d[6]) || 0 | number:3) }}</td>
-					<td>{{d[3] || 0 | number:3}}</td>
-				</tr>
-				<tr ng-show="data.length == 0">
-					<td colspan="7" style="text-align: center;"><em>Empty</em></td>
-				</tr>
-				</tbody>
-			</table>
-			<table class="table table-bordered table-striped tablesorter" ng-show="agg_period == 'raw' ">
-				<thead>
-				<tr>
-					<th class="span6">Timestamp</th>
-					<th class="span6">Value</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="d in data">
-					<td>{{(d[0] && (d[0] - local_tz_offset)*1000 | date:'dd MMM yyyy - HH:mm:ss') || "-"}}</td>
-					<td>{{d[1] || 0 | number:3}}</td>
-				</tr>
-				<tr ng-show="data.length == 0">
-					<td colspan="7" style="text-align: center;"><em>Empty</em></td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+</div>
 </div>

@@ -230,8 +230,7 @@
           return d[0];
         });
         $scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset) * 1000;
-        $scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length - 1][period === "raw" ? 0 : 1] - $scope.local_tz_offset) * 1000;
-        return $scope.plot_data_stream_chart();
+        return $scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length - 1][period === "raw" ? 0 : 1] - $scope.local_tz_offset) * 1000;
       });
     };
     $resource('/session', (user ? {
@@ -288,20 +287,13 @@
         }), 0);
       }
     });
-    $("body").on("click", function(e) {
+    return $("body").on("click", function(e) {
       var src;
       src = $(e.srcElement);
       if (src.attr("id") === "show_hide_metadata") {
         return $scope.hide_metadata = !$scope.hide_metadata;
       }
     });
-    $scope.period = -1;
-    return $scope.set_period = function(period) {
-      if (period === $scope.period) {
-        return;
-      }
-      return $scope.period = period;
-    };
   };
   window.ExperimentCreateCtrl = function($scope, $location, $routeParams, $timeout) {
     return $("body textarea").cleditor(sensordb.Utils.editor_config);

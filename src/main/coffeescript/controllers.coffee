@@ -112,7 +112,8 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 	$scope.local_tz_offset = (new Date()).getTimezoneOffset()*60
 	$scope.calc_std = sensordb.Utils.calc_std
 	selection_id = $routeParams.selection_id
-
+	## as flot plot is only shown when there is enough data points available to be plotted, this function should be calculated at the latest point when the plot needs to be redrawn
+	## Therefore, the call to this method is place at the view (data_page_stream) hence plot_data_stream_chart can correctly align Y axies values.
 	$scope.plot_data_stream_chart = ->
 		options =
 			series:
@@ -158,7 +159,6 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
 			$scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset)*1000
 			$scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length-1][if period is "raw" then 0 else 1] - $scope.local_tz_offset)*1000
-			$scope.plot_data_stream_chart()
 
 	$resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)
@@ -172,6 +172,7 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.selection_node = _.find($scope.session.nodes, (n)->n._id is $scope.selection_stream.nid)
 			$scope.selection_experiment = _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
 			$scope.set_agg_period("1-day")
+
 		# Things to set if a NODE is selected, used by data_page_node.html
 		if ($scope.selection_node)
 			$scope.selection_experiment =  _.find($scope.session.experiments, (e)->e._id is $scope.selection_node.eid)
@@ -201,12 +202,6 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 		src = $(e.srcElement)
 		if src.attr("id") is "show_hide_metadata"
 			$scope.hide_metadata = !$scope.hide_metadata
-
-	$scope.period = -1
-	$scope.set_period = (period)->
-		if (period == $scope.period )
-			return
-		$scope.period = period
 
 window.ExperimentCreateCtrl = ($scope, $location,$routeParams,$timeout) ->
 	$("body textarea").cleditor(sensordb.Utils.editor_config)
