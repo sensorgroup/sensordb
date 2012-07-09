@@ -230,7 +230,8 @@
           return d[0];
         });
         $scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset) * 1000;
-        return $scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length - 1][period === "raw" ? 0 : 1] - $scope.local_tz_offset) * 1000;
+        $scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length - 1][period === "raw" ? 0 : 1] - $scope.local_tz_offset) * 1000;
+        return $scope.plot_data_stream_chart();
       });
     };
     $resource('/session', (user ? {

@@ -4,6 +4,26 @@
   html5mode = function($locationProvider) {
     return $locationProvider.html5Mode(false);
   };
+  angular.module('SharedServices', []).config(function($httpProvider) {
+    var spinnerFunction;
+    $httpProvider.responseInterceptors.push('myHttpInterceptor');
+    spinnerFunction = function(data, headersGetter) {
+      $('.ajax-loading img').show();
+      console.log('ajax-started');
+      return data;
+    };
+    return $httpProvider.defaults.transformRequest.push(spinnerFunction);
+  }).factory('myHttpInterceptor', (function($q, $window) {
+    return function(promise) {
+      return promise.then(function(response) {
+        $('.ajax-loading img').hide();
+        return response;
+      });
+    };
+  }), (function(response) {
+    $('.ajax-loading img').hide();
+    return $q.reject(response);
+  }));
   routes = function($routeProvider) {
     $routeProvider.when('/register', {
       templateUrl: '/p/registration.html',
@@ -46,5 +66,5 @@
       controller: Err404Ctrl
     });
   };
-  angular.module('sensordb', ['ngResource', 'ngCookies', 'sensordb.filters', 'sensordb.services', 'sensordb.directives']).config(['$routeProvider', routes]).config(['$locationProvider', html5mode]);
+  angular.module('sensordb', ['ngResource', 'ngCookies', 'SharedServices', 'sensordb.filters', 'sensordb.services', 'sensordb.directives']).config(['$routeProvider', routes]).config(['$locationProvider', html5mode]);
 }).call(this);

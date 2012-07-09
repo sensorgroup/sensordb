@@ -159,6 +159,7 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
 			$scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset)*1000
 			$scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length-1][if period is "raw" then 0 else 1] - $scope.local_tz_offset)*1000
+			$scope.plot_data_stream_chart()
 
 	$resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)
