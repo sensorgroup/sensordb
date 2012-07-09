@@ -9,7 +9,6 @@
     $httpProvider.responseInterceptors.push('myHttpInterceptor');
     spinnerFunction = function(data, headersGetter) {
       $('.ajax-loading img').show();
-      console.log('ajax-started');
       return data;
     };
     return $httpProvider.defaults.transformRequest.push(spinnerFunction);

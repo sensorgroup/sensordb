@@ -7,7 +7,6 @@ angular.module('SharedServices', []).config(($httpProvider) ->
 	spinnerFunction =  (data, headersGetter) ->
 		# Start the spinner here
 		$('.ajax-loading img').show()
-		console.log('ajax-started')
 		data;
 	$httpProvider.defaults.transformRequest.push(spinnerFunction)
 ).factory('myHttpInterceptor',  (($q, $window) -> # Register the interceptor as a service, intercepts ALL angular ajax http calls
@@ -18,7 +17,6 @@ angular.module('SharedServices', []).config(($httpProvider) ->
 	$('.ajax-loading img').hide() # do something on error
 	$q.reject(response)
 ))
-
 
 routes = ($routeProvider)->
 	$routeProvider.when('/register', {templateUrl: '/p/registration.html', controller: RegistrationCtrl})

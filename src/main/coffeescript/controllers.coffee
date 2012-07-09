@@ -108,7 +108,7 @@ window.HomeCtrl = ($scope, $location,$routeParams,$cookies,$resource,$timeout) -
 
 window.AnalysisCtrl = ($scope, $location,$routeParams) ->
 
-window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
+window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource,$timeout) ->
 	$scope.local_tz_offset = (new Date()).getTimezoneOffset()*60
 	$scope.calc_std = sensordb.Utils.calc_std
 	selection_id = $routeParams.selection_id
@@ -159,7 +159,9 @@ window.DataPageCtrl = ($scope,$rootScope, $location,$routeParams,$resource) ->
 			$scope.data= _.sortBy(data[selection_id],(d)->d[0]) #d[0] is minTs, default sort is by timestamp
 			$scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset)*1000
 			$scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length-1][if period is "raw" then 0 else 1] - $scope.local_tz_offset)*1000
-			$scope.plot_data_stream_chart()
+			if ($scope.data.length>1)
+				$("#flot").html("") # So while user is waiting we doesn't want to show the old chart on the screen
+				$timeout((-> $scope.plot_data_stream_chart()),20)
 
 	$resource('/session',(if user then {'user':user} else {})).get (session)->
 		$rootScope.$broadcast(SDB.SESSION_INFO,session)

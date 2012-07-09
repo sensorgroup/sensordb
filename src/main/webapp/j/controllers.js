@@ -141,7 +141,7 @@
     });
   };
   window.AnalysisCtrl = function($scope, $location, $routeParams) {};
-  window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource) {
+  window.DataPageCtrl = function($scope, $rootScope, $location, $routeParams, $resource, $timeout) {
     var selection_id, user;
     $scope.local_tz_offset = (new Date()).getTimezoneOffset() * 60;
     $scope.calc_std = sensordb.Utils.calc_std;
@@ -231,7 +231,12 @@
         });
         $scope.plot_from = $scope.first_updated = ($scope.data[0][0] - $scope.local_tz_offset) * 1000;
         $scope.plot_to = $scope.last_updated = ($scope.data[$scope.data.length - 1][period === "raw" ? 0 : 1] - $scope.local_tz_offset) * 1000;
-        return $scope.plot_data_stream_chart();
+        if ($scope.data.length > 1) {
+          $("#flot").html("");
+          return $timeout((function() {
+            return $scope.plot_data_stream_chart();
+          }), 20);
+        }
       });
     };
     $resource('/session', (user ? {
