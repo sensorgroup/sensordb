@@ -1,41 +1,3 @@
-<script type="text/javascript">
-	var metadata = {}
-	var metadata_keys = []
-	jQuery.getJSON("/metadata/keyvalues",function(data){
-		metadata=data;
-		metadata_keys = _.keys(metadata);
-	});
-	$LAB.script("j/lib/backbone-min.js").script("j/lib/jquery-ui-1.8.21.custom.min.js").script("/j/lib/visualsearch.js").wait(function(){
-		$(function(){
-			var visualSearch = VS.init({
-				container : $('.visual_search'),
-				query     : '',
-				remainder: "Metadata",
-				callbacks : {
-					search       : function(query, searchCollection) {
-//						searchCollection.forEach(function(facet){
-//							var category = facet.get("category")
-//							var value = facet.get("value")
-//							if (value == "searching..."){
-//								searchCollection.remove(facet)
-//							}
-//						});
-					},
-					facetMatches : function(callback) {callback(metadata_keys);},
-					valueMatches : function(facet, searchTerm, callback) {
-//						callback(["searching..."])
-//						jQuery.getJSON("/metadata/values/"+facet,function(json){
-//							setTimeout(function(){
-//								callback(json)
-//							},1000);
-//						});
-						callback(metadata[facet])
-					}
-				}
-			});
-		});
-	});
-</script>
 <script src="" type="text/javascript"></script>
 <!--[if (!IE)|(gte IE 8)]><!-->
 <link href="/c/visualsearch-datauri.css" media="screen" rel="stylesheet" type="text/css" />
@@ -165,7 +127,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr ng-repeat="i in filtering_results.s">
+			<tr ng-repeat="i in filtering_results.s" >
 				<td><a href="/#/data/{{user}}/{{nodes[streams[i].nid].eid}}">{{experiments[nodes[streams[i].nid].eid].name}}</a></td>
 				<td><a href="/#/data/{{user}}/{{streams[i].nid}}">{{nodes[streams[i].nid].name}}</a></td>
 				<td><a href="/#/data/{{user}}/{{i}}">{{streams[i].name}}</a></td>
@@ -176,6 +138,9 @@
 				<td>{{(calc_std(filtering_results.data[i][7],filtering_results.data[i][8],filtering_results.data[i][6]) || 0 | number:3) }}</td><!--   s = square root of[(sum of Xsquared -((sum of X)*(sum of X)/N))/(N-1)] -->
 				<td>{{filtering_results.data[i][3] || 0 | number:3}}</td>
 				<td>{{(filtering_results.data[i][1] && (filtering_results.data[i][1] - local_tz_offset)*1000 | date:'dd MMM yyyy HH:mm:ss') || "-"}}</td>
+			</tr>
+			<tr ng-show="filtering_results.s.length == 0">
+				<td colspan="10" style="text-align: center;"><em>Empty</em></td>
 			</tr>
 			</tbody>
 		</table>

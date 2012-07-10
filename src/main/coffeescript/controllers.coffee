@@ -246,12 +246,27 @@ window.DataExplorerCtrl = ($scope,$routeParams,$resource,$rootScope) ->
 		),{})
 		$scope.apply_filters()
 
+	apply_metadata_filter = (metadata_query,filtering_result)->
+		# Create a map, key is the _id of an element which satisfies the metadata predicate.
+		# This map will be set to undefined if metadata_query is empty.
+		metadata_query_result = if _.isEmpty(metadata_query) then undefined else {}
+		unless _.isEmpty(metadata_query)
+			_.each [$scope.streams,$scope.nodes,$scope.experiments] , (source) ->
+				_.reduce(source,((sum,item)->
+					if _.any(item.metadata,(meta)-> metadata_query[meta.name] is meta.value && meta.value isnt undefined)
+						sum[item._id]=1
+					sum
+				),metadata_query_result)
+			filtering_result.s = _.filter filtering_result.s,(sid)->
+				metadata_query_result[sid] || metadata_query_result[$scope.streams[sid].nid] || metadata_query_result[$scope.nodes[$scope.streams[sid].nid].eid]
+		filtering_result
+
 	$scope.apply_filters = ()->
-		source_filter = apply_source_filter()
-		filtering_results = source_filter
+		filtering_result = apply_source_filter()
+		filtering_result = apply_metadata_filter(metadata_query,filtering_result)
 		# Shoud I use Lscache ? not sure as I need to then make sure in-browser cache invalidated when a new entry available !
-		if (source_filter.s?.length > 0)
-			$resource("/data",{sid:JSON.stringify(source_filter.s),level:"1-year"}).get (summaries)->
+		if (filtering_result.s?.length > 0)
+			$resource("/data",{sid:JSON.stringify(filtering_result.s),level:"1-year"}).get (summaries)->
 				summaries = _.reduce(summaries,(summary,values,key)->
 					summary[key] =
 						if(values.length>1)
@@ -269,11 +284,12 @@ window.DataExplorerCtrl = ($scope,$routeParams,$resource,$rootScope) ->
 							values[0]
 					 summary
 				,{})
-				console.log(summaries)
-				filtering_results.data = summaries
-				$scope.filtering_results=filtering_results
+				filtering_result.data = summaries
+				$scope.filtering_results=filtering_result
 		else
-			$scope.filtering_results=filtering_results
+			$scope.filtering_results=filtering_result
+		$scope.$apply()
+
 
 	apply_source_filter = ()->
 		# Select experiments based on their names, return experiment.id as array
@@ -310,7 +326,27 @@ window.DataExplorerCtrl = ($scope,$routeParams,$resource,$rootScope) ->
 		experiments_tmp = _.filter(experiments_tmp,(e)-> _.include(nodes_tmp_eid,e))
 		{e:experiments_tmp,n: _.map(nodes_tmp,(n)->n._id),s:_.map(streams_tmp,(s)->s._id)}
 
-# Join the experiments, nodes and streams using outer join
+	metadata = {}
+	metadata_query = {}
+	metadata_keys = []
+	$resource("/metadata/keyvalues").get (data)->
+		metadata=data;
+		metadata_keys = _.keys(metadata)
+
+	metadata_search = (query, searchCollection) ->
+		metadata_query = {}
+		searchCollection.forEach (facet)->
+			category = facet.get("category")
+			value = facet.get("value")
+			metadata_query[category]=value
+		$scope.apply_filters()
+
+	$LAB.script("j/lib/backbone-min.js").script("j/lib/jquery-ui-1.8.21.custom.min.js").script("/j/lib/visualsearch.js").wait ->
+		visualSearch = VS.init({container : $('.visual_search'),query: '',remainder: "Metadata",callbacks : {
+			search  : metadata_search,
+			facetMatches : (callback) -> callback(metadata_keys),
+			valueMatches : (facet, searchTerm, callback) -> callback(metadata[facet])
+		}})
 
 window.Err404Ctrl = ($scope) ->
 	$scope.url=window.location.href
@@ -361,7 +397,6 @@ window.HeaderCtrl = ($scope,$rootScope,$cookies,$timeout,$resource)->
 
 		$.ajax type:'post', url:'/login', data:credentials , success:((res)->
 			session_info =jQuery.parseJSON(res)
-
 			$rootScope.$broadcast(SDB.SESSION_INFO,session_info)
 			$rootScope.$broadcast(SDB.SUCCESS_ALERT_MESSAGE,["Logged in Successfully"])
 		) , error:(res)-> $rootScope.$broadcast(SDB.ERROR_ALERT_MESSAGE,jQuery.parseJSON(res.responseText)["errors"])

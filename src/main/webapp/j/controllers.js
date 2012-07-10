@@ -311,7 +311,7 @@
     return $("body textarea").cleditor(sensordb.Utils.editor_config);
   };
   window.DataExplorerCtrl = function($scope, $routeParams, $resource, $rootScope) {
-    var apply_source_filter, user;
+    var apply_metadata_filter, apply_source_filter, metadata, metadata_keys, metadata_query, metadata_search, user;
     $scope.user = user = $routeParams['username'];
     $scope.calc_std = sensordb.Utils.calc_std;
     $scope.local_tz_offset = (new Date()).getTimezoneOffset() * 60;
@@ -355,13 +355,33 @@
       }), {});
       return $scope.apply_filters();
     });
+    apply_metadata_filter = function(metadata_query, filtering_result) {
+      var metadata_query_result;
+      metadata_query_result = _.isEmpty(metadata_query) ? void 0 : {};
+      if (!_.isEmpty(metadata_query)) {
+        _.each([$scope.streams, $scope.nodes, $scope.experiments], function(source) {
+          return _.reduce(source, (function(sum, item) {
+            if (_.any(item.metadata, function(meta) {
+              return metadata_query[meta.name] === meta.value && meta.value !== void 0;
+            })) {
+              sum[item._id] = 1;
+            }
+            return sum;
+          }), metadata_query_result);
+        });
+        filtering_result.s = _.filter(filtering_result.s, function(sid) {
+          return metadata_query_result[sid] || metadata_query_result[$scope.streams[sid].nid] || metadata_query_result[$scope.nodes[$scope.streams[sid].nid].eid];
+        });
+      }
+      return filtering_result;
+    };
     $scope.apply_filters = function() {
-      var filtering_results, source_filter, _ref;
-      source_filter = apply_source_filter();
-      filtering_results = source_filter;
-      if (((_ref = source_filter.s) != null ? _ref.length : void 0) > 0) {
-        return $resource("/data", {
-          sid: JSON.stringify(source_filter.s),
+      var filtering_result, _ref;
+      filtering_result = apply_source_filter();
+      filtering_result = apply_metadata_filter(metadata_query, filtering_result);
+      if (((_ref = filtering_result.s) != null ? _ref.length : void 0) > 0) {
+        $resource("/data", {
+          sid: JSON.stringify(filtering_result.s),
           level: "1-year"
         }).get(function(summaries) {
           summaries = _.reduce(summaries, function(summary, values, key) {
@@ -379,15 +399,15 @@
             }), 0), [minTs, maxTs, minTsVal, maxTsVal, min, max, count, total, sumSq]) : values[0];
             return summary;
           }, {});
-          console.log(summaries);
-          filtering_results.data = summaries;
-          return $scope.filtering_results = filtering_results;
+          filtering_result.data = summaries;
+          return $scope.filtering_results = filtering_result;
         });
       } else {
-        return $scope.filtering_results = filtering_results;
+        $scope.filtering_results = filtering_result;
       }
+      return $scope.$apply();
     };
-    return apply_source_filter = function() {
+    apply_source_filter = function() {
       var experiments_tmp, nodes_tmp, nodes_tmp_eid, nodes_tmp_id, stream_node_ids, streams_tmp;
       experiments_tmp = _.map(($scope.experiment_selector !== void 0 && $scope.experiment_selector !== "" ? _.filter($scope.session.experiments, function(item) {
         return item.name === $scope.experiment_selector;
@@ -434,6 +454,40 @@
         })
       };
     };
+    metadata = {};
+    metadata_query = {};
+    metadata_keys = [];
+    $resource("/metadata/keyvalues").get(function(data) {
+      metadata = data;
+      return metadata_keys = _.keys(metadata);
+    });
+    metadata_search = function(query, searchCollection) {
+      metadata_query = {};
+      searchCollection.forEach(function(facet) {
+        var category, value;
+        category = facet.get("category");
+        value = facet.get("value");
+        return metadata_query[category] = value;
+      });
+      return $scope.apply_filters();
+    };
+    return $LAB.script("j/lib/backbone-min.js").script("j/lib/jquery-ui-1.8.21.custom.min.js").script("/j/lib/visualsearch.js").wait(function() {
+      var visualSearch;
+      return visualSearch = VS.init({
+        container: $('.visual_search'),
+        query: '',
+        remainder: "Metadata",
+        callbacks: {
+          search: metadata_search,
+          facetMatches: function(callback) {
+            return callback(metadata_keys);
+          },
+          valueMatches: function(facet, searchTerm, callback) {
+            return callback(metadata[facet]);
+          }
+        }
+      });
+    });
   };
   window.Err404Ctrl = function($scope) {
     return $scope.url = window.location.href;
