@@ -53,6 +53,13 @@ class SampleSetup extends ScalatraSuite with FunSuite {
         experimentId=idOf(body)
         status should equal(200)
       }
+
+
+      post("/experiments",Map("name"->"yanco","timezone"->"Australia/Sydney")){
+        body should include ("_id")
+        experimentId=idOf(body)
+        status should equal(200)
+      }
       get("/metadata/add",Map("id"->experimentId,"name"->"location","value"->"Australia")){
         status must equal(200)
       }
@@ -61,12 +68,6 @@ class SampleSetup extends ScalatraSuite with FunSuite {
       }
       get("/metadata/add",Map("id"->experimentId,"name"->"deployment status","value"->"Active","start-ts"->"2012-03-05T21:42:26.220+10:00","end-ts"->"2012-05-05T21:42:26.220+10:00")){
         status must equal(200)
-      }
-
-      post("/experiments",Map("name"->"yanco","timezone"->"Australia/Sydney")){
-        body should include ("_id")
-        experimentId=idOf(body)
-        status should equal(200)
       }
       post("/nodes",Map("name"->"node1","eid"->experimentId)){
         // successful creation of node1 within experiment 1

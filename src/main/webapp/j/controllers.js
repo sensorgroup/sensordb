@@ -380,7 +380,7 @@
       filtering_result = apply_source_filter();
       filtering_result = apply_metadata_filter(metadata_query, filtering_result);
       if (((_ref = filtering_result.s) != null ? _ref.length : void 0) > 0) {
-        $resource("/data", {
+        return $resource("/data", {
           sid: JSON.stringify(filtering_result.s),
           level: "1-year"
         }).get(function(summaries) {
@@ -404,8 +404,8 @@
         });
       } else {
         $scope.filtering_results = filtering_result;
+        return $scope.$apply();
       }
-      return $scope.$apply();
     };
     apply_source_filter = function() {
       var experiments_tmp, nodes_tmp, nodes_tmp_eid, nodes_tmp_id, stream_node_ids, streams_tmp;

@@ -288,7 +288,7 @@ window.DataExplorerCtrl = ($scope,$routeParams,$resource,$rootScope) ->
 				$scope.filtering_results=filtering_result
 		else
 			$scope.filtering_results=filtering_result
-		$scope.$apply()
+			$scope.$apply()
 
 
 	apply_source_filter = ()->
